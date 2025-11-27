@@ -20,6 +20,9 @@ export default function Header() {
             <a href="#" className="">
               Pricing
             </a>
+            <a href="#about" className="">
+              About
+            </a>
             <div className="flex gap-4">
               <button>Sign In</button>
               <button>Sign Up</button>

@@ -28,7 +28,7 @@ export default function PromptGenerator() {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto ">
       <div className="">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Prompt Input */}
@@ -120,7 +120,11 @@ export default function PromptGenerator() {
           </div>
 
           {/* Generate Button */}
-          <button type="submit">Generate SVG</button>
+          <div className="flex justify-end">
+            <button type="submit" className="">
+              Generate SVG
+            </button>
+          </div>
         </form>
       </div>
     </div>
