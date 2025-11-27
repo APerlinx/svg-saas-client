@@ -2,7 +2,7 @@ import logo from '../assets/logo.svg'
 
 export default function Header() {
   return (
-    <header className="border-b border-gray-100 ">
+    <header className="border-b-[0.5px]  border-gray-100 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center font-serif">
@@ -21,8 +21,8 @@ export default function Header() {
               Pricing
             </a>
             <div className="flex gap-4">
-              <button className="border px-2  cursor-pointer">Sign In</button>
-              <button className="border px-2  cursor-pointer">Sign Up</button>
+              <button>Sign In</button>
+              <button>Sign Up</button>
             </div>
           </nav>
         </div>

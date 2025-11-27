@@ -14,6 +14,7 @@ export default function PromptGenerator() {
   const [formData, setFormData] = useState<PromptFormData>({
     prompt: '',
     style: 'minimal',
+    isPrivate: false,
   })
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
@@ -75,10 +76,51 @@ export default function PromptGenerator() {
             </select>
           </div>
 
+          {/* Privacy Switch */}
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="privacy"
+                className="text-sm font-medium text-gray-700"
+              >
+                Privacy Mode
+              </label>
+              <div className="relative group">
+                <svg
+                  className="w-4 h-4 text-gray-400 cursor-help"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
+                  If turned on, we will not add your generation to the public
+                  collection
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+                </div>
+              </div>
+            </div>
+            <label htmlFor="privacy" className="relative inline-block w-12 h-6">
+              <input
+                type="checkbox"
+                id="privacy"
+                checked={formData.isPrivate}
+                onChange={(e) =>
+                  setFormData({ ...formData, isPrivate: e.target.checked })
+                }
+                className="sr-only peer"
+              />
+              <div className="w-12 h-6 bg-gray-300 rounded-full peer peer-checked:bg-wizard-orange transition-colors"></div>
+              <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-6"></div>
+            </label>
+          </div>
+
           {/* Generate Button */}
-          <button type="submit" className="py-4 px-6 border">
-            Generate SVG
-          </button>
+          <button type="submit">Generate SVG</button>
         </form>
       </div>
     </div>
