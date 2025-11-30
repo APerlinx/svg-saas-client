@@ -1,6 +1,6 @@
+import { Outlet } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import PromptGenerator from './components/PromptGenerator'
 
 function App() {
   return (
@@ -8,7 +8,7 @@ function App() {
       <Header />
 
       <main className="grow flex items-center justify-center px-4 py-16">
-        <PromptGenerator />
+        <Outlet />
       </main>
 
       <Footer />

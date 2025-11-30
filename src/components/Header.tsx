@@ -47,7 +47,7 @@ export default function Header() {
               <button className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors">
                 Sign In
               </button>
-              <button className="px-4 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-wizard-orange to-wizard-orange/90 hover:from-wizard-orange/90 hover:to-wizard-orange rounded-lg transition-all shadow-sm">
+              <button className="px-4 py-1.5 text-sm font-medium text-white bg-linear-to-r from-wizard-orange to-wizard-orange/90 hover:from-wizard-orange/90 hover:to-wizard-orange rounded-lg transition-all shadow-sm">
                 Sign Up
               </button>
             </div>
