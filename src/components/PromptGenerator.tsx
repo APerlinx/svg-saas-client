@@ -112,7 +112,7 @@ export default function PromptGenerator() {
           <ChevronDownIcon />
         </button>
         {openDropdown === name && (
-          <div className="absolute bottom-full bg-black left-0 mb-2 pb-2 w-64 rounded-lg z-10 overflow-y-auto">
+          <div className="absolute bottom-full bg-black left-0 mb-2 pb-2 w-64 rounded-lg z-10 overflow-y-auto animate-in fade-in slide-in-from-bottom-2 duration-300 ease-out">
             {isModel ? (
               <>
                 {/* Partner Models Section */}
