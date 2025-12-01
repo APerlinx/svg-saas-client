@@ -1,4 +1,4 @@
-import logo from '../assets/logo.svg'
+import logo from '../assets/logotape.svg'
 
 export default function Header() {
   return (
@@ -8,17 +8,17 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center gap-2 group cursor-pointer">
             <div className="w-8 h-8 flex items-center justify-center">
-              <img src={logo} alt="SVG Wiz Logo" className="w-full h-full" />
+              <img src={logo} alt="Chat SVG Logo" className="w-full h-full" />
             </div>
             <span className="font-semibold text-lg tracking-tight text-gray-900">
-              SVG Wiz
+              chatSVG
             </span>
           </div>
 
           {/* Navigation */}
           <nav className="flex items-center gap-1">
             <a
-              href="#"
+              href="/"
               className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
             >
               Home
