@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import type { User, AuthResponse } from '../types/user'
 import * as authService from '../services/authService'
 import { setToken, getToken, removeToken } from '../utils/localStorage'
-import { AuthContext, type AuthContextType } from './AuthContext'
+import { AuthContext, type AuthContextType } from './AuthContext.tsx'
 
 interface AuthProviderProps {
   children: ReactNode
@@ -36,18 +36,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkAuth()
   }, [])
 
-  const login = async (email: string, password: string) => {
-    const response: AuthResponse = await authService.signIn({ email, password })
-    if (response.accessToken) {
-      setToken(response.accessToken)
+  const login = async (
+    email: string,
+    password: string,
+    rememberMe: boolean
+  ) => {
+    const response: AuthResponse = await authService.signIn({
+      email,
+      password,
+      rememberMe,
+    })
+    const tokenValue = response.token || response.accessToken
+    if (tokenValue) {
+      setToken(tokenValue)
     }
     setUser(response.user)
   }
 
   const register = async (name: string, email: string, password: string) => {
-    const response: AuthResponse = await authService.signUp({ name, email, password })
-    if (response.accessToken) {
-      setToken(response.accessToken)
+    const response: AuthResponse = await authService.signUp({
+      name,
+      email,
+      password,
+    })
+    const tokenValue = response.token || response.accessToken
+    if (tokenValue) {
+      setToken(tokenValue)
     }
     setUser(response.user)
   }

@@ -17,6 +17,7 @@ export default function SignIn() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    rememberMe: false,
   })
 
   const handleSubmit = async (e: FormEvent) => {
@@ -24,8 +25,9 @@ export default function SignIn() {
     setIsLoading(true)
 
     try {
-      const { email, password } = formData
-      await login(email, password)
+      const { email, password, rememberMe } = formData
+
+      await login(email, password, rememberMe)
       showToast('Welcome back! You have successfully signed in.', 'success')
       navigate('/')
     } catch (error) {
@@ -72,6 +74,10 @@ export default function SignIn() {
             <input
               type="checkbox"
               className="w-4 h-4 rounded border-gray-300 text-wizard-orange focus:ring-wizard-orange"
+              checked={formData.rememberMe}
+              onChange={(e) =>
+                setFormData({ ...formData, rememberMe: e.target.checked })
+              }
             />
             <span className="text-gray-600">Remember me</span>
           </label>

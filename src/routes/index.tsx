@@ -5,6 +5,7 @@ import ErrorBoundary from '../components/ErrorBoundary'
 import Pricing from '../pages/Pricing'
 import SignIn from '../pages/auth/SignIn'
 import SignUp from '../pages/auth/SignUp'
+import ForgotPassword from '../pages/auth/ForgotPassword'
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
       {
         path: 'signup',
         element: <SignUp />,
+      },
+      {
+        path: 'forgot-password',
+        element: <ForgotPassword />,
       },
     ],
   },

@@ -2,6 +2,15 @@
 import axios, { AxiosError } from 'axios'
 import { getToken } from '../utils/localStorage'
 
+// TODO: Check registration (and add email sent to thank the user no confirmation)
+// TODO: deal with the social auth check it works! (login/register/logout)
+// TODO: deal with "forgot password" functionality (backend and front - email reset flow)
+// TODO: Auth security improvements (refresh tokens, token expiry handling, etc.)
+// TODO: Typescript improvements throughout the file
+// TODO: Add terms of service and privacy policy acceptance during registration
+// TODO: Ui improvements (loading states, error handling, etc.)
+// TODO: review and cleanup unused code
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   withCredentials: false,
@@ -41,14 +50,17 @@ function normalizeError(error: unknown): never {
 export async function signIn({
   email,
   password,
+  rememberMe,
 }: {
   email: string
   password: string
+  rememberMe: boolean
 }): Promise<AuthResponse> {
   try {
     const response = await api.post<AuthResponse>('/auth/login', {
       email,
       password,
+      rememberMe,
     })
     return response.data
   } catch (error) {
@@ -94,11 +106,27 @@ export async function getCurrentUser(): Promise<User | null> {
     const response = await api.get<User>('/auth/current-user')
     return response.data
   } catch (error) {
-    // if not authenticated, your backend should probably return 401
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       return null
     }
     console.error('Error fetching current user:', error)
+    normalizeError(error)
+  }
+}
+
+export async function forgotPassword({
+  email,
+}: {
+  email: string
+}): Promise<{ message: string }> {
+  try {
+    const response = await api.post<{ message: string }>(
+      '/auth/forgot-password',
+      { email }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error sending reset email:', error)
     normalizeError(error)
   }
 }
