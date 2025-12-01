@@ -45,11 +45,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const register = async (name: string, email: string, password: string) => {
-    const response: AuthResponse = await authService.signUp({
-      name,
-      email,
-      password,
-    })
+    const response: AuthResponse = await authService.signUp({ name, email, password })
     if (response.accessToken) {
       setToken(response.accessToken)
     }

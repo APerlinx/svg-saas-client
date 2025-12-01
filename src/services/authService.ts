@@ -1,9 +1,19 @@
 // src/services/authService.ts
 import axios, { AxiosError } from 'axios'
+import { getToken } from '../utils/localStorage'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
-  withCredentials: true, // include cookies for cross-origin requests
+  withCredentials: false,
+})
+
+// Add JWT token to all requests
+api.interceptors.request.use((config) => {
+  const token = getToken()
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
 })
 
 import type { User } from '../types/user'
@@ -28,7 +38,7 @@ function normalizeError(error: unknown): never {
 
 // Auth service functions
 
-export async function SignIn({
+export async function signIn({
   email,
   password,
 }: {
@@ -36,7 +46,7 @@ export async function SignIn({
   password: string
 }): Promise<AuthResponse> {
   try {
-    const response = await api.post<AuthResponse>('/auth/signin', {
+    const response = await api.post<AuthResponse>('/auth/login', {
       email,
       password,
     })
@@ -47,7 +57,7 @@ export async function SignIn({
   }
 }
 
-export async function SignUp({
+export async function signUp({
   name,
   email,
   password,
@@ -57,7 +67,7 @@ export async function SignUp({
   password: string
 }): Promise<AuthResponse> {
   try {
-    const response = await api.post<AuthResponse>('/auth/signup', {
+    const response = await api.post<AuthResponse>('/auth/register', {
       name,
       email,
       password,
@@ -69,9 +79,9 @@ export async function SignUp({
   }
 }
 
-export async function SignOut(): Promise<{ success: boolean }> {
+export async function signOut(): Promise<{ success: boolean }> {
   try {
-    const response = await api.post<{ success: boolean }>('/auth/signout')
+    const response = await api.post<{ success: boolean }>('/auth/logout')
     return response.data
   } catch (error) {
     console.error('Error signing out:', error)
@@ -79,7 +89,7 @@ export async function SignOut(): Promise<{ success: boolean }> {
   }
 }
 
-export async function GetCurrentUser(): Promise<User | null> {
+export async function getCurrentUser(): Promise<User | null> {
   try {
     const response = await api.get<User>('/auth/current-user')
     return response.data

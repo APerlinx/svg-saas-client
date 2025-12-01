@@ -1,13 +1,18 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AuthLayout from '../../components/auth/AuthLayout'
 import Input from '../../components/ui/Input'
 import Button from '../../components/ui/Button'
 import SocialAuth from '../../components/auth/SocialAuth'
 import AuthDivider from '../../components/auth/AuthDivider'
+import { useAuth } from '../../hooks/useAuth'
+import { useToast } from '../../hooks/useToast'
 
 export default function SignIn() {
   const navigate = useNavigate()
+  const { login } = useAuth()
+  const { showToast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
@@ -19,12 +24,18 @@ export default function SignIn() {
     setIsLoading(true)
 
     try {
-      // TODO: Implement actual sign in logic
-      console.log('Sign in:', formData)
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API call
+      const { email, password } = formData
+      await login(email, password)
+      showToast('Welcome back! You have successfully signed in.', 'success')
       navigate('/')
     } catch (error) {
       console.error('Sign in error:', error)
+      showToast(
+        error instanceof Error
+          ? error.message
+          : 'Failed to sign in. Please try again.',
+        'error'
+      )
     } finally {
       setIsLoading(false)
     }

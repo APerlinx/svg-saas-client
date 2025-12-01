@@ -1,13 +1,18 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AuthLayout from '../../components/auth/AuthLayout'
 import Input from '../../components/ui/Input'
 import Button from '../../components/ui/Button'
 import SocialAuth from '../../components/auth/SocialAuth'
 import AuthDivider from '../../components/auth/AuthDivider'
+import { useAuth } from '../../hooks/useAuth'
+import { useToast } from '../../hooks/useToast'
 
 export default function SignUp() {
   const navigate = useNavigate()
+  const { register } = useAuth()
+  const { showToast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
@@ -18,15 +23,27 @@ export default function SignUp() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+
+    if (formData.password !== formData.confirmPassword) {
+      showToast('Passwords do not match', 'error')
+      return
+    }
+
     setIsLoading(true)
 
     try {
-      // TODO: Implement actual sign up logic
-      console.log('Sign up:', formData)
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API call
+      const { name, email, password } = formData
+      await register(name, email, password)
+      showToast('Account created successfully! Welcome to chatSVG.', 'success')
       navigate('/')
     } catch (error) {
       console.error('Sign up error:', error)
+      showToast(
+        error instanceof Error
+          ? error.message
+          : 'Failed to create account. Please try again.',
+        'error'
+      )
     } finally {
       setIsLoading(false)
     }
