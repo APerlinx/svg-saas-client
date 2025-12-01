@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import logo from '../assets/logotape.svg'
 
 export default function Header() {
@@ -6,50 +7,56 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
-          <div className="flex items-center gap-2 group cursor-pointer">
+          <Link to="/" className="flex items-center gap-2 group cursor-pointer">
             <div className="w-8 h-8 flex items-center justify-center">
               <img src={logo} alt="Chat SVG Logo" className="w-full h-full" />
             </div>
             <span className="font-semibold text-lg tracking-tight text-gray-900">
               chatSVG
             </span>
-          </div>
+          </Link>
 
           {/* Navigation */}
           <nav className="flex items-center gap-1">
-            <a
-              href="/"
+            <Link
+              to="/"
               className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
             >
               Home
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="/gallery"
               className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
             >
               Gallery
-            </a>
-            <a
-              href="/pricing"
+            </Link>
+            <Link
+              to="/pricing"
               className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
             >
               Pricing
-            </a>
-            <a
-              href="#about"
+            </Link>
+            <Link
+              to="/about"
               className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
             >
               About
-            </a>
+            </Link>
 
             {/* Auth Buttons */}
             <div className="flex items-center gap-2 ml-4 pl-4 border-l border-gray-200">
-              <button className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors">
+              <Link
+                to="/signin"
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
+              >
                 Sign In
-              </button>
-              <button className="px-4 py-1.5 text-sm font-medium text-white bg-linear-to-r from-wizard-orange to-wizard-orange/90 hover:from-wizard-orange/90 hover:to-wizard-orange rounded-lg transition-all shadow-sm">
+              </Link>
+              <Link
+                to="/signup"
+                className="px-4 py-1.5 text-sm font-medium text-white bg-linear-to-r from-wizard-orange to-wizard-orange/90 hover:from-wizard-orange/90 hover:to-wizard-orange rounded-lg transition-all shadow-sm"
+              >
                 Sign Up
-              </button>
+              </Link>
             </div>
           </nav>
         </div>

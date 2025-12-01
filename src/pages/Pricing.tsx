@@ -5,7 +5,7 @@ export default function Pricing() {
       coins: '50',
       price: '$5',
       pricePerCoin: '$0.10',
-      description: 'Perfect for trying out our SVG chat',
+      description: 'Perfect for trying out our SVG',
       features: [
         '50 SVG generations',
         'All styles available',
