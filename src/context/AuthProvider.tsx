@@ -46,20 +46,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
       password,
       rememberMe,
     })
-    const tokenValue = response.token || response.accessToken
+    const tokenValue = response.token
     if (tokenValue) {
       setToken(tokenValue)
     }
     setUser(response.user)
   }
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    agreedToTerms: boolean
+  ) => {
     const response: AuthResponse = await authService.signUp({
       name,
       email,
       password,
+      agreedToTerms,
     })
-    const tokenValue = response.token || response.accessToken
+    const tokenValue = response.token
     if (tokenValue) {
       setToken(tokenValue)
     }

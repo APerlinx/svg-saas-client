@@ -5,8 +5,16 @@ export interface User {
   coins?: number
 }
 
+// Interface for registration response
+export interface RegisterResponse {
+  id: string
+  name: string
+  email: string
+  token: string
+  coins?: number
+}
+
 export interface AuthResponse {
   user: User
   token?: string
-  accessToken?: string
 }

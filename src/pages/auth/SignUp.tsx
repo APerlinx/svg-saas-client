@@ -14,6 +14,9 @@ export default function SignUp() {
   const { register } = useAuth()
   const { showToast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,10 +24,60 @@ export default function SignUp() {
     confirmPassword: '',
   })
 
+  // Password strength calculation
+  const getPasswordStrength = (password: string) => {
+    if (password.length === 0) return { strength: 0, label: '', color: '' }
+    if (password.length < 8)
+      return { strength: 1, label: 'Too short', color: 'text-red-500' }
+
+    let strength = 0
+    if (password.length >= 8) strength++
+    if (password.length >= 12) strength++
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++
+    if (/\d/.test(password)) strength++
+    if (/[^a-zA-Z0-9]/.test(password)) strength++
+
+    if (strength <= 2)
+      return { strength: 33, label: 'Weak', color: 'text-red-500' }
+    if (strength <= 4)
+      return { strength: 66, label: 'Medium', color: 'text-yellow-500' }
+    return { strength: 100, label: 'Strong', color: 'text-green-500' }
+  }
+
+  const passwordStrength = getPasswordStrength(formData.password)
+  const passwordsMatch =
+    formData.password.length > 0 &&
+    formData.confirmPassword.length > 0 &&
+    formData.password === formData.confirmPassword
+  const passwordsDontMatch =
+    formData.confirmPassword.length > 0 && !passwordsMatch
+
+  // Check if form is valid
+  const isFormValid =
+    formData.name.trim().length > 0 &&
+    formData.email.trim().length > 0 &&
+    formData.password.length >= 8 &&
+    passwordsMatch &&
+    agreedToTerms
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
 
-    if (formData.password !== formData.confirmPassword) {
+    // Frontend validation
+    if (!agreedToTerms) {
+      showToast(
+        'Please accept the Terms of Service and Privacy Policy',
+        'error'
+      )
+      return
+    }
+
+    if (formData.password.length < 8) {
+      showToast('Password must be at least 8 characters long', 'error')
+      return
+    }
+
+    if (!passwordsMatch) {
       showToast('Passwords do not match', 'error')
       return
     }
@@ -33,7 +86,7 @@ export default function SignUp() {
 
     try {
       const { name, email, password } = formData
-      await register(name, email, password)
+      await register(name, email, password, agreedToTerms)
       showToast('Account created successfully! Welcome to chatSVG.', 'success')
       navigate('/')
     } catch (error) {
@@ -73,39 +126,250 @@ export default function SignUp() {
           required
         />
 
-        <Input
-          label="Password"
-          type="password"
-          placeholder="••••••••"
-          value={formData.password}
-          onChange={(e) =>
-            setFormData({ ...formData, password: e.target.value })
-          }
-          required
-        />
+        {/* Password with show/hide toggle */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              className="w-full px-4 py-2.5 pr-10 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-wizard-orange focus:border-transparent transition-all"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? (
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
 
-        <Input
-          label="Confirm Password"
-          type="password"
-          placeholder="••••••••"
-          value={formData.confirmPassword}
-          onChange={(e) =>
-            setFormData({ ...formData, confirmPassword: e.target.value })
-          }
-          required
-        />
+          {/* Password strength indicator */}
+          {formData.password.length > 0 && (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-600">Password strength:</span>
+                <span className={`font-medium ${passwordStrength.color}`}>
+                  {passwordStrength.label}
+                </span>
+              </div>
+              <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-300 ${
+                    passwordStrength.label === 'Strong'
+                      ? 'bg-green-500'
+                      : passwordStrength.label === 'Medium'
+                      ? 'bg-yellow-500'
+                      : 'bg-red-500'
+                  }`}
+                  style={{ width: `${passwordStrength.strength}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Password requirements */}
+          <div className="space-y-1 text-xs mt-2">
+            <div
+              className={`flex items-center gap-1.5 ${
+                formData.password.length >= 8
+                  ? 'text-green-600'
+                  : 'text-gray-500'
+              }`}
+            >
+              {formData.password.length >= 8 ? (
+                <svg
+                  className="w-3.5 h-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-3.5 h-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              )}
+              At least 8 characters
+            </div>
+          </div>
+        </div>
+
+        {/* Confirm Password with show/hide toggle */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700">
+            Confirm Password
+          </label>
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              value={formData.confirmPassword}
+              onChange={(e) =>
+                setFormData({ ...formData, confirmPassword: e.target.value })
+              }
+              className={`w-full px-4 py-2.5 pr-10 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
+                passwordsDontMatch
+                  ? 'border-red-500 focus:ring-red-500'
+                  : 'border-gray-300 focus:ring-wizard-orange'
+              }`}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showConfirmPassword ? (
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+
+          {/* Password match indicator */}
+          {formData.confirmPassword.length > 0 && (
+            <div className="flex items-center gap-1.5 text-xs mt-1">
+              {passwordsMatch ? (
+                <>
+                  <svg
+                    className="w-3.5 h-3.5 text-green-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span className="text-green-600">Passwords match</span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="w-3.5 h-3.5 text-red-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  <span className="text-red-600">Passwords don't match</span>
+                </>
+              )}
+            </div>
+          )}
+        </div>
 
         <label className="flex items-start gap-2 cursor-pointer text-sm text-gray-600">
           <input
             type="checkbox"
+            checked={agreedToTerms}
+            onChange={(e) => setAgreedToTerms(e.target.checked)}
             className="w-4 h-4 mt-0.5 rounded border-gray-300 text-wizard-orange focus:ring-wizard-orange"
-            required
           />
           <span>
             I agree to the{' '}
             <Link
               to="/terms"
               className="text-wizard-orange hover:text-wizard-orange/80"
+              onClick={(e) => e.stopPropagation()}
             >
               Terms of Service
             </Link>{' '}
@@ -113,13 +377,14 @@ export default function SignUp() {
             <Link
               to="/privacy"
               className="text-wizard-orange hover:text-wizard-orange/80"
+              onClick={(e) => e.stopPropagation()}
             >
               Privacy Policy
             </Link>
           </span>
         </label>
 
-        <Button type="submit" isLoading={isLoading}>
+        <Button type="submit" isLoading={isLoading} disabled={!isFormValid}>
           Create Account
         </Button>
       </form>

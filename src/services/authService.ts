@@ -25,11 +25,10 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-import type { User } from '../types/user'
+import type { RegisterResponse, User } from '../types/user'
 import type { AuthResponse } from '../types/user'
 interface ApiError {
   message: string
-  // optional extra fields from your backend (code, details, etc.)
 }
 
 // Helper to normalize and throw errors
@@ -46,7 +45,6 @@ function normalizeError(error: unknown): never {
 }
 
 // Auth service functions
-
 export async function signIn({
   email,
   password,
@@ -73,18 +71,32 @@ export async function signUp({
   name,
   email,
   password,
+  agreedToTerms,
 }: {
   name: string
   email: string
   password: string
+  agreedToTerms: boolean
 }): Promise<AuthResponse> {
   try {
-    const response = await api.post<AuthResponse>('/auth/register', {
+    const response = await api.post<RegisterResponse>('/auth/register', {
       name,
       email,
       password,
+      agreedToTerms,
     })
-    return response.data
+
+    const transformed: AuthResponse = {
+      user: {
+        id: response.data.id,
+        name: response.data.name,
+        email: response.data.email,
+        coins: response.data.coins,
+      },
+      token: response.data.token,
+    }
+
+    return transformed
   } catch (error) {
     console.error('Error signing up:', error)
     normalizeError(error)
