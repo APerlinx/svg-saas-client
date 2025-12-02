@@ -11,7 +11,7 @@ export default function AuthLayout({
 }: AuthLayoutProps) {
   return (
     <div className="flex">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-6xl">
         {/* Auth Card */}
         <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-xl p-8">
           <div className="mb-6">

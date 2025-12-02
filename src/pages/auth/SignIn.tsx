@@ -7,13 +7,12 @@ import Button from '../../components/ui/Button'
 import SocialAuth from '../../components/auth/SocialAuth'
 import AuthDivider from '../../components/auth/AuthDivider'
 import { useAuth } from '../../hooks/useAuth'
-import { useToast } from '../../hooks/useToast'
 
 export default function SignIn() {
   const navigate = useNavigate()
   const { login } = useAuth()
-  const { showToast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -23,21 +22,30 @@ export default function SignIn() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError('')
 
     try {
       const { email, password, rememberMe } = formData
 
       await login(email, password, rememberMe)
-      showToast('Welcome back! You have successfully signed in.', 'success')
       navigate('/')
     } catch (error) {
       console.error('Sign in error:', error)
-      showToast(
+      const errorMessage =
         error instanceof Error
           ? error.message
-          : 'Failed to sign in. Please try again.',
-        'error'
-      )
+          : 'Failed to sign in. Please try again.'
+
+      // Show inline error for all authentication errors
+      if (
+        errorMessage.toLowerCase().includes('credential') ||
+        errorMessage.toLowerCase().includes('invalid') ||
+        errorMessage.toLowerCase().includes('unauthorized')
+      ) {
+        setError('Email or password is incorrect. Please try again.')
+      } else {
+        setError(errorMessage)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -49,6 +57,26 @@ export default function SignIn() {
       subtitle="Sign in to your account to continue"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Error message */}
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+            <svg
+              className="w-5 h-5 text-red-600 shrink-0 mt-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
+
         <Input
           label="Email"
           type="email"

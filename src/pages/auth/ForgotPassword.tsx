@@ -5,29 +5,27 @@ import AuthLayout from '../../components/auth/AuthLayout'
 import Input from '../../components/ui/Input'
 import Button from '../../components/ui/Button'
 import { forgotPassword } from '../../services/authService'
-import { useToast } from '../../hooks/useToast'
 
 export default function ForgotPassword() {
-  const { showToast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [email, setEmail] = useState('')
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    setError('')
     setIsLoading(true)
 
     try {
       await forgotPassword({ email })
       setEmailSent(true)
-      showToast('Password reset link sent to your email', 'success')
     } catch (error) {
       console.error('Forgot password error:', error)
-      showToast(
+      setError(
         error instanceof Error
           ? error.message
-          : 'Failed to send reset email. Please try again.',
-        'error'
+          : 'Failed to send reset email. Please try again.'
       )
     } finally {
       setIsLoading(false)
@@ -87,6 +85,26 @@ export default function ForgotPassword() {
       subtitle="Enter your email to receive a reset link"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Error message */}
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+            <svg
+              className="w-5 h-5 text-red-600 shrink-0 mt-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
+
         <Input
           label="Email"
           type="email"

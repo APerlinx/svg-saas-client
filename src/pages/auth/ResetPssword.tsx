@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import type { FormEvent } from 'react'
 import { useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { resetPassword } from '../../services/authService'
-import { useToast } from '../../hooks/useToast'
 import AuthLayout from '../../components/auth/AuthLayout'
 import Input from '../../components/ui/Input'
 import Button from '../../components/ui/Button'
@@ -11,10 +10,10 @@ export default function ResetPassword() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const token = searchParams.get('token') || ''
-  const { showToast } = useToast()
 
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -55,19 +54,10 @@ export default function ResetPassword() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-
-    if (formData.newPassword !== formData.confirmPassword) {
-      showToast('Passwords do not match', 'error')
-      return
-    }
-
-    if (formData.newPassword.length < 8) {
-      showToast('Password must be at least 8 characters', 'error')
-      return
-    }
+    setError('')
 
     if (!token) {
-      showToast('Invalid reset token', 'error')
+      setError('Invalid or expired reset token')
       return
     }
 
@@ -76,14 +66,12 @@ export default function ResetPassword() {
     try {
       await resetPassword({ token, newPassword: formData.newPassword })
       setSuccess(true)
-      showToast('Password reset successfully!', 'success')
     } catch (error) {
       console.error('Reset password error:', error)
-      showToast(
+      setError(
         error instanceof Error
           ? error.message
-          : 'Failed to reset password. Please try again.',
-        'error'
+          : 'Failed to reset password. Please try again.'
       )
     } finally {
       setIsLoading(false)
@@ -132,6 +120,26 @@ export default function ResetPassword() {
       subtitle="Enter your new password below"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Error message */}
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+            <svg
+              className="w-5 h-5 text-red-600 shrink-0 mt-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
+
         {/* New Password */}
         <div className="relative">
           <Input
