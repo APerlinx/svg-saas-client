@@ -6,6 +6,7 @@ import Pricing from '../pages/Pricing'
 import SignIn from '../pages/auth/SignIn'
 import SignUp from '../pages/auth/SignUp'
 import ForgotPassword from '../pages/auth/ForgotPassword'
+import ResetPassword from '../pages/auth/ResetPssword'
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
       {
         path: 'forgot-password',
         element: <ForgotPassword />,
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPassword />,
       },
     ],
   },

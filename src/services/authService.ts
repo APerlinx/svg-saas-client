@@ -130,3 +130,22 @@ export async function forgotPassword({
     normalizeError(error)
   }
 }
+
+export async function resetPassword({
+  token,
+  newPassword,
+}: {
+  token: string
+  newPassword: string
+}): Promise<{ message: string }> {
+  try {
+    const response = await api.post<{ message: string }>(
+      '/auth/reset-password',
+      { token, newPassword }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error resetting password:', error)
+    normalizeError(error)
+  }
+}
