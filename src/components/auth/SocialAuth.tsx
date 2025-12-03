@@ -23,8 +23,19 @@ export default function SocialAuth() {
   }
 
   const handleGitHubSignIn = () => {
-    // TODO: Implement GitHub OAuth
-    console.log('GitHub sign in - Coming Soon!')
+    const currentPath = window.location.pathname.toLowerCase()
+
+    const authPages = [
+      '/signin',
+      '/signup',
+      '/forgot-password',
+      '/reset-password',
+    ]
+    const redirectUri = authPages.includes(currentPath) ? '/' : currentPath
+
+    window.location.href = `${VITE_API_BASE_URL}/auth/github?redirectUri=${encodeURIComponent(
+      redirectUri
+    )}`
   }
 
   return (

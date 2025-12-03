@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import logo from '../assets/logotape.svg'
+import getInitials from '../utils/getInitials'
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -27,15 +27,6 @@ export default function Header() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [isDropdownOpen])
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
-  }
 
   const handleLogout = async () => {
     await logout()
@@ -91,7 +82,15 @@ export default function Header() {
                     className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-100/60 rounded-lg transition-colors"
                   >
                     <div className="w-8 h-8 rounded-full bg-linear-to-r from-wizard-orange to-wizard-orange/90 flex items-center justify-center text-white text-sm font-medium">
-                      {getInitials(user.name)}
+                      {user.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt={user.name}
+                          className="w-8 h-8 rounded-full"
+                        />
+                      ) : (
+                        getInitials(user.name)
+                      )}
                     </div>
                     <span className="text-sm font-medium text-gray-900">
                       {user.name}
