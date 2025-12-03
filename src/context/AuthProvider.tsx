@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import type { User, AuthResponse } from '../types/user'
 import * as authService from '../services/authService'
@@ -13,10 +13,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     const token = getToken()
     if (!token) {
       setIsLoading(false)
+      setUser(null)
       return
     }
 
@@ -30,11 +31,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     checkAuth()
-  }, [])
+  }, [checkAuth])
 
   const login = async (
     email: string,

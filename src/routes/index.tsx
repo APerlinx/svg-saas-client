@@ -7,6 +7,7 @@ import SignIn from '../pages/auth/SignIn'
 import SignUp from '../pages/auth/SignUp'
 import ForgotPassword from '../pages/auth/ForgotPassword'
 import ResetPassword from '../pages/auth/ResetPssword'
+import OAuthCallback from '../pages/auth/OAuthCallback'
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
       {
         path: 'reset-password',
         element: <ResetPassword />,
+      },
+      {
+        path: 'auth/callback',
+        element: <OAuthCallback />,
       },
     ],
   },
