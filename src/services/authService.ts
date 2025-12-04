@@ -1,28 +1,9 @@
 // src/services/authService.ts
 import axios, { AxiosError } from 'axios'
-import { getToken } from '../utils/localStorage'
-
-// TODO: Check registration (and add email sent to thank the user no confirmation)
-// TODO: deal with the social auth check it works! (login/register/logout)
-// TODO: deal with "forgot password" functionality (backend and front - email reset flow)
-// TODO: Auth security improvements (refresh tokens, token expiry handling, etc.)
-// TODO: Typescript improvements throughout the file
-// TODO: Add terms of service and privacy policy acceptance during registration
-// TODO: Ui improvements (loading states, error handling, etc.)
-// TODO: review and cleanup unused code
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
-  withCredentials: false,
-})
-
-// Add JWT token to all requests
-api.interceptors.request.use((config) => {
-  const token = getToken()
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
+  withCredentials: true, // Include cookies in requests
 })
 
 import type { RegisterResponse, User } from '../types/user'
@@ -86,17 +67,7 @@ export async function signUp({
       agreedToTerms,
     })
 
-    const transformed: AuthResponse = {
-      user: {
-        id: response.data.id,
-        name: response.data.name,
-        email: response.data.email,
-        coins: response.data.coins,
-      },
-      token: response.data.token,
-    }
-
-    return transformed
+    return response.data
   } catch (error) {
     console.error('Error signing up:', error)
     normalizeError(error)

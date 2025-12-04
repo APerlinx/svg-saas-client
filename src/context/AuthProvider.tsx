@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import type { User, AuthResponse } from '../types/user'
 import * as authService from '../services/authService'
-import { setToken, getToken, removeToken } from '../utils/localStorage'
 import { AuthContext, type AuthContextType } from './AuthContext.tsx'
 
 interface AuthProviderProps {
@@ -14,19 +13,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true)
 
   const checkAuth = useCallback(async () => {
-    const token = getToken()
-    if (!token) {
-      setIsLoading(false)
-      setUser(null)
-      return
-    }
-
     try {
       const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
     } catch (error) {
       console.error('Auth check failed:', error)
-      removeToken()
       setUser(null)
     } finally {
       setIsLoading(false)
@@ -47,10 +38,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       password,
       rememberMe,
     })
-    const tokenValue = response.token
-    if (tokenValue) {
-      setToken(tokenValue)
-    }
+
     setUser(response.user)
   }
 
@@ -66,10 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       password,
       agreedToTerms,
     })
-    const tokenValue = response.token
-    if (tokenValue) {
-      setToken(tokenValue)
-    }
+
     setUser(response.user)
   }
 
@@ -79,7 +64,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
-      removeToken()
       setUser(null)
     }
   }

@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { setToken } from '../../utils/localStorage'
 import { useAuth } from '../../hooks/useAuth'
 
 export default function OAuthCallback() {
@@ -12,15 +11,18 @@ export default function OAuthCallback() {
 
     const processOAuth = async () => {
       const params = new URLSearchParams(window.location.search)
-      const token = params.get('token')
       const redirect = params.get('redirect') || '/'
 
-      if (token) {
-        setToken(token)
+      try {
         await checkAuth()
-        if (isMounted) navigate(redirect, { replace: true })
-      } else {
-        navigate('/signin?error=oauth_failed', { replace: true })
+        if (isMounted) {
+          navigate(redirect, { replace: true })
+        }
+      } catch (error) {
+        console.error('OAuth checkAuth failed:', error)
+        if (isMounted) {
+          navigate('/signin?error=oauth_failed', { replace: true })
+        }
       }
     }
 
