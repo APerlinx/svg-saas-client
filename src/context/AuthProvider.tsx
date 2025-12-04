@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import type { User, AuthResponse } from '../types/user'
 import * as authService from '../services/authService'
 import { AuthContext, type AuthContextType } from './AuthContext.tsx'
+import { refreshAccessToken } from '../services/authService'
 
 interface AuthProviderProps {
   children: ReactNode
@@ -17,15 +18,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
     } catch (error) {
-      console.error('Auth check failed:', error)
+      console.error('Unexpected error in checkAuth:', error)
       setUser(null)
-    } finally {
-      setIsLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    checkAuth()
+    const initAuth = async () => {
+      setIsLoading(true)
+      try {
+        const refreshed = await refreshAccessToken()
+
+        if (refreshed) {
+          await checkAuth()
+        } else {
+          setUser(null)
+        }
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    void initAuth()
   }, [checkAuth])
 
   const login = async (
@@ -68,6 +82,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  const refreshToken = async (): Promise<boolean> => {
+    const success = await refreshAccessToken()
+    if (success) {
+      await checkAuth()
+    }
+    return success
+  }
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -76,6 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     register,
     logout,
     checkAuth,
+    refreshToken,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
