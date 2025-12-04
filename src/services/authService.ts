@@ -1,10 +1,11 @@
-// src/services/authService.ts
 import axios, { AxiosError } from 'axios'
+import { attachCsrfInterceptor } from '../services/csrfInterceptor'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   withCredentials: true, // Include cookies in requests
 })
+attachCsrfInterceptor(api)
 
 import type { RegisterResponse, User } from '../types/user'
 import type { AuthResponse } from '../types/user'
