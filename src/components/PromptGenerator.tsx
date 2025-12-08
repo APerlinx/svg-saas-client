@@ -5,6 +5,7 @@ import { SVG_STYLES } from '../constants/svgStyles'
 import { AI_MODELS } from '../constants/models'
 import Dropdown from './ui/Dropdown'
 import PrivacySwitch from './ui/PrivacySwitch'
+import SvgResultModal from './modal/SvgResultModal'
 
 export default function PromptGenerator() {
   const [formData, setFormData] = useState<PromptFormData>({
@@ -16,11 +17,22 @@ export default function PromptGenerator() {
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [generatedSvg, setGeneratedSvg] = useState<string>('')
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault()
     console.log('Generating SVG with:', formData)
-    // TODO: Connect to backend
+
+    // TODO: Connect to backend and get actual SVG
+    // For now, using a sample SVG
+    const sampleSvg = `<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="80" fill="#FF6B35" />
+      <text x="100" y="110" font-size="24" text-anchor="middle" fill="white">Sample</text>
+    </svg>`
+
+    setGeneratedSvg(sampleSvg)
+    setIsModalOpen(true)
   }
 
   useEffect(() => {
@@ -121,6 +133,13 @@ export default function PromptGenerator() {
           </div>
         </form>
       </div>
+
+      <SvgResultModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        svgCode={generatedSvg}
+        prompt={formData.prompt}
+      />
     </div>
   )
 }
