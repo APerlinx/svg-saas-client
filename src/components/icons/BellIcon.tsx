@@ -1,0 +1,25 @@
+type BellProps = {
+  size?: string
+  className?: string
+}
+
+const Bell = ({ size = '20', className = 'text-gray-700' }: BellProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    className={className}
+  >
+    <g stroke="currentColor" strokeLinecap="round" strokeWidth="1.5">
+      <path
+        strokeLinejoin="round"
+        d="M18.934 14.98a3 3 0 0 1-.457-1.59V9.226a6.477 6.477 0 0 0-12.954 0v4.162a3 3 0 0 1-.457 1.592l-1.088 1.74a1 1 0 0 0 .848 1.53h14.348a1 1 0 0 0 .848-1.53z"
+      />
+      <path d="M10 21.25h4" />
+    </g>
+  </svg>
+)
+
+export default Bell

@@ -1,6 +1,6 @@
 import { useState, type FormEvent, useRef, useEffect } from 'react'
 import type { PromptFormData } from '../types/svg'
-import generate from '../assets/generate.svg'
+import { Pencil } from './icons/PencilIcon'
 import { SVG_STYLES } from '../constants/svgStyles'
 import { AI_MODELS } from '../constants/models'
 import Dropdown from './ui/Dropdown'
@@ -113,7 +113,7 @@ export default function PromptGenerator() {
                   className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-black bg-white/90 rounded-3xl hover:bg-white transition-all disabled:none"
                   disabled={!formData.prompt}
                 >
-                  <img src={generate} alt="Generate" className="w-5 h-5" />
+                  <Pencil size="20" className="text-black" />
                   Generate
                 </button>
               </div>
