@@ -59,7 +59,7 @@ export default function Dropdown({
             <img src={modelIcon} alt="" className="w-3.5 h-3.5" />
           </div>
         )}
-        {label}
+        <span className={isModel ? 'hidden sm:inline' : ''}>{label}</span>
         <ChevronDownIcon />
       </button>
       {isOpen && (

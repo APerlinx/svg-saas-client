@@ -127,10 +127,10 @@ export default function PromptGenerator() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className="bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)] backdrop-blur-xl border-rgba(255, 255, 255, 0.08) rounded-3xl shadow-xl p-4">
-        <form onSubmit={handleSubmit} className="p-1.5">
-          <div className="relative bg-[rgb(17_17_17/55%)] rounded-3xl">
+    <div className="w-full max-w-4xl mx-auto px-4">
+      <div className="bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)] backdrop-blur-xl border-rgba(255, 255, 255, 0.08) rounded-2xl sm:rounded-3xl shadow-xl p-2 sm:p-4">
+        <form onSubmit={handleSubmit} className="p-1 sm:p-1.5">
+          <div className="relative bg-[rgb(17_17_17/55%)] rounded-2xl sm:rounded-3xl">
             <textarea
               id="prompt"
               value={formData.prompt}
@@ -140,15 +140,15 @@ export default function PromptGenerator() {
               placeholder="Choose a style and describe what you want to generate..."
               rows={5}
               required
-              className="w-full bg-transparent text-white placeholder-white rounded-xl p-4 pr-6 pb-16 resize-none focus:outline-none "
+              className="w-full bg-transparent text-white placeholder-white rounded-xl p-3 sm:p-4 pr-4 sm:pr-6 pb-32 sm:pb-16 resize-none focus:outline-none text-sm sm:text-base"
             />
 
             <div
-              className="absolute bottom-0 left-0 right-0 flex items-center justify-between p-3"
+              className="absolute bottom-0 left-0 right-0 flex items-center justify-between p-2 sm:p-3 gap-1.5 sm:gap-3"
               ref={dropdownRef}
             >
-              {/* Left Controls */}
-              <div className="flex items-center gap-2 flex-wrap">
+              {/* Controls - Stay in one row, shrink on mobile */}
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
                 <Dropdown
                   name="style"
                   label={selectedStyleLabel}
@@ -183,19 +183,20 @@ export default function PromptGenerator() {
                 />
               </div>
 
-              {/* Right Controls */}
-              <div className="flex items-center gap-4">
-                <button
-                  type="submit"
-                  className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold text-black bg-white/90 rounded-3xl hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                    shake ? 'animate-shake' : ''
-                  }`}
-                  disabled={isGenerating || !formData.prompt.trim()}
-                >
-                  <Pencil size="20" className="text-black" />
+              {/* Generate Button - Icon only on mobile, text on desktop */}
+              <button
+                type="submit"
+                className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-sm font-semibold text-black bg-white/90 rounded-3xl hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 ${
+                  shake ? 'animate-shake' : ''
+                }`}
+                disabled={isGenerating || !formData.prompt.trim()}
+                aria-label={isGenerating ? 'Generating...' : 'Generate'}
+              >
+                <Pencil size="20" className="text-black" />
+                <span className="hidden sm:inline">
                   {isGenerating ? 'Generating...' : 'Generate'}
-                </button>
-              </div>
+                </span>
+              </button>
             </div>
           </div>
         </form>

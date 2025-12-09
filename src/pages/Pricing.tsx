@@ -68,9 +68,14 @@ export default function Pricing() {
           <span className="font-bold text-wizard-orange">10 free coins</span>{' '}
           every month. No credit card required.
         </p>
-        <button className="bg-white text-gray-900 px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
-          Create Free Account
-        </button>
+        <div className="relative inline-block group">
+          <button className="bg-white text-gray-900 px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
+            Create Free Account
+          </button>
+          <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-gray-900 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            Coming Soon
+          </span>
+        </div>
       </div>
 
       {/* Coin Packs */}
@@ -133,15 +138,20 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <button
-                className={`w-full py-3 px-6 rounded-full font-semibold transition-all ${
-                  pack.popular
-                    ? 'bg-linear-to-r from-wizard-orange to-amber-500 text-white hover:shadow-lg'
-                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                }`}
-              >
-                Buy Now
-              </button>
+              <div className="relative group">
+                <button
+                  className={`w-full py-3 px-6 rounded-full font-semibold transition-all ${
+                    pack.popular
+                      ? 'bg-linear-to-r from-wizard-orange to-amber-500 text-white hover:shadow-lg'
+                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                  }`}
+                >
+                  Buy Now
+                </button>
+                <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-gray-900 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  Coming Soon
+                </span>
+              </div>
             </div>
           ))}
         </div>
@@ -233,9 +243,14 @@ export default function Pricing() {
             </div>
           </div>
 
-          <button className="bg-linear-to-r from-wizard-orange to-amber-500 text-white px-12 py-4 rounded-full text-lg font-bold hover:shadow-2xl transition-all">
-            Get Unlimited Access
-          </button>
+          <div className="relative inline-block group">
+            <button className="bg-linear-to-r from-wizard-orange to-amber-500 text-white px-12 py-4 rounded-full text-lg font-bold hover:shadow-2xl transition-all">
+              Get Unlimited Access
+            </button>
+            <span className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-gray-900 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+              Coming Soon
+            </span>
+          </div>
           <p className="text-sm text-gray-600 mt-4">
             🔥 Most popular for professionals and agencies
           </p>

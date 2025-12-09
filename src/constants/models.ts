@@ -2,7 +2,7 @@
 /**
  * Valid AI models
  * IMPORTANT: Keep this in sync with the backend version!
- * Last updated: 2025-11-30
+ * Last updated: 2025-12-9
  */
 export const AI_MODELS = [
   {

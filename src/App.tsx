@@ -11,7 +11,7 @@ function App() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="loader">
-          <img src={loader} alt="Loading..." className="w-16 h-16" />
+          <img src={loader} alt="Loading..." className="w-12 h-12" />
         </div>
       </div>
     )
@@ -21,7 +21,7 @@ function App() {
     <div className="min-h-screen flex flex-col ">
       <Header />
 
-      <main className="grow flex items-center justify-center px-4 py-16">
+      <main className="grow flex items-center justify-center px-4 py-8 sm:py-16">
         <Outlet />
       </main>
 

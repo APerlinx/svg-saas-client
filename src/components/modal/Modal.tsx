@@ -39,9 +39,9 @@ function Modal({ isOpen, onClose, children }: ModalProps) {
       />
 
       {/* Modal container  */}
-      <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none">
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center pointer-events-none p-0 sm:p-4">
         <div
-          className={`bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)] backdrop-blur-xl rounded-t-3xl shadow-2xl w-full max-w-6xl border-2 border-wizard-orange/30 pointer-events-auto transform transition-all duration-500 ease-out ${
+          className={`bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)] backdrop-blur-xl rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-6xl border-2 border-wizard-orange/30 pointer-events-auto transform transition-all duration-500 ease-out ${
             isOpen ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -72,7 +72,7 @@ function Modal({ isOpen, onClose, children }: ModalProps) {
           </button>
 
           {/* Scrollable content */}
-          <div className="overflow-y-auto max-h-[90vh] px-8 pt-16 pb-8">
+          <div className="overflow-y-auto max-h-[90vh] px-4 sm:px-8 pt-12 sm:pt-16 pb-6 sm:pb-8">
             {children}
           </div>
         </div>
@@ -102,14 +102,18 @@ Modal.Header = function ModalHeader({
   children: React.ReactNode
 }) {
   return (
-    <div className="mb-6 pb-4 border-b border-white/10">
-      <h2 className="text-2xl font-bold text-white">{children}</h2>
+    <div className="mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-white/10">
+      <h2 className="text-xl sm:text-2xl font-bold text-white">{children}</h2>
     </div>
   )
 }
 
 Modal.Body = function ModalBody({ children }: { children: React.ReactNode }) {
-  return <div className="mb-6 text-white/90 leading-relaxed">{children}</div>
+  return (
+    <div className="mb-4 sm:mb-6 text-white/90 leading-relaxed text-sm sm:text-base">
+      {children}
+    </div>
+  )
 }
 
 Modal.Footer = function ModalFooter({
@@ -118,7 +122,7 @@ Modal.Footer = function ModalFooter({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex items-center justify-end gap-3 pt-6 border-t border-white/10">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 pt-4 sm:pt-6 border-t border-white/10">
       {children}
     </div>
   )

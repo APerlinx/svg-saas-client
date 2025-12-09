@@ -137,7 +137,6 @@ export async function resetPassword({
 export async function refreshAccessToken(): Promise<boolean> {
   try {
     await api.post('/auth/refresh')
-    console.log('✅ Access token refreshed')
     return true
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
