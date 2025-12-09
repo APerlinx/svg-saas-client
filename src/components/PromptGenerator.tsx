@@ -6,33 +6,98 @@ import { AI_MODELS } from '../constants/models'
 import Dropdown from './ui/Dropdown'
 import PrivacySwitch from './ui/PrivacySwitch'
 import SvgResultModal from './modal/SvgResultModal'
+import Modal from './modal/Modal'
+import { generateSvg } from '../services/svgService'
+import { useAuth } from '../hooks/useAuth'
+import { Link } from 'react-router-dom'
+
+const SESSION_KEY = 'svg_prompt_draft'
 
 export default function PromptGenerator() {
-  const [formData, setFormData] = useState<PromptFormData>({
-    prompt: '',
-    style: 'minimal',
-    isPrivate: false,
-    model: 'gpt-5-mini',
+  const { user } = useAuth()
+
+  // Load from sessionStorage on mount
+  const [formData, setFormData] = useState<PromptFormData>(() => {
+    const saved = sessionStorage.getItem(SESSION_KEY)
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch {
+        // Invalid JSON, use defaults
+      }
+    }
+    return {
+      prompt: '',
+      style: 'minimal',
+      isPrivate: false,
+      model: 'gpt-5-mini',
+    }
   })
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false)
   const [generatedSvg, setGeneratedSvg] = useState<string>('')
+  const [isGenerating, setIsGenerating] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
+  const [shake, setShake] = useState<boolean>(false)
+
+  // Save to sessionStorage whenever formData changes
+  useEffect(() => {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(formData))
+  }, [formData])
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault()
-    console.log('Generating SVG with:', formData)
+    setError(null)
 
-    // TODO: Connect to backend and get actual SVG
-    // For now, using a sample SVG
-    const sampleSvg = `<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="100" cy="100" r="80" fill="#FF6B35" />
-      <text x="100" y="110" font-size="24" text-anchor="middle" fill="white">Sample</text>
-    </svg>`
+    // Check if user is authenticated
+    if (!user) {
+      setIsAuthModalOpen(true)
+      return
+    }
 
-    setGeneratedSvg(sampleSvg)
-    setIsModalOpen(true)
+    // Validation
+    if (!formData.prompt.trim()) {
+      setError('Please enter a prompt to generate your SVG')
+      triggerShake()
+      return
+    }
+
+    if (formData.prompt.trim().length < 10) {
+      setError(
+        'Please provide a more detailed description (at least 10 characters)'
+      )
+      triggerShake()
+      return
+    }
+
+    setIsGenerating(true)
+
+    try {
+      const result = await generateSvg({
+        prompt: formData.prompt,
+        style: formData.style,
+        privacy: formData.isPrivate,
+        model: formData.model,
+      })
+      setGeneratedSvg(result.svgCode)
+      setIsModalOpen(true)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      setError(
+        'Unable to generate SVG. Please ensure your description uses valid characters and try again.'
+      )
+      triggerShake()
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
+  const triggerShake = () => {
+    setShake(true)
+    setTimeout(() => setShake(false), 500)
   }
 
   useEffect(() => {
@@ -122,11 +187,13 @@ export default function PromptGenerator() {
               <div className="flex items-center gap-4">
                 <button
                   type="submit"
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-black bg-white/90 rounded-3xl hover:bg-white transition-all disabled:none"
-                  disabled={!formData.prompt}
+                  className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold text-black bg-white/90 rounded-3xl hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                    shake ? 'animate-shake' : ''
+                  }`}
+                  disabled={isGenerating || !formData.prompt.trim()}
                 >
                   <Pencil size="20" className="text-black" />
-                  Generate
+                  {isGenerating ? 'Generating...' : 'Generate'}
                 </button>
               </div>
             </div>
@@ -134,12 +201,64 @@ export default function PromptGenerator() {
         </form>
       </div>
 
+      {/* Error message outside both boxes */}
+      {error && (
+        <p className="text-red-400 text-sm mt-3 px-2 animate-fadeIn">
+          ⚠️ {error}
+        </p>
+      )}
+
+      {/* SVG Result Modal */}
       <SvgResultModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         svgCode={generatedSvg}
         prompt={formData.prompt}
       />
+
+      {/* Auth Required Modal */}
+      <Modal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)}>
+        <div className="text-center py-8">
+          <div className="w-16 h-16 mx-auto mb-6 bg-wizard-orange/20 rounded-full flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-wizard-orange"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+          </div>
+
+          <h3 className="text-2xl font-bold text-white mb-3">
+            Sign In Required
+          </h3>
+          <p className="text-white/70 mb-8 max-w-md mx-auto">
+            To generate custom SVGs, you need to be signed in. Create a free
+            account to get started!
+          </p>
+
+          <div className="flex gap-4 justify-center">
+            <Link
+              to="/signup"
+              className="px-6 py-3 bg-wizard-orange text-white font-semibold rounded-lg hover:bg-wizard-orange/90 transition-all shadow-lg"
+            >
+              Create Account
+            </Link>
+            <Link
+              to="/signin"
+              className="px-6 py-3 bg-white/10 text-white font-semibold rounded-lg hover:bg-white/20 transition-all border border-white/20"
+            >
+              Sign In
+            </Link>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

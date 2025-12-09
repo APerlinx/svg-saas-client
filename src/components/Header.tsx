@@ -88,32 +88,25 @@ export default function Header() {
             <div className="flex items-center gap-2 ml-4 pl-4 border-l border-gray-200">
               {isAuthenticated && user ? (
                 <>
-                  {/* Notification Bell */}
-                  <button
-                    className="p-2 hover:bg-gray-100/60 rounded-lg transition-colors relative group"
-                    aria-label="Notifications"
-                  >
-                    <Bell size="20" />
-                    {/* Notification badge - uncomment when you have notifications */}
-                    {/* <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span> */}
-
-                    {/* Coming Soon Tooltip */}
-                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                      Coming Soon
-                    </span>
-                  </button>
-
                   <div className="relative" ref={dropdownRef}>
                     <button
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                       className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-100/60 rounded-lg transition-colors"
                     >
-                      <div className="w-8 h-8 rounded-full bg-linear-to-r from-wizard-orange to-wizard-orange/90 flex items-center justify-center text-white text-sm font-medium">
+                      <div className="w-8 h-8 rounded-full bg-linear-to-r from-wizard-orange to-wizard-orange/90 flex items-center justify-center text-white text-sm font-medium overflow-hidden">
                         {user.avatar ? (
                           <img
                             src={user.avatar}
                             alt={user.name}
-                            className="w-8 h-8 rounded-full"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // Fallback to initials if image fails to load
+                              e.currentTarget.style.display = 'none'
+                              const parent = e.currentTarget.parentElement
+                              if (parent) {
+                                parent.textContent = getInitials(user.name)
+                              }
+                            }}
                           />
                         ) : (
                           getInitials(user.name)
@@ -184,6 +177,21 @@ export default function Header() {
                       </div>
                     )}
                   </div>
+
+                  {/* Notification Bell */}
+                  <button
+                    className="p-2 hover:bg-gray-100/60 rounded-lg transition-colors relative group"
+                    aria-label="Notifications"
+                  >
+                    <Bell size="20" />
+                    {/* Notification badge - uncomment when you have notifications */}
+                    {/* <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span> */}
+
+                    {/* Coming Soon Tooltip */}
+                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                      Coming Soon
+                    </span>
+                  </button>
                 </>
               ) : (
                 <>

@@ -36,7 +36,6 @@ export default function SignIn() {
           ? error.message
           : 'Failed to sign in. Please try again.'
 
-      // Show inline error for all authentication errors
       if (
         errorMessage.toLowerCase().includes('credential') ||
         errorMessage.toLowerCase().includes('invalid') ||

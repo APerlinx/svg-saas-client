@@ -78,6 +78,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
+      // Clear session storage on logout
+      sessionStorage.removeItem('svg_prompt_draft')
       setUser(null)
     }
   }
