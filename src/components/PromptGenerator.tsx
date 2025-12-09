@@ -30,7 +30,7 @@ export default function PromptGenerator() {
       prompt: '',
       style: 'minimal',
       isPrivate: false,
-      model: 'gpt-5-mini',
+      model: 'gpt-4o',
     }
   })
 
