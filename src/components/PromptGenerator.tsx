@@ -139,7 +139,6 @@ export default function PromptGenerator() {
               }
               placeholder="Choose a style and describe what you want to generate..."
               rows={5}
-              required
               className="w-full bg-transparent text-white placeholder-white rounded-xl p-3 sm:p-4 pr-4 sm:pr-6 pb-32 sm:pb-16 resize-none focus:outline-none text-sm sm:text-base"
             />
 

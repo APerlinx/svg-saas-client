@@ -110,6 +110,7 @@ export default function SignUp() {
             )}
 
             <Input
+              id="name"
               label="Full Name"
               type="text"
               placeholder="John Doe"
@@ -121,6 +122,7 @@ export default function SignUp() {
             />
 
             <Input
+              id="email"
               label="Email"
               type="email"
               placeholder="you@example.com"
@@ -133,11 +135,15 @@ export default function SignUp() {
 
             {/* Password with show/hide toggle */}
             <div className="space-y-1">
-              <label className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <div className="relative">
                 <input
+                  id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={formData.password}
@@ -259,11 +265,15 @@ export default function SignUp() {
 
             {/* Confirm Password with show/hide toggle */}
             <div className="space-y-1">
-              <label className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Confirm Password
               </label>
               <div className="relative">
                 <input
+                  id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={formData.confirmPassword}
