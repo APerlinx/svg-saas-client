@@ -7,22 +7,71 @@ interface ModalProps {
   isOpen: boolean
   onClose: () => void
   children: React.ReactNode
+  /** Additional classes for the outer container (fixed inset wrapper). */
+  containerClassName?: string
+  /** Additional classes for the modal panel. */
+  panelClassName?: string
+  /** Additional classes for the content wrapper. */
+  contentClassName?: string
+  /** Disable the built-in scroll container (use when content is guaranteed to fit). */
+  disableContentScroll?: boolean
+  /** Make the panel fullscreen on mobile (keeps current sizing on >= sm). */
+  fullScreenOnMobile?: boolean
 }
 
-function Modal({ isOpen, onClose, children }: ModalProps) {
+function Modal({
+  isOpen,
+  onClose,
+  children,
+  containerClassName,
+  panelClassName,
+  contentClassName,
+  disableContentScroll,
+  fullScreenOnMobile,
+}: ModalProps) {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
     }
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleEsc)
-      document.body.style.overflow = 'hidden'
-    }
+    if (!isOpen) return
+
+    document.addEventListener('keydown', handleEsc)
+
+    const scrollY = window.scrollY
+
+    const prevHtmlOverflow = document.documentElement.style.overflow
+    const prevBodyPosition = document.body.style.position
+    const prevBodyTop = document.body.style.top
+    const prevBodyLeft = document.body.style.left
+    const prevBodyRight = document.body.style.right
+    const prevBodyWidth = document.body.style.width
+    const prevBodyOverflow = document.body.style.overflow
+    const prevBodyOverflowX = document.body.style.overflowX
+
+    // Robust scroll lock (prevents background scroll and x-axis overflow).
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.left = '0'
+    document.body.style.right = '0'
+    document.body.style.width = '100%'
+    document.body.style.overflow = 'hidden'
+    document.body.style.overflowX = 'hidden'
 
     return () => {
       document.removeEventListener('keydown', handleEsc)
-      document.body.style.overflow = 'unset'
+
+      document.documentElement.style.overflow = prevHtmlOverflow
+      document.body.style.position = prevBodyPosition
+      document.body.style.top = prevBodyTop
+      document.body.style.left = prevBodyLeft
+      document.body.style.right = prevBodyRight
+      document.body.style.width = prevBodyWidth
+      document.body.style.overflow = prevBodyOverflow
+      document.body.style.overflowX = prevBodyOverflowX
+
+      window.scrollTo(0, scrollY)
     }
   }, [isOpen, onClose])
 
@@ -39,14 +88,22 @@ function Modal({ isOpen, onClose, children }: ModalProps) {
       />
 
       {/* Modal container  */}
-      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center pointer-events-none p-0 sm:p-4">
+      <div
+        className={`fixed inset-0 z-50 flex items-end sm:items-center justify-center pointer-events-none overflow-hidden overscroll-none p-0 sm:p-4 ${
+          containerClassName ?? ''
+        }`}
+      >
         <div
-          className={`bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)] backdrop-blur-xl rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-6xl border-2 border-wizard-orange/30 pointer-events-auto transform transition-all duration-500 ease-out ${
+          className={`bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)] backdrop-blur-xl shadow-2xl w-full max-w-6xl border-2 border-wizard-orange/30 pointer-events-auto transform transition-all duration-500 ease-out box-border flex flex-col min-w-0 ${
             isOpen ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
-          }`}
+          } ${
+            fullScreenOnMobile
+              ? 'h-svh sm:h-auto rounded-none sm:rounded-3xl'
+              : 'rounded-t-3xl sm:rounded-3xl'
+          } ${panelClassName ?? ''}`}
           onClick={(e) => e.stopPropagation()}
           style={{
-            maxHeight: '90vh',
+            maxHeight: fullScreenOnMobile ? undefined : '90vh',
             animation: isOpen ? 'slideUp 0.5s ease-out' : 'none',
           }}
         >
@@ -71,8 +128,16 @@ function Modal({ isOpen, onClose, children }: ModalProps) {
             </svg>
           </button>
 
-          {/* Scrollable content */}
-          <div className="overflow-y-auto max-h-[90vh] px-4 sm:px-8 pt-12 sm:pt-16 pb-6 sm:pb-8">
+          {/* Content */}
+          <div
+            className={`${
+              disableContentScroll ? 'overflow-hidden' : 'overflow-y-auto'
+            } ${
+              fullScreenOnMobile ? 'flex-1 min-h-0' : 'max-h-[90vh]'
+            } px-4 sm:px-8 pt-12 sm:pt-16 pb-6 sm:pb-8 min-w-0 ${
+              contentClassName ?? ''
+            }`}
+          >
             {children}
           </div>
         </div>

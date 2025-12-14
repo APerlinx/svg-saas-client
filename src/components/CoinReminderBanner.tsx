@@ -1,0 +1,132 @@
+import { Link, useLocation } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { useAuth } from '../hooks/useAuth'
+
+type Variant = 'guest' | 'low'
+
+function BannerContent({
+  variant,
+  coins,
+}: {
+  variant: Variant
+  coins?: number
+}) {
+  if (variant === 'low') {
+    return (
+      <div className="flex flex-col gap-2 w-full">
+        <div className="text-sm font-semibold text-gray-900">Low on coins</div>
+        <div className="text-xs sm:text-sm text-gray-700">
+          You have{' '}
+          <span className="font-semibold text-wizard-orange">{coins ?? 0}</span>{' '}
+          {coins === 1 ? 'coin' : 'coins'} left. Top up to keep generating.
+        </div>
+        <Link
+          to="/pricing"
+          className="flex text-sm font-semibold text-black self-end"
+        >
+          Get more coins
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-2 w-full">
+      <div className="text-sm font-semibold text-gray-900">
+        Want to generate more?
+      </div>
+      <div className="text-xs sm:text-sm text-gray-700">
+        Buy coins once and use them anytime — no subscription.
+      </div>
+      <Link
+        to="/pricing"
+        className="flex text-sm font-semibold text-black self-end"
+      >
+        Buy coins
+      </Link>
+    </div>
+  )
+}
+
+export default function CoinReminderBanner() {
+  const { isAuthenticated, user } = useAuth()
+  const location = useLocation()
+  const [isDismissed, setIsDismissed] = useState(() => {
+    try {
+      return sessionStorage.getItem('coinReminderDismissed') === '1'
+    } catch {
+      return false
+    }
+  })
+  const [isVisible, setIsVisible] = useState(false)
+
+  const isDashboard = useMemo(
+    () => location.pathname === '/',
+    [location.pathname]
+  )
+
+  const coins = user?.coins ?? 0
+  const shouldShowLowCoins = isAuthenticated && !!user && coins <= 3
+  const shouldShowGuest = !isAuthenticated
+
+  const shouldShow = isDashboard && (shouldShowLowCoins || shouldShowGuest)
+
+  useEffect(() => {
+    if (!shouldShow || isDismissed) return
+
+    const timer = setTimeout(() => {
+      setIsVisible(true)
+    }, 2500)
+
+    return () => clearTimeout(timer)
+  }, [shouldShow, isDismissed])
+
+  if (!shouldShow || isDismissed || !isVisible) return null
+
+  const variant: Variant = shouldShowLowCoins ? 'low' : 'guest'
+
+  const handleDismiss = () => {
+    sessionStorage.setItem('coinReminderDismissed', '1')
+    setIsDismissed(true)
+  }
+
+  return (
+    <div className="fixed top-12 sm:top-14 left-0 right-0 z-40 pointer-events-none">
+      <div className="backdrop-blur-sm pointer-events-auto">
+        <div className="max-w-2xl mx-auto px-4 sm:px-4 lg:px-6 ">
+          <div className="py-2 animate-slideDown">
+            <div className="relative rounded-2xl border  border-wizard-orange/20 bg-wizard-gold/30 px-4 sm:px-5 py-3">
+              {/* Close button - top right */}
+              <button
+                type="button"
+                onClick={handleDismiss}
+                className="absolute top-2 right-2 inline-flex h-6 w-6 items-center justify-center rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100/70 transition"
+                aria-label="Dismiss reminder"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+
+              {/* Content */}
+              <div className="pl-3">
+                <BannerContent variant={variant} coins={coins} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

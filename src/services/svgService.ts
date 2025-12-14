@@ -55,7 +55,6 @@ export async function generateSvg({
       privacy,
       model,
     })
-    console.log('SVG generated successfully:', response.data)
     return response.data
   } catch (error) {
     console.error('Error generating SVG:', error)
