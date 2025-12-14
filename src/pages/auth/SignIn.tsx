@@ -76,25 +76,43 @@ export default function SignIn() {
           </div>
         )}
 
-        <Input
-          label="Email"
-          type="email"
-          placeholder="you@example.com"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          required
-        />
+        <div className="space-y-1">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mt-2"
+          >
+            Email
+          </label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            required
+          />
+        </div>
 
-        <Input
-          label="Password"
-          type="password"
-          placeholder="••••••••"
-          value={formData.password}
-          onChange={(e) =>
-            setFormData({ ...formData, password: e.target.value })
-          }
-          required
-        />
+        <div className="space-y-1">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mt-2"
+          >
+            Password
+          </label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={formData.password}
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
+            required
+          />
+        </div>
 
         <div className="flex items-center justify-between text-sm">
           <label className="flex items-center gap-2 cursor-pointer">

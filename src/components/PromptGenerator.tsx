@@ -131,6 +131,9 @@ export default function PromptGenerator() {
       <div className="bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)] backdrop-blur-xl border-rgba(255, 255, 255, 0.08) rounded-2xl sm:rounded-3xl shadow-xl p-2 sm:p-4">
         <form onSubmit={handleSubmit} className="p-1 sm:p-1.5">
           <div className="relative bg-[rgb(17_17_17/55%)] rounded-2xl sm:rounded-3xl">
+            <label htmlFor="prompt" className="sr-only">
+              Prompt
+            </label>
             <textarea
               id="prompt"
               value={formData.prompt}
@@ -148,6 +151,9 @@ export default function PromptGenerator() {
             >
               {/* Controls - Stay in one row, shrink on mobile */}
               <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
+                <label htmlFor="style" className="sr-only">
+                  Style
+                </label>
                 <Dropdown
                   name="style"
                   label={selectedStyleLabel}
@@ -160,6 +166,9 @@ export default function PromptGenerator() {
                   }
                   onChange={handleDropdownChange}
                 />
+                <label htmlFor="model" className="sr-only">
+                  Model
+                </label>
                 <Dropdown
                   name="model"
                   label={selectedModelLabel}
@@ -218,7 +227,7 @@ export default function PromptGenerator() {
 
       {/* Auth Required Modal */}
       <Modal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)}>
-        <div className="text-center py-8">
+        <div className="text-center py-8" data-testid="signin-required-modal">
           <div className="w-16 h-16 mx-auto mb-6 bg-wizard-orange/20 rounded-full flex items-center justify-center">
             <svg
               className="w-8 h-8 text-wizard-orange"

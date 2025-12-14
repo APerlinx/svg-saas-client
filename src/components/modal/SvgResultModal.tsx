@@ -122,7 +122,10 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div
+        className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+        data-testid="svg-result-modal"
+      >
         {/* Left side - SVG Preview */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -136,11 +139,11 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
 
           {/* SVG Preview Container */}
           <div
-            className="bg-[rgb(17_17_17/55%)] rounded-2xl p-8 flex items-center justify-center min-h-[400px] border-2 border-wizard-orange/20 relative"
+            className="bg-[rgba(150,149,149,0.55)] rounded-2xl p-8 flex items-center justify-center min-h-[400px] border-2 border-wizard-orange/20 relative"
             style={{
               backgroundImage: `
-                radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px),
-                radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)
+                radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+                radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px)
               `,
               backgroundSize: '20px 20px',
               backgroundPosition: '0 0, 10px 10px',

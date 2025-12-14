@@ -108,31 +108,42 @@ export default function SignUp() {
                 <p className="text-sm text-red-800">{error}</p>
               </div>
             )}
-
-            <Input
-              id="name"
-              label="Full Name"
-              type="text"
-              placeholder="John Doe"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              required
-            />
-
-            <Input
-              id="email"
-              label="Email"
-              type="email"
-              placeholder="you@example.com"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              required
-            />
-
+            <div className="space-y-1">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mt-2"
+              >
+                Full Name
+              </label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="space-y-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mt-2"
+              >
+                Email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                required
+              />
+            </div>
             {/* Password with show/hide toggle */}
             <div className="space-y-1">
               <label
