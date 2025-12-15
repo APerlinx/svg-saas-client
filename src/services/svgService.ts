@@ -8,7 +8,8 @@ const api = axios.create({
 attachCsrfInterceptor(api)
 
 interface ApiError {
-  message: string
+  message?: string
+  error?: string
 }
 
 interface GenerateSvgResponse {
@@ -19,6 +20,7 @@ function normalizeError(error: unknown): never {
   if (axios.isAxiosError(error)) {
     const err = error as AxiosError<ApiError>
     const msg =
+      err.response?.data?.error ||
       err.response?.data?.message ||
       err.response?.statusText ||
       'Unexpected server error'

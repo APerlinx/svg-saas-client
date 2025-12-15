@@ -84,11 +84,26 @@ export default function PromptGenerator() {
       })
       setGeneratedSvg(result.svgCode)
       setIsModalOpen(true)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      setError(
-        'Unable to generate SVG. Please ensure your description uses valid characters and try again.'
-      )
+      if (err && typeof err === 'object' && 'message' in err) {
+        const errorMessage = (err as Error).message
+
+        if (
+          errorMessage.toLowerCase().includes('credit') ||
+          errorMessage.toLowerCase().includes('insufficient')
+        ) {
+          setError(errorMessage)
+        } else {
+          setError(
+            'Unable to generate SVG. Please ensure your description uses valid characters and try again.'
+          )
+        }
+      } else {
+        setError(
+          'Unable to generate SVG. Please ensure your description uses valid characters and try again.'
+        )
+      }
+
       triggerShake()
     } finally {
       setIsGenerating(false)
@@ -128,7 +143,7 @@ export default function PromptGenerator() {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4">
-      <div className="bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)] backdrop-blur-xl border-rgba(255, 255, 255, 0.08) rounded-2xl sm:rounded-3xl shadow-xl p-2 sm:p-4">
+      <div className="bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)]  border-rgba(255, 255, 255, 0.08) rounded-2xl sm:rounded-3xl shadow-xl p-2 sm:p-4">
         <form onSubmit={handleSubmit} className="p-1 sm:p-1.5">
           <div className="relative bg-[rgb(17_17_17/55%)] rounded-2xl sm:rounded-3xl">
             <label htmlFor="prompt" className="sr-only">

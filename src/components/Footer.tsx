@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col items-center md:items-start gap-0.5">
             <div className="text-gray-600 text-xs font-medium">
-              © {currentYear} SVG Wiz. All rights reserved.
+              © {currentYear} chatSVG. All rights reserved.
             </div>
             <div className="text-gray-400 text-xs">Handcrafted with ❤️</div>
           </div>

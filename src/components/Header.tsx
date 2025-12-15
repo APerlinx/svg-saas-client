@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import logo from '../assets/logotape.svg'
 import getInitials from '../utils/getInitials'
 import Bell from './icons/BellIcon'
 import GalleryIcon from './icons/GalleryIcon'
 import PricingIcon from './icons/PricingIcon'
+import { Logo } from './icons/logo'
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth()
@@ -44,9 +44,13 @@ export default function Header() {
             to="/"
             className="flex items-center gap-1.5 group cursor-pointer shrink-0"
           >
-            <div className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
-              <img src={logo} alt="Chat SVG Logo" className="w-full h-full" />
+            <div className="flex items-center justify-center ">
+              <Logo
+                size="24"
+                className="text-gray-900 group-hover:scale-105 transition-transform"
+              />
             </div>
+
             <span className="font-semibold text-base sm:text-lg tracking-tight text-gray-900 ">
               chatSVG
             </span>
@@ -78,7 +82,7 @@ export default function Header() {
                 title="Pricing"
               >
                 <PricingIcon size="20" className="text-current shrink-0" />
-                <span className="hidden md:inline">Pricing</span>
+                <span className="hidden md:inline">Buy now</span>
               </Link>
             </nav>
 
@@ -142,15 +146,15 @@ export default function Header() {
                           </p>
                         </div>
 
-                        {/* Coins Display */}
+                        {/* Credits Display */}
                         <div className="px-4 py-3 border-b border-gray-200/50">
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium text-gray-700">
-                              Coins
+                              Credits
                             </span>
                             <div className="flex items-center gap-2">
                               <span className="text-lg font-bold text-wizard-orange">
-                                {user.coins ?? 0}
+                                {user.credits ?? 0}
                               </span>
                             </div>
                           </div>
@@ -162,7 +166,7 @@ export default function Header() {
                             onClick={() => setIsDropdownOpen(false)}
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/60 transition-colors"
                           >
-                            Get More Coins
+                            Get More Credits
                           </Link>
                           <button
                             onClick={handleLogout}

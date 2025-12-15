@@ -10,7 +10,8 @@ attachCsrfInterceptor(api)
 import type { RegisterResponse, User } from '../types/user'
 import type { AuthResponse } from '../types/user'
 interface ApiError {
-  message: string
+  message?: string
+  error?: string
 }
 
 // Helper to normalize and throw errors
@@ -18,6 +19,7 @@ function normalizeError(error: unknown): never {
   if (axios.isAxiosError(error)) {
     const err = error as AxiosError<ApiError>
     const msg =
+      err.response?.data?.error ||
       err.response?.data?.message ||
       err.response?.statusText ||
       'Unexpected server error'

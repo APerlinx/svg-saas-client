@@ -1,6 +1,6 @@
-import chatGptIcon from '../../assets/chat-gpt.svg'
-import googleIcon from '../../assets/google.svg'
-import ChevronDownIcon from './ChevronDownIcon'
+import ChatGptIcon from '../icons/ChatGptIcon'
+import GoogleIcon from '../icons/GoogleIcon'
+import ChevronDownIcon from '../icons/ChevronDownIcon'
 import type { PromptFormData } from '../../types/svg'
 
 interface DropdownProps {
@@ -21,8 +21,8 @@ interface DropdownProps {
 }
 
 const getIcon = (iconName?: string) => {
-  if (iconName === 'chat-gpt') return chatGptIcon
-  if (iconName === 'google') return googleIcon
+  if (iconName === 'chat-gpt') return 'chat-gpt'
+  if (iconName === 'google') return 'google'
   return null
 }
 
@@ -56,7 +56,11 @@ export default function Dropdown({
       >
         {isModel && modelIcon && (
           <div className="w-5 h-5 bg-white rounded flex items-center justify-center shrink-0">
-            <img src={modelIcon} alt="" className="w-3.5 h-3.5" />
+            {modelIcon === 'chat-gpt' ? (
+              <ChatGptIcon className="w-3.5 h-3.5 text-black" />
+            ) : (
+              <GoogleIcon className="w-3.5 h-3.5" />
+            )}
           </div>
         )}
         <span className={isModel ? 'hidden sm:inline' : ''}>{label}</span>
@@ -87,7 +91,11 @@ export default function Dropdown({
                   >
                     {icon && (
                       <div className="w-6 h-6 bg-white rounded flex items-center justify-center shrink-0">
-                        <img src={icon} alt="" className="w-4 h-4" />
+                        {icon === 'chat-gpt' ? (
+                          <ChatGptIcon className="w-4 h-4 text-black" />
+                        ) : (
+                          <GoogleIcon className="w-4 h-4" />
+                        )}
                       </div>
                     )}
                     <span className="flex-1">{option.label}</span>
@@ -135,7 +143,11 @@ export default function Dropdown({
                   >
                     {icon && (
                       <div className="w-6 h-6 bg-white rounded flex items-center justify-center shrink-0">
-                        <img src={icon} alt="" className="w-4 h-4" />
+                        {icon === 'chat-gpt' ? (
+                          <ChatGptIcon className="w-4 h-4" />
+                        ) : (
+                          <GoogleIcon className="w-4 h-4" />
+                        )}
                       </div>
                     )}
                     <span className="flex-1">{option.label}</span>

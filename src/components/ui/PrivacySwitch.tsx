@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import InfoIcon from '../../assets/info.svg'
+import InfoIcon from '../icons/InfoIcon'
 
 interface PrivacySwitchProps {
   isPrivate: boolean
@@ -30,16 +30,12 @@ export default function PrivacySwitch({
             className="focus:outline-none"
             aria-label="Privacy information"
           >
-            <img
-              src={InfoIcon}
-              alt="Info"
-              className="h-3 sm:h-3.5 w-3 sm:w-3.5 cursor-help"
-            />
+            <InfoIcon className="h-3 sm:h-3.5 w-3 sm:w-3.5 cursor-help text-black" />
           </button>
           {showTooltip && (
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-black/90 text-white text-xs rounded-lg z-20 animate-fadeIn">
               When enabled, your generation will not be saved to the public
-              gallery or generation history
+              gallery
               <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
             </div>
           )}

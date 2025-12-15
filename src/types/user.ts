@@ -3,7 +3,7 @@ export interface User {
   name: string
   email: string
   avatar?: string | null
-  coins?: number
+  credits?: number
 }
 
 // Interface for registration response

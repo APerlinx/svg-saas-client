@@ -1,10 +1,10 @@
 export default function Pricing() {
-  const coinPacks = [
+  const creditPacks = [
     {
       name: 'Starter',
-      coins: '50',
+      credits: '50',
       price: '$5',
-      pricePerCoin: '$0.10',
+      pricePerCredit: '$0.10',
       description: 'Perfect for trying out our SVG',
       features: [
         '50 SVG generations',
@@ -16,9 +16,9 @@ export default function Pricing() {
     },
     {
       name: 'Creator',
-      coins: '200',
+      credits: '200',
       price: '$15',
-      pricePerCoin: '$0.075',
+      pricePerCredit: '$0.075',
       description: 'Best value for regular use',
       features: [
         '200 SVG generations',
@@ -31,9 +31,9 @@ export default function Pricing() {
     },
     {
       name: 'Professional',
-      coins: '500',
+      credits: '500',
       price: '$30',
-      pricePerCoin: '$0.06',
+      pricePerCredit: '$0.06',
       description: 'For power users and teams',
       features: [
         '500 SVG generations',
@@ -54,7 +54,7 @@ export default function Pricing() {
           Simple, pay-as-you-go pricing
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          No subscriptions. No monthly fees. Buy coins once, use them forever.
+          No subscriptions. No monthly fees. Buy credits once, use them forever.
         </p>
       </div>
 
@@ -65,7 +65,7 @@ export default function Pricing() {
         </h3>
         <p className="text-gray-700 mb-4">
           Get{' '}
-          <span className="font-bold text-wizard-orange">10 free coins</span>{' '}
+          <span className="font-bold text-wizard-orange">10 free credits</span>{' '}
           every month. No credit card required.
         </p>
         <div className="relative inline-block group">
@@ -78,13 +78,13 @@ export default function Pricing() {
         </div>
       </div>
 
-      {/* Coin Packs */}
+      {/* Credit Packs */}
       <div className="mb-16">
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">
-          Buy Coins
+          Buy Credits
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
-          {coinPacks.map((pack) => (
+          {creditPacks.map((pack) => (
             <div
               key={pack.name}
               className={`relative bg-white/50 backdrop-blur-sm rounded-3xl p-8 shadow-lg transition-all hover:shadow-xl ${
@@ -108,10 +108,10 @@ export default function Pricing() {
                     {pack.price}
                   </div>
                   <div className="text-wizard-orange font-semibold text-lg mt-1">
-                    {pack.coins} coins
+                    {pack.credits} credits
                   </div>
                   <div className="text-gray-500 text-sm">
-                    {pack.pricePerCoin} per coin
+                    {pack.pricePerCredit} per credit
                   </div>
                 </div>
                 <p className="text-gray-600 text-sm">{pack.description}</p>
@@ -196,7 +196,9 @@ export default function Pricing() {
                 <div className="font-semibold text-gray-900">
                   Unlimited generations
                 </div>
-                <div className="text-sm text-gray-600">No coin limits ever</div>
+                <div className="text-sm text-gray-600">
+                  No credit limits ever
+                </div>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -272,9 +274,9 @@ export default function Pricing() {
           </div>
           <div>
             <div className="text-4xl mb-3">♾️</div>
-            <div className="font-semibold mb-2">Coins Never Expire</div>
+            <div className="font-semibold mb-2">Credits Never Expire</div>
             <div className="text-sm text-gray-600">
-              Use your coins anytime. No pressure, no waste.
+              Use your credits anytime. No pressure, no waste.
             </div>
           </div>
           <div>
