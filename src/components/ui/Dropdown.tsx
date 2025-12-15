@@ -1,6 +1,7 @@
 import ChatGptIcon from '../icons/ChatGptIcon'
 import GoogleIcon from '../icons/GoogleIcon'
 import ChevronDownIcon from '../icons/ChevronDownIcon'
+import CheckmarkIcon from '../icons/CheckmarkIcon'
 import type { PromptFormData } from '../../types/svg'
 
 interface DropdownProps {
@@ -100,20 +101,7 @@ export default function Dropdown({
                     )}
                     <span className="flex-1">{option.label}</span>
                     {isSelected && (
-                      <svg
-                        className="w-4 h-4 text-green-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
+                      <CheckmarkIcon className="w-4 h-4 text-green-500" />
                     )}
                   </button>
                 )
@@ -152,20 +140,7 @@ export default function Dropdown({
                     )}
                     <span className="flex-1">{option.label}</span>
                     {isSelected && (
-                      <svg
-                        className="w-4 h-4 text-green-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
+                      <CheckmarkIcon className="w-4 h-4 text-green-500" />
                     )}
                   </button>
                 )

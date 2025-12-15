@@ -11,40 +11,23 @@ export default function LoaderIcon({
       viewBox="0 0 24 24"
       className={className}
     >
-      <g>
-        <path
-          fill="currentColor"
-          d="M12 5.75c.345 0 .625-.28.625-.625V2.5a.625.625 0 1 0-1.25 0v2.625c0 .345.28.625.625.625Z"
+      <path
+        fill="none"
+        stroke="#000000"
+        stroke-linecap="round"
+        stroke-width="2"
+        d="M12 6.99998C9.1747 6.99987 6.99997 9.24998 7 12C7.00003 14.55 9.02119 17 12 17C14.7712 17 17 14.75 17 12"
+      >
+        <animateTransform
+          attributeName="transform"
+          attributeType="XML"
+          dur="560ms"
+          from="0,12,12"
+          repeatCount="indefinite"
+          to="360,12,12"
+          type="rotate"
         />
-        <path
-          fill="currentColor"
-          d="M6.625 8.75a.625.625 0 0 0 .883-.883L5.659 6.017a.625.625 0 0 0-.883.883l1.849 1.85Z"
-        />
-        <path
-          fill="currentColor"
-          d="M5.75 12a.625.625 0 0 0-.625-.625H2.5a.625.625 0 1 0 0 1.25h2.625c.345 0 .625-.28.625-.625Z"
-        />
-        <path
-          fill="currentColor"
-          d="M6.625 15.25 4.776 17.1a.625.625 0 0 0 .883.883l1.85-1.85a.625.625 0 0 0-.883-.883Z"
-        />
-        <path
-          fill="currentColor"
-          d="M12 18.25a.625.625 0 0 0-.625.625V21.5a.625.625 0 1 0 1.25 0v-2.625a.625.625 0 0 0-.625-.625Z"
-        />
-        <path
-          fill="currentColor"
-          d="M17.375 15.25a.625.625 0 0 0-.883.883l1.85 1.85a.625.625 0 1 0 .883-.883l-1.85-1.85Z"
-        />
-        <path
-          fill="currentColor"
-          d="M21.5 12a.625.625 0 0 0-.625-.625H18.25a.625.625 0 1 0 0 1.25h2.625c.345 0 .625-.28.625-.625Z"
-        />
-        <path
-          fill="currentColor"
-          d="M17.375 8.75 19.225 6.9a.626.626 0 0 0-.884-.882l-1.849 1.85a.626.626 0 1 0 .883.883Z"
-        />
-      </g>
+      </path>
     </svg>
   )
 }

@@ -6,7 +6,6 @@ import Bell from './icons/BellIcon'
 import GalleryIcon from './icons/GalleryIcon'
 import PricingIcon from './icons/PricingIcon'
 import { Logo } from './icons/logo'
-
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
