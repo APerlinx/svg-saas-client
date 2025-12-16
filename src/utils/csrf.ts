@@ -36,28 +36,23 @@ export const fetchWithCsrf = async (
     headers['X-CSRF-Token'] = csrfToken
   }
 
-  let response = await fetch(url, {
-    ...options,
-    headers,
-    credentials: 'include', // Always send cookies
-  })
+  const doFetch = () =>
+    fetch(url, {
+      ...options,
+      headers,
+      credentials: 'include',
+    })
 
-  // If 401 Unauthorized, try to refresh token
-  if (response.status === 401) {
-    console.log('Got 401, attempting token refresh...')
+  let response = await doFetch()
 
+  const isRefreshCall = url.includes('/auth/refresh')
+  const isLoginCall =
+    url.includes('/auth/login') || url.includes('/auth/google')
+
+  if (response.status === 401 && !isRefreshCall && !isLoginCall) {
     const refreshed = await refreshAccessToken()
-
     if (refreshed) {
-      // Retry the original request with new access token
-      response = await fetch(url, {
-        ...options,
-        headers,
-        credentials: 'include',
-      })
-    } else {
-      console.log('Token refresh failed, redirecting to login...')
-      window.location.href = '/signin'
+      response = await doFetch()
     }
   }
 

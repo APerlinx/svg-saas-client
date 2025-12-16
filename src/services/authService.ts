@@ -136,15 +136,33 @@ export async function resetPassword({
   }
 }
 
+let refreshInFlight: Promise<boolean> | null = null
+
 export async function refreshAccessToken(): Promise<boolean> {
-  try {
-    await api.post('/auth/refresh')
-    return true
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
+  // If a refresh is already running, reuse it.
+  if (refreshInFlight) return refreshInFlight
+
+  refreshInFlight = (async () => {
+    try {
+      await api.post('/auth/refresh')
+      return true
+    } catch {
       return false
+    } finally {
+      // Always release the lock
+      refreshInFlight = null
     }
-    console.error('Refresh token error:', error)
-    return false
-  }
+  })()
+
+  return refreshInFlight
+}
+
+export async function ensureSession(): Promise<User | null> {
+  const user = await getCurrentUser()
+  if (user) return user
+
+  const refreshed = await refreshAccessToken()
+  if (!refreshed) return null
+
+  return await getCurrentUser()
 }

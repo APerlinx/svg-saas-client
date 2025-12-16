@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { ReactNode } from 'react'
-import type { User, AuthResponse } from '../types/user'
+import type { User } from '../types/user'
 import * as authService from '../services/authService'
 import { AuthContext, type AuthContextType } from './AuthContext.tsx'
 import { refreshAccessToken } from '../services/authService'
@@ -27,33 +27,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const initAuth = async () => {
       setIsLoading(true)
       try {
-        const refreshed = await refreshAccessToken()
-
-        if (refreshed) {
-          await checkAuth()
-        } else {
-          setUser(null)
-        }
+        const currentUser = await authService.ensureSession()
+        setUser(currentUser)
+      } catch (error) {
+        console.error('Unexpected error in initAuth:', error)
+        setUser(null)
       } finally {
         setIsLoading(false)
       }
     }
 
     void initAuth()
-  }, [checkAuth])
+  }, [])
 
   const login = async (
     email: string,
     password: string,
     rememberMe: boolean
   ) => {
-    const response: AuthResponse = await authService.signIn({
+    await authService.signIn({
       email,
       password,
       rememberMe,
     })
-
-    setUser(response.user)
+    try {
+      const currentUser = await authService.getCurrentUser()
+      setUser(currentUser)
+    } catch (error) {
+      console.error('Unexpected error in login:', error)
+      setUser(null)
+    }
   }
 
   const register = async (
@@ -62,14 +65,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     password: string,
     agreedToTerms: boolean
   ) => {
-    const response: AuthResponse = await authService.signUp({
+    await authService.signUp({
       name,
       email,
       password,
       agreedToTerms,
     })
-
-    setUser(response.user)
+    try {
+      const currentUser = await authService.getCurrentUser()
+      setUser(currentUser)
+    } catch (error) {
+      console.error('Unexpected error in register:', error)
+      setUser(null)
+    }
   }
 
   const logout = async () => {
