@@ -5,6 +5,10 @@ import './index.css'
 import { router } from './routes'
 import { AuthProvider } from './context/AuthProvider'
 import { ToastProvider } from './context/ToastProvider'
+import { initSentry } from './services/logger'
+
+// Initialize Sentry for error tracking
+initSentry()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

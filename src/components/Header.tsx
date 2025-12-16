@@ -5,7 +5,8 @@ import getInitials from '../utils/getInitials'
 import Bell from './icons/BellIcon'
 import GalleryIcon from './icons/GalleryIcon'
 import PricingIcon from './icons/PricingIcon'
-import { Logo } from './icons/logo'
+import { Logo } from './icons/Logo'
+
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)

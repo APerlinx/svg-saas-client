@@ -4,6 +4,7 @@ import type { User } from '../types/user'
 import * as authService from '../services/authService'
 import { AuthContext, type AuthContextType } from './AuthContext.tsx'
 import { refreshAccessToken } from '../services/authService'
+import { logger } from '../services/logger'
 
 interface AuthProviderProps {
   children: ReactNode
@@ -18,7 +19,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
     } catch (error) {
-      console.error('Unexpected error in checkAuth:', error)
+      logger.error('Unexpected error in checkAuth', error)
       setUser(null)
     }
   }, [])
@@ -30,7 +31,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const currentUser = await authService.ensureSession()
         setUser(currentUser)
       } catch (error) {
-        console.error('Unexpected error in initAuth:', error)
+        logger.error('Unexpected error in initAuth', error)
         setUser(null)
       } finally {
         setIsLoading(false)
@@ -54,7 +55,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
     } catch (error) {
-      console.error('Unexpected error in login:', error)
+      logger.error('Unexpected error in login', error)
       setUser(null)
     }
   }
@@ -75,7 +76,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
     } catch (error) {
-      console.error('Unexpected error in register:', error)
+      logger.error('Unexpected error in register', error)
       setUser(null)
     }
   }
@@ -84,7 +85,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       await authService.signOut()
     } catch (error) {
-      console.error('Logout error:', error)
+      logger.error('Logout error', error)
     } finally {
       // Clear session storage on logout
       sessionStorage.removeItem('svg_prompt_draft')

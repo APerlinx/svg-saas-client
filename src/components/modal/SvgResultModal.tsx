@@ -8,6 +8,7 @@ import { DownloadIcon } from '../icons/DownloadIcon'
 import { ImageIcon } from '../icons/ImageIcon'
 import { CheckIcon } from '../icons/CheckIcon'
 import { EditIcon } from '../icons/EditIcon'
+import { logger } from '../../services/logger'
 
 interface SvgResultModalProps {
   isOpen: boolean
@@ -87,7 +88,7 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
       setCopiedButton(buttonId)
       setTimeout(() => setCopiedButton(null), 2000)
     } catch (err) {
-      console.error('Failed to copy:', err)
+      logger.error('Failed to copy to clipboard', err)
     }
   }
 

@@ -5,6 +5,7 @@ import { resetPassword } from '../../services/authService'
 import AuthLayout from '../../components/auth/AuthLayout'
 import Input from '../../components/ui/Input'
 import Button from '../../components/ui/Button'
+import { logger } from '../../services/logger'
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams()
@@ -67,7 +68,7 @@ export default function ResetPassword() {
       await resetPassword({ token, newPassword: formData.newPassword })
       setSuccess(true)
     } catch (error) {
-      console.error('Reset password error:', error)
+      logger.error('Reset password error', error)
       setError(
         error instanceof Error
           ? error.message

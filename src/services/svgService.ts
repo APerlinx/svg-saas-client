@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { attachCsrfInterceptor } from '../services/csrfInterceptor'
+import { logger } from './logger'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
@@ -41,16 +42,7 @@ export async function generateSvg({
   model: string
 }): Promise<GenerateSvgResponse> {
   try {
-    console.log(
-      'Generating SVG with prompt:',
-      prompt,
-      'style:',
-      style,
-      'privacy:',
-      privacy,
-      'model:',
-      model
-    )
+    logger.debug('Generating SVG', { prompt, style, privacy, model })
     const response = await api.post<GenerateSvgResponse>('/svg/generate-svg', {
       prompt,
       style,
@@ -59,7 +51,7 @@ export async function generateSvg({
     })
     return response.data
   } catch (error) {
-    console.error('Error generating SVG:', error)
+    logger.error('Error generating SVG', error, { prompt, style, model })
     normalizeError(error)
   }
 }

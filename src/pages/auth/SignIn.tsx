@@ -7,6 +7,7 @@ import Button from '../../components/ui/Button'
 import SocialAuth from '../../components/auth/SocialAuth'
 import AuthDivider from '../../components/auth/AuthDivider'
 import { useAuth } from '../../hooks/useAuth'
+import { logger } from '../../services/logger'
 
 export default function SignIn() {
   const navigate = useNavigate()
@@ -30,7 +31,8 @@ export default function SignIn() {
       await login(email, password, rememberMe)
       navigate('/')
     } catch (error) {
-      console.error('Sign in error:', error)
+      const { email } = formData
+      logger.error('Sign in error', error, { email })
       const errorMessage =
         error instanceof Error
           ? error.message

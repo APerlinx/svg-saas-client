@@ -7,6 +7,7 @@ import Button from '../../components/ui/Button'
 import SocialAuth from '../../components/auth/SocialAuth'
 import AuthDivider from '../../components/auth/AuthDivider'
 import { useAuth } from '../../hooks/useAuth'
+import { logger } from '../../services/logger'
 
 export default function SignUp() {
   const navigate = useNavigate()
@@ -69,7 +70,8 @@ export default function SignUp() {
       await register(name, email, password, agreedToTerms)
       navigate('/')
     } catch (error) {
-      console.error('Sign up error:', error)
+      const { email } = formData
+      logger.error('Sign up error', error, { email })
       setError(
         error instanceof Error
           ? error.message

@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { attachCsrfInterceptor } from '../services/csrfInterceptor'
+import { logger } from './logger'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
@@ -46,7 +47,7 @@ export async function signIn({
     })
     return response.data
   } catch (error) {
-    console.error('Error signing in:', error)
+    logger.error('Error signing in', error, { email })
     normalizeError(error)
   }
 }
@@ -72,7 +73,7 @@ export async function signUp({
 
     return response.data
   } catch (error) {
-    console.error('Error signing up:', error)
+    logger.error('Error signing up', error, { email })
     normalizeError(error)
   }
 }
@@ -82,7 +83,7 @@ export async function signOut(): Promise<{ success: boolean }> {
     const response = await api.post<{ success: boolean }>('/auth/logout')
     return response.data
   } catch (error) {
-    console.error('Error signing out:', error)
+    logger.error('Error signing out', error)
     normalizeError(error)
   }
 }
@@ -95,7 +96,7 @@ export async function getCurrentUser(): Promise<User | null> {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       return null
     }
-    console.error('Error fetching current user:', error)
+    logger.error('Error fetching current user', error)
     normalizeError(error)
   }
 }
@@ -112,7 +113,7 @@ export async function forgotPassword({
     )
     return response.data
   } catch (error) {
-    console.error('Error sending reset email:', error)
+    logger.error('Error sending reset email', error, { email })
     normalizeError(error)
   }
 }
@@ -131,7 +132,7 @@ export async function resetPassword({
     )
     return response.data
   } catch (error) {
-    console.error('Error resetting password:', error)
+    logger.error('Error resetting password', error)
     normalizeError(error)
   }
 }
@@ -158,11 +159,16 @@ export async function refreshAccessToken(): Promise<boolean> {
 }
 
 export async function ensureSession(): Promise<User | null> {
-  const user = await getCurrentUser()
-  if (user) return user
+  try {
+    const user = await getCurrentUser()
+    if (user) return user
 
-  const refreshed = await refreshAccessToken()
-  if (!refreshed) return null
+    const refreshed = await refreshAccessToken()
+    if (!refreshed) return null
 
-  return await getCurrentUser()
+    return await getCurrentUser()
+  } catch (error) {
+    logger.error('Error ensuring session', error)
+    return null
+  }
 }

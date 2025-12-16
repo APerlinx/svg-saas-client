@@ -5,6 +5,7 @@ import AuthLayout from '../../components/auth/AuthLayout'
 import Input from '../../components/ui/Input'
 import Button from '../../components/ui/Button'
 import { forgotPassword } from '../../services/authService'
+import { logger } from '../../services/logger'
 
 export default function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false)
@@ -21,7 +22,7 @@ export default function ForgotPassword() {
       await forgotPassword({ email })
       setEmailSent(true)
     } catch (error) {
-      console.error('Forgot password error:', error)
+      logger.error('Forgot password error', error, { email })
       setError(
         error instanceof Error
           ? error.message

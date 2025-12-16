@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { logger } from '../../services/logger'
 
 export default function OAuthCallback() {
   const navigate = useNavigate()
@@ -19,7 +20,7 @@ export default function OAuthCallback() {
           navigate(redirect, { replace: true })
         }
       } catch (error) {
-        console.error('OAuth checkAuth failed:', error)
+        logger.error('OAuth checkAuth failed', error)
         if (isMounted) {
           navigate('/signin?error=oauth_failed', { replace: true })
         }
