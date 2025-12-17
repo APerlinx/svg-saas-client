@@ -11,7 +11,12 @@ export const AI_MODELS = [
     icon: 'chat-gpt',
     section: 'partner',
   },
-  { value: 'gpt-5-mini', label: 'GPT-5', icon: 'chat-gpt', section: 'partner' },
+  {
+    value: 'gpt-5-mini-2025-08-07',
+    label: 'GPT-5',
+    icon: 'chat-gpt',
+    section: 'partner',
+  },
   { value: 'gemini', label: 'Gemini', icon: 'google', section: 'coming-soon' },
 ] as const
 
