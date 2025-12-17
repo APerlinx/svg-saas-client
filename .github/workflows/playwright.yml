@@ -27,21 +27,24 @@ jobs:
           --health-retries=10
 
     env:
-      # Client env
+      # Client env (Vite reads this at runtime)
       VITE_API_BASE_URL: http://localhost:4000/api
 
-      # Server env (for the backend we start during e2e)
+      # Server env
       NODE_ENV: test
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      PORT: '4000'
       FRONTEND_URL: http://localhost:5173
       IS_PRODUCTION: 'false'
-      PORT:
-        '4000'
-        # AI Service Keys (dummy for tests)
+
+      # CI DB (use the service container)
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb?schema=public
+
+      # Secret only where it matters
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+      # Dummy keys for tests
       OPENAI_API_KEY: dummy_openai_key_for_ci_tests
       RESEND_API_KEY: dummy_resend_key_for_ci_tests
-      # Google/Github OAuth (dummy for tests)
       GOOGLE_CLIENT_ID: dummy
       GOOGLE_CLIENT_SECRET: dummy
       GOOGLE_REDIRECT_URI: http://localhost:4000/api/auth/google/callback
