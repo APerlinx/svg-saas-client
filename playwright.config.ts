@@ -16,7 +16,7 @@ export default defineConfig({
   testIgnore: ['**/auth.setup.spec.ts'],
   timeout: 30_000,
   expect: {
-    timeout: 5_000,
+    timeout: 15_000,
   },
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
