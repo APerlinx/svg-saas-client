@@ -1,27 +1,93 @@
-name: Playwright Tests
+name: CI (client e2e)
+
 on:
   push:
-    branches: [ main, master ]
+    branches: [main]
   pull_request:
-    branches: [ main, master ]
+    branches: [main]
+
 jobs:
-  test:
+  e2e:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d testdb"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      # Client env
+      VITE_API_BASE_URL: http://localhost:4000/api
+
+      # Server env (for the backend we start during e2e)
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
+      JWT_SECRET: ci_test_secret_please_override_in_prod
+      FRONTEND_URL: http://localhost:5173
+      IS_PRODUCTION: 'false'
+      PORT:
+        '4000'
+        # AI Service Keys (dummy for tests)
+      OPENAI_API_KEY: dummy_openai_key_for_ci_tests
+      RESEND_API_KEY: dummy_resend_key_for_ci_tests
+      # Google/Github OAuth (dummy for tests)
+      GOOGLE_CLIENT_ID: dummy
+      GOOGLE_CLIENT_SECRET: dummy
+      GOOGLE_REDIRECT_URI: http://localhost:4000/api/auth/google/callback
+      GITHUB_CLIENT_ID: dummy
+      GITHUB_CLIENT_SECRET: dummy
+      GITHUB_REDIRECT_URI: http://localhost:4000/api/auth/github/callback
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - name: Checkout client
+        uses: actions/checkout@v4
+
+      - name: Checkout server
+        uses: actions/checkout@v4
+        with:
+          repository: APerlinx/svg-saas-server
+          path: server
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install client deps
+        run: npm ci
+
+      - name: Install server deps
+        working-directory: server
+        run: npm ci
+
+      - name: Prisma generate (server)
+        working-directory: server
+        run: npm run prisma:generate
+
+      - name: Prisma migrate (server, CI DB)
+        working-directory: server
+        run: npm run prisma:migrate:deploy
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
