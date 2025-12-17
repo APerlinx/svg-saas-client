@@ -160,6 +160,8 @@ export async function refreshAccessToken(): Promise<boolean> {
 
 export async function ensureSession(): Promise<User | null> {
   try {
+    await api.get('/auth/csrf')
+
     const user = await getCurrentUser()
     if (user) return user
 
