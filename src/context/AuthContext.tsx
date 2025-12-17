@@ -15,6 +15,7 @@ export interface AuthContextType {
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
   refreshToken: () => Promise<boolean>
+  updateUserCredits: (credits: number) => void
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)

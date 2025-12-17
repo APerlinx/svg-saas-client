@@ -102,6 +102,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return success
   }
 
+  const updateUserCredits = useCallback((credits: number) => {
+    setUser((prevUser) => {
+      if (!prevUser) return null
+      return { ...prevUser, credits }
+    })
+  }, [])
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -111,6 +118,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     logout,
     checkAuth,
     refreshToken,
+    updateUserCredits,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

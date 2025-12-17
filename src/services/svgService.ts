@@ -15,6 +15,7 @@ interface ApiError {
 
 interface GenerateSvgResponse {
   svgCode: string
+  credits?: number
 }
 
 function normalizeError(error: unknown): never {

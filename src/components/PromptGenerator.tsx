@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom'
 const SESSION_KEY = 'svg_prompt_draft'
 
 export default function PromptGenerator() {
-  const { user } = useAuth()
+  const { user, updateUserCredits } = useAuth()
 
   // Load from sessionStorage on mount
   const [formData, setFormData] = useState<PromptFormData>(() => {
@@ -52,6 +52,9 @@ export default function PromptGenerator() {
     e.preventDefault()
     setError(null)
 
+    // Close any open dropdowns
+    setOpenDropdown(null)
+
     // Check if user is authenticated
     if (!user) {
       setIsAuthModalOpen(true)
@@ -83,6 +86,12 @@ export default function PromptGenerator() {
         model: formData.model,
       })
       setGeneratedSvg(result.svgCode)
+
+      // Update credits immediately if backend returns updated count
+      if (result.credits !== undefined) {
+        updateUserCredits(result.credits)
+      }
+
       setIsModalOpen(true)
     } catch (err) {
       if (err && typeof err === 'object' && 'message' in err) {
