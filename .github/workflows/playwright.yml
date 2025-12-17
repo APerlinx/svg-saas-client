@@ -2,9 +2,9 @@ name: CI (client e2e)
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   e2e:
@@ -32,8 +32,8 @@ jobs:
 
       # Server env (for the backend we start during e2e)
       NODE_ENV: test
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
-      JWT_SECRET: ci_test_secret_please_override_in_prod
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
       FRONTEND_URL: http://localhost:5173
       IS_PRODUCTION: 'false'
       PORT:
