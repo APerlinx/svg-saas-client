@@ -10,6 +10,7 @@ attachCsrfInterceptor(api)
 
 import type { RegisterResponse, User } from '../types/user'
 import type { AuthResponse } from '../types/user'
+import { setCsrfToken } from '../utils/csrf'
 interface ApiError {
   message?: string
   error?: string
@@ -160,8 +161,6 @@ export async function refreshAccessToken(): Promise<boolean> {
 
 export async function ensureSession(): Promise<User | null> {
   try {
-    await api.get('/auth/csrf')
-
     const user = await getCurrentUser()
     if (user) return user
 
@@ -173,4 +172,9 @@ export async function ensureSession(): Promise<User | null> {
     logger.error('Error ensuring session', error)
     return null
   }
+}
+
+export async function bootstrapCsrf() {
+  const res = await api.get('/csrf')
+  setCsrfToken(res.data.csrfToken)
 }

@@ -28,6 +28,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const initAuth = async () => {
       setIsLoading(true)
       try {
+        await authService.bootstrapCsrf()
         const currentUser = await authService.ensureSession()
         setUser(currentUser)
       } catch (error) {

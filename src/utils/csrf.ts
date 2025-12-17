@@ -10,6 +10,10 @@ export const getCsrfToken = (): string | null => {
   return map['csrf-token'] || null
 }
 
+let csrfToken: string | null = null
+export const setCsrfToken = (t: string) => (csrfToken = t)
+export const getStoredCsrfToken = () => csrfToken
+
 /**
  * Wrapper for fetch that automatically includes CSRF token
  * Use this instead of native fetch for all API calls
