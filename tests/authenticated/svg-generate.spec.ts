@@ -1,6 +1,6 @@
 // tests/authenticated/svg-generate.spec.ts
 import { test, expect } from '@playwright/test'
-const TEST_EMAIL = 'e2e-user@example.com'
+const TEST_EMAIL = 'test@example.com'
 const TEST_PASSWORD = 'Password123!'
 // Use authenticated state
 
