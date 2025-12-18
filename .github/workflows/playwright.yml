@@ -82,6 +82,10 @@ jobs:
         working-directory: server
         run: npm run prisma:migrate:deploy
 
+      - name: Seed test data (server)
+        working-directory: server
+        run: npm run seed:test
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
