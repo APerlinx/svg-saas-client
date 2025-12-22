@@ -4,6 +4,7 @@
 
 [![CI Status](<https://github.com/APerlinx/svg-saas-client/workflows/CI%20(client%20e2e)/badge.svg>)](https://github.com/APerlinx/svg-saas-client/actions)
 [![Deploy Status](https://img.shields.io/badge/deploy-Vercel-black)](https://vercel.com)
+[![Render](https://img.shields.io/badge/API-Render-blue)](https://chatsvg-api.onrender.com)
 
 ## 🚀 Features
 
