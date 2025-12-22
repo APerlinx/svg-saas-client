@@ -1,9 +1,10 @@
 # chatSVG - Frontend
 
-> A production-ready SaaS frontend for AI-powered SVG generation with enterprise-grade authentication, real-time credit management, and modern React architecture. Built with TypeScript, comprehensive testing (Playwright E2E), Sentry error tracking, and CI/CD automation.
-
 [![CI Status](<https://github.com/APerlinx/svg-saas-client/workflows/CI%20(client%20e2e)/badge.svg>)](https://github.com/APerlinx/svg-saas-client/actions)
 [![Deploy Status](https://img.shields.io/badge/deploy-Vercel-black)](https://vercel.com)
+[![Render](https://img.shields.io/badge/API-Render-blue)](https://chatsvg-api.onrender.com)
+
+> A production-ready SaaS frontend for AI-powered SVG generation with enterprise-grade authentication, real-time credit management, and modern React architecture. Built with TypeScript, comprehensive testing (Playwright E2E), Sentry error tracking, and CI/CD automation.
 
 ## 🚀 Features
 
