@@ -50,9 +50,18 @@ export async function generateSvg({
       privacy,
       model,
     })
+
     return response.data
   } catch (error) {
     logger.error('Error generating SVG', error, { prompt, style, model })
+
+    if (axios.isAxiosError(error) && error.response?.status === 429) {
+      const retryAfter = error.response.headers['retry-after']
+      if (retryAfter) {
+        const baseMessage = error.response.data?.error || 'Rate limit exceeded'
+        throw new Error(`${baseMessage}. Retry after ${retryAfter} seconds.`)
+      }
+    }
     normalizeError(error)
   }
 }
