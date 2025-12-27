@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import App from '../App'
 import Dashboard from '../pages/Dashboard'
 import ErrorBoundary from '../components/ErrorBoundary'
+import NotFound from '../components/NotFound'
 import Pricing from '../pages/Pricing'
 import SignIn from '../pages/auth/SignIn'
 import SignUp from '../pages/auth/SignUp'
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
       {
         path: 'auth/callback',
         element: <OAuthCallback />,
+      },
+      {
+        path: '*',
+        element: <NotFound />,
       },
     ],
   },

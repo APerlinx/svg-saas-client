@@ -6,16 +6,19 @@ import { router } from './routes'
 import { AuthProvider } from './context/AuthProvider'
 import { ToastProvider } from './context/ToastProvider'
 import { initSentry } from './services/logger'
+import { AppErrorBoundary } from './components/AppErrorBoundary'
 
 // Initialize Sentry for error tracking
 initSentry()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <ToastProvider>
-        <RouterProvider router={router} />
-      </ToastProvider>
-    </AuthProvider>
+    <AppErrorBoundary>
+      <AuthProvider>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </AuthProvider>
+    </AppErrorBoundary>
   </StrictMode>
 )
