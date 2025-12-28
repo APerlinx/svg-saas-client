@@ -1,13 +1,55 @@
-# v0.1.0-beta
+# v0.2.0 Release Checklist
 
-## Beta checklist
+## Core Features ✅
 
-- [x]CI green on PR
-- [x]Branch protection enabled
-- [x]Production deploy from main only
-- [x]Sentry: errors visible, release set (optional)
-- [x]Backend logs: Render log drain / pino output confirmed
-- [x]Health endpoint works: /api/health
-- [x]Auth flows tested (signup/login/logout/refresh)
-- [x]Rate limiting doesn’t block normal users
-- [x]Secrets only in platform env vars (no .env committed)
+- [x] BullMQ job polling with exponential backoff
+- [x] Per-attempt idempotency keys
+- [x] Real-time progress modal with animated UI
+- [x] Credit updates from polling responses
+- [x] Type-safe Job/QueueStats interfaces exported
+- [x] Modal close button disabled during generation
+
+## Testing 🧪
+
+- [ ] E2E tests pass for new async generation flow
+- [ ] Manual testing: generate SVG and verify progress states
+- [ ] Manual testing: double-click prevention with same idempotency key
+- [ ] Manual testing: credit balance updates without refresh
+- [ ] Manual testing: modal cannot be closed mid-generation
+- [ ] Manual testing: timeout handling (60s limit)
+- [ ] Manual testing: error states display correctly
+
+## Documentation 📝
+
+- [x] README updated with BullMQ architecture
+- [x] CHANGELOG.md created with v0.2.0 notes
+- [x] package.json version bumped to 0.2.0
+- [ ] API contract documented (job status responses)
+
+## Production Readiness 🚀
+
+- [ ] CI green on PR
+- [ ] No secrets in client code (only VITE_* env vars)
+- [ ] Sentry DSN configured for production
+- [ ] Backend idempotency validation deployed
+- [ ] Rate limiting tested (429 with retry-after header)
+- [ ] Job polling tested under load
+
+## Deployment 🌐
+
+- [ ] Merge to `main` branch
+- [ ] Tag release: `git tag v0.2.0`
+- [ ] Push tags: `git push origin v0.2.0`
+- [ ] Create GitHub release with changelog
+- [ ] Verify Vercel auto-deploy completes
+- [ ] Smoke test production: generate SVG end-to-end
+
+## Rollback Plan 🔄
+
+If critical issues found:
+1. Revert `main` to previous commit
+2. Force push: `git push origin main --force`
+3. Vercel will auto-deploy previous version
+4. Tag hotfix branch from reverted state
+
+

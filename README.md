@@ -9,7 +9,10 @@
 ## 🚀 Features
 
 - **AI-Powered SVG Generation**: Create custom SVGs using GPT-4o and GPT-5 models
-- **Real-Time Credit Management**: Instant credit updates after generation
+- **Async Job Processing**: BullMQ-powered queue with real-time progress tracking
+- **Real-Time Credit Management**: Instant credit updates via polling responses
+- **Idempotency Protection**: Per-attempt keys prevent duplicate job creation
+- **Professional Progress UI**: Animated progress bar with status-specific messaging
 - **Multiple Export Formats**: Raw SVG, React components, TypeScript, CDN URLs, PNG downloads
 - **Privacy Controls**: Public/private generation options
 - **Session Management**: Persistent draft prompts and secure authentication
@@ -191,12 +194,25 @@ client/
 - Multiple AI models (GPT-4o, GPT-5)
 - Style presets (minimal, flat, isometric, etc.)
 - Privacy controls (public/private)
+- Async job processing with BullMQ
+- Real-time progress updates (QUEUED → RUNNING → SUCCEEDED/FAILED)
+- Exponential backoff polling (2s to 10s intervals)
+- Idempotency keys to prevent duplicate submissions
 ```
+
+### Job Processing Flow
+
+1. **Submit** - Frontend sends generation request with idempotency key
+2. **Queue** - Backend creates BullMQ job and returns job ID
+3. **Poll** - Frontend polls `/svg/generation-jobs/:id` every 2-10s
+4. **Progress** - Modal shows live status with animated progress bar
+5. **Complete** - SVG delivered with updated credit balance
 
 ### Credit System
 
 - Real-time credit display in header
-- Instant updates after generation (no refresh)
+- Instant updates from polling responses (no refresh needed)
+- Credits deducted only on successful generation
 - Low credit warnings with banner
 - Pricing page with purchase options
 
