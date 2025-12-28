@@ -15,6 +15,13 @@ interface SvgResultModalProps {
   onClose: () => void
   svgCode: string
   prompt?: string
+  isGenerating?: boolean
+  progress?: {
+    percent: number
+    label: string
+    subtext?: string
+  }
+  error?: string | null
 }
 
 export default function SvgResultModal({
@@ -22,6 +29,9 @@ export default function SvgResultModal({
   onClose,
   svgCode,
   prompt,
+  isGenerating,
+  progress,
+  error,
 }: SvgResultModalProps) {
   const [copiedButton, setCopiedButton] = useState<string | null>(null)
   const previewRef = useRef<HTMLDivElement | null>(null)
@@ -139,12 +149,23 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
     },
   ]
 
+  const progressPercent = Math.min(Math.max(progress?.percent ?? 0, 0), 100)
+  const progressLabel = progress?.label ?? 'Preparing your SVG'
+  const progressSubtext =
+    progress?.subtext ?? 'Hang tight while we bring your idea to life.'
+
+  const isPreviewReady = Boolean(svgCode) && !isGenerating && !error
+  const showProgressState = !isPreviewReady && !error
+  const showErrorState = Boolean(error)
+  const disableExportActions = !isPreviewReady
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       fullScreenOnMobile
       disableContentScroll
+      showCloseButton={!isGenerating}
       contentClassName="px-3 sm:px-8 pt-10 sm:pt-16 pb-3 sm:pb-8"
     >
       <div
@@ -176,18 +197,78 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
               backgroundPosition: '0 0, 10px 10px',
             }}
           >
-            <div
-              ref={previewRef}
-              className="svg-preview w-full h-full min-w-0"
-              dangerouslySetInnerHTML={{ __html: svgCode }}
-            />
+            {showProgressState && (
+              <div className="w-full max-w-lg text-center flex flex-col items-center gap-4">
+                <div className="w-16 h-16 rounded-full border-2 border-dashed border-white/40 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-wizard-blue to-wizard-orange animate-pulse" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-base sm:text-lg">
+                    {progressLabel}
+                  </p>
+                  <p className="text-white/70 text-sm mt-1">
+                    {progressSubtext}
+                  </p>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-linear-to-r from-wizard-blue via-wizard-orange/80 to-wizard-orange transition-all duration-500"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+                <p className="text-[12px] text-white/60 uppercase tracking-[0.2em]">
+                  Live status updates
+                </p>
+              </div>
+            )}
+
+            {showErrorState && (
+              <div className="text-center max-w-md space-y-4">
+                <div className="w-16 h-16 mx-auto rounded-full bg-wizard-orange/10 flex items-center justify-center border border-wizard-orange/40">
+                  <svg
+                    className="w-8 h-8 text-wizard-orange"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v4m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-white text-lg font-semibold">
+                    We couldn't finish this one
+                  </p>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    {error}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {isPreviewReady && (
+              <div
+                ref={previewRef}
+                className="svg-preview w-full h-full min-w-0"
+                dangerouslySetInnerHTML={{ __html: svgCode }}
+              />
+            )}
           </div>
 
           {/* Download Buttons */}
           <div className="flex gap-2 sm:gap-3">
             <button
               onClick={handleDownloadSVG}
-              className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-wizard-orange text-white rounded-lg font-medium hover:bg-wizard-orange/90 transition-all shadow-md hover:shadow-lg text-sm"
+              disabled={disableExportActions}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all shadow-md text-sm ${
+                disableExportActions
+                  ? 'bg-white/10 text-white/40 cursor-not-allowed'
+                  : 'bg-wizard-orange text-white hover:bg-wizard-orange/90 hover:shadow-lg'
+              }`}
             >
               <DownloadIcon className="w-5 h-5" />
               Download SVG
@@ -195,7 +276,12 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
 
             <button
               onClick={handleDownloadPNG}
-              className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-white/10 text-white/70 rounded-lg font-medium hover:bg-white/20 transition-all relative group text-sm"
+              disabled={disableExportActions}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all relative group text-sm ${
+                disableExportActions
+                  ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                  : 'bg-white/10 text-white/70 hover:bg-white/20'
+              }`}
             >
               <ImageIcon className="w-5 h-5" />
               PNG
@@ -209,64 +295,105 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
         {/* Right side - Code & Actions */}
         <div className="flex flex-col gap-3 sm:gap-4 min-h-0 min-w-0">
           <h3 className="text-base sm:text-lg font-semibold text-white">
-            Export Options
+            {showErrorState ? 'What happened?' : 'Export Options'}
           </h3>
 
-          {/* Copy Buttons Grid */}
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            {copyButtons.map((button) => (
+          {showErrorState ? (
+            <div className="bg-[rgb(17_17_17/55%)] border border-red-500/30 rounded-2xl p-4 text-white/80 space-y-3">
+              <p className="text-sm leading-relaxed">
+                The renderer hit an unexpected issue while processing your
+                prompt. Please close this modal, adjust your prompt, and try
+                again. If the problem persists, reach out via support.
+              </p>
               <button
-                key={button.id}
-                onClick={() => handleCopy(button.content, button.id)}
-                className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all text-sm ${
-                  copiedButton === button.id
-                    ? 'bg-green-500 text-white'
-                    : 'bg-[rgb(17_17_17/55%)] text-white/90 hover:bg-[rgb(17_17_17/70%)] border border-wizard-orange/20'
+                onClick={onClose}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-wizard-orange text-white rounded-lg font-semibold hover:bg-wizard-orange/90 transition-all"
+              >
+                Back to editor
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Copy Buttons Grid */}
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                {copyButtons.map((button) => (
+                  <button
+                    key={button.id}
+                    onClick={() => handleCopy(button.content, button.id)}
+                    disabled={disableExportActions}
+                    className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all text-sm ${
+                      disableExportActions
+                        ? 'bg-[rgb(17_17_17/40%)] text-white/30 cursor-not-allowed'
+                        : copiedButton === button.id
+                        ? 'bg-green-500 text-white'
+                        : 'bg-[rgb(17_17_17/55%)] text-white/90 hover:bg-[rgb(17_17_17/70%)] border border-wizard-orange/20'
+                    }`}
+                  >
+                    {copiedButton === button.id ? (
+                      <>
+                        <CheckIcon className="w-4 h-4" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        {button.icon}
+                        {button.label}
+                      </>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Code Preview */}
+              <div className="bg-[rgb(17_17_17/55%)] rounded-lg p-3 sm:p-4 border border-wizard-orange/20 overflow-hidden relative min-h-[120px] flex flex-col">
+                {isPreviewReady ? (
+                  <pre className="text-[11px] sm:text-xs text-white/80 font-mono whitespace-pre-wrap break-all max-h-20 sm:max-h-40 overflow-hidden flex-1">
+                    <code>{svgCode}</code>
+                  </pre>
+                ) : (
+                  <div className="flex-1 flex flex-col justify-center items-start gap-2 text-white/50 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-wizard-orange animate-pulse" />
+                      Preparing code snippets...
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-white/40 animate-pulse" />
+                      Export options unlock once your SVG is ready.
+                    </div>
+                  </div>
+                )}
+                {isPreviewReady && (
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-linear-to-t from-[rgb(17_17_17/70%)] to-transparent" />
+                )}
+              </div>
+
+              {/* Edit Button */}
+              <button
+                onClick={handleEdit}
+                disabled={disableExportActions}
+                className={`w-full flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all relative group text-sm ${
+                  disableExportActions
+                    ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                    : 'bg-white/10 text-white/70 hover:bg-white/20'
                 }`}
               >
-                {copiedButton === button.id ? (
-                  <>
-                    <CheckIcon className="w-4 h-4" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    {button.icon}
-                    {button.label}
-                  </>
-                )}
+                <EditIcon className="w-5 h-5" />
+                Edit SVG
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  Coming Soon
+                </span>
               </button>
-            ))}
-          </div>
 
-          {/* Code Preview */}
-          <div className="bg-[rgb(17_17_17/55%)] rounded-lg p-3 sm:p-4 border border-wizard-orange/20 overflow-hidden relative">
-            <pre className="text-[11px] sm:text-xs text-white/80 font-mono whitespace-pre-wrap break-all max-h-20 sm:max-h-40 overflow-hidden">
-              <code>{svgCode}</code>
-            </pre>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-linear-to-t from-[rgb(17_17_17/70%)] to-transparent" />
-          </div>
-
-          {/* Edit Button */}
-          <button
-            onClick={handleEdit}
-            className="w-full flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-white/10 text-white/70 rounded-lg font-medium hover:bg-white/20 transition-all relative group text-sm"
-          >
-            <EditIcon className="w-5 h-5" />
-            Edit SVG
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              Coming Soon
-            </span>
-          </button>
-
-          {/* Info Text */}
-          <p className="text-[11px] sm:text-xs text-white/50 text-center">
-            💡 Tip: Data URI can be used directly in{' '}
-            <code className="bg-white/10 px-1 rounded text-wizard-orange">
-              img src
-            </code>{' '}
-            or CSS backgrounds
-          </p>
+              {/* Info Text */}
+              <p className="text-[11px] sm:text-xs text-white/50 text-center">
+                💡 Tip: Data URI can be used directly in{' '}
+                <code className="bg-white/10 px-1 rounded text-wizard-orange">
+                  img src
+                </code>{' '}
+                or CSS backgrounds
+              </p>
+            </>
+          )}
         </div>
       </div>
     </Modal>
