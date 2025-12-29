@@ -17,6 +17,8 @@ interface ModalProps {
   disableContentScroll?: boolean
   /** Make the panel fullscreen on mobile (keeps current sizing on >= sm). */
   fullScreenOnMobile?: boolean
+  /** Hides the close icon/button when false (defaults to true). */
+  showCloseButton?: boolean
 }
 
 function Modal({
@@ -28,6 +30,7 @@ function Modal({
   contentClassName,
   disableContentScroll,
   fullScreenOnMobile,
+  showCloseButton = true,
 }: ModalProps) {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -108,25 +111,27 @@ function Modal({
           }}
         >
           {/* Close button - top right */}
-          <button
-            onClick={onClose}
-            className="absolute top-1 right-1 w-10 h-10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all duration-200 group z-10"
-            aria-label="Close modal"
-          >
-            <svg
-              className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {showCloseButton && (
+            <button
+              onClick={onClose}
+              className="absolute top-1 right-1 w-10 h-10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all duration-200 group z-10"
+              aria-label="Close modal"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              <svg
+                className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
 
           {/* Content */}
           <div
