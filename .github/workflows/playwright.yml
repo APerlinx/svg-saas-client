@@ -26,6 +26,16 @@ jobs:
           --health-timeout=5s
           --health-retries=10
 
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     env:
       # Client env (Vite reads this at runtime)
       VITE_API_BASE_URL: http://localhost:4000/api
@@ -38,6 +48,9 @@ jobs:
 
       # CI DB (use the service container)
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb?schema=public
+
+      # Redis for BullMQ job queue
+      REDIS_URL: redis://localhost:6379
 
       # Secret only where it matters
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
