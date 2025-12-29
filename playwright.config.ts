@@ -37,8 +37,8 @@ export default defineConfig({
 
   webServer: [
     {
-      // Run backend from ./server with NODE_ENV=test
-      command: 'npm run dev:test --prefix ./server',
+      // Run backend + worker from ./server with NODE_ENV=test
+      command: 'npm run dev:test:full --prefix ./server',
       port: 4000,
       reuseExistingServer: !process.env.CI,
     },
