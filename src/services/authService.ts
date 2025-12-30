@@ -6,11 +6,11 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   withCredentials: true, // Include cookies in requests
 })
+
 attachCsrfInterceptor(api)
 
 import type { RegisterResponse, User } from '../types/user'
 import type { AuthResponse } from '../types/user'
-import { setCsrfToken } from '../utils/csrf'
 interface ApiError {
   message?: string
   error?: string
@@ -172,9 +172,4 @@ export async function ensureSession(): Promise<User | null> {
     logger.error('Error ensuring session', error)
     return null
   }
-}
-
-export async function bootstrapCsrf() {
-  const res = await api.get('/csrf')
-  setCsrfToken(res.data.csrfToken)
 }
