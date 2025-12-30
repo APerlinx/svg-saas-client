@@ -5,7 +5,7 @@ import * as authService from '../services/authService'
 import { AuthContext, type AuthContextType } from './AuthContext.tsx'
 import { refreshAccessToken } from '../services/authService'
 import { logger } from '../services/logger'
-
+import { bootstrapCsrf } from '../services/csrfService'
 interface AuthProviderProps {
   children: ReactNode
 }
@@ -28,7 +28,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const initAuth = async () => {
       setIsLoading(true)
       try {
-        await authService.bootstrapCsrf()
+        await bootstrapCsrf()
         const currentUser = await authService.ensureSession()
         setUser(currentUser)
       } catch (error) {
