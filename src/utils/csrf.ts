@@ -1,9 +1,5 @@
 import { refreshAccessToken } from '../services/authService'
 
-/**
- * Get CSRF token from cookie
- * The token is stored in a non-httpOnly cookie so JS can read it
- */
 export const getCsrfToken = (): string | null => {
   const cookies = document.cookie.split(';').map((c) => c.trim().split('='))
   const map = Object.fromEntries(cookies)
