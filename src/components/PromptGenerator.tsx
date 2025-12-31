@@ -74,12 +74,23 @@ const DEFAULT_PROGRESS: ProgressState = {
 const buildProgressState = (
   status: JobStatus,
   queue?: QueueStats,
-  duplicate?: boolean
+  duplicate?: boolean,
+  progress?: number
 ): ProgressState => {
   const config = PROGRESS_COPY[status] ?? PROGRESS_COPY.QUEUED
+  const normalizedProgress =
+    typeof progress === 'number' && Number.isFinite(progress)
+      ? Math.min(Math.max(Math.round(progress), 0), 100)
+      : undefined
+
+  const percent =
+    status === 'SUCCEEDED' || status === 'FAILED'
+      ? 100
+      : normalizedProgress ?? config.percent
+
   return {
     status,
-    percent: config.percent,
+    percent,
     label: config.label,
     subtext: config.subtext({ queue, duplicate }),
   }
@@ -118,6 +129,9 @@ export default function PromptGenerator() {
     useState<ProgressState>(DEFAULT_PROGRESS)
   const [modalError, setModalError] = useState<string | null>(null)
   const idempotencyKeyRef = useRef<string | null>(null)
+  const generationAttemptRef = useRef<string | null>(null)
+  const activeJobIdRef = useRef<string | null>(null)
+  const [modalKey, setModalKey] = useState<string>('svg-result')
 
   // Save to sessionStorage whenever formData changes
   useEffect(() => {
@@ -128,9 +142,25 @@ export default function PromptGenerator() {
     idempotencyKeyRef.current = null
   }, [formData.prompt, formData.style, formData.model, formData.isPrivate])
 
-  const handleProgressUpdate = (update: GenerationProgressUpdate) => {
+  const handleProgressUpdate = (
+    update: GenerationProgressUpdate,
+    attemptId: string
+  ) => {
+    if (generationAttemptRef.current !== attemptId) return
+
+    if (!activeJobIdRef.current) {
+      activeJobIdRef.current = update.job.id
+    }
+
+    if (activeJobIdRef.current !== update.job.id) return
+
     setProgressState(
-      buildProgressState(update.job.status, update.queue, update.duplicate)
+      buildProgressState(
+        update.job.status,
+        update.queue,
+        update.duplicate,
+        update.progress
+      )
     )
   }
 
@@ -138,6 +168,11 @@ export default function PromptGenerator() {
     e.preventDefault()
     setError(null)
     setModalError(null)
+
+    const attemptId = crypto.randomUUID()
+    setModalKey(attemptId)
+    generationAttemptRef.current = attemptId
+    activeJobIdRef.current = null
 
     // Close any open dropdowns
     setOpenDropdown(null)
@@ -182,9 +217,11 @@ export default function PromptGenerator() {
           idempotencyKey: idempotencyKeyRef.current,
         },
         {
-          onStatusUpdate: handleProgressUpdate,
+          onStatusUpdate: (update) => handleProgressUpdate(update, attemptId),
         }
       )
+
+      if (generationAttemptRef.current !== attemptId) return
 
       if (!result.job.generation?.svg) {
         throw new Error('Generation completed but no SVG was returned.')
@@ -203,6 +240,8 @@ export default function PromptGenerator() {
 
       setIsModalOpen(true)
     } catch (err) {
+      if (generationAttemptRef.current !== attemptId) return
+
       let errorMessage =
         'Unable to generate SVG. Please ensure your description uses valid characters and try again.'
 
@@ -233,7 +272,9 @@ export default function PromptGenerator() {
       })
       triggerShake()
     } finally {
-      setIsGenerating(false)
+      if (generationAttemptRef.current === attemptId) {
+        setIsGenerating(false)
+      }
     }
   }
 
@@ -372,6 +413,7 @@ export default function PromptGenerator() {
 
       {/* SVG Result Modal */}
       <SvgResultModal
+        key={modalKey}
         isOpen={isModalOpen}
         onClose={handleModalClose}
         svgCode={generatedSvg}

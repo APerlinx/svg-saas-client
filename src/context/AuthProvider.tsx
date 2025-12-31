@@ -6,6 +6,7 @@ import { AuthContext, type AuthContextType } from './AuthContext.tsx'
 import { refreshAccessToken } from '../services/authService'
 import { logger } from '../services/logger'
 import { bootstrapCsrf } from '../services/csrfService'
+import { disconnectSocket, setupSocket } from '../lib/socket.ts'
 interface AuthProviderProps {
   children: ReactNode
 }
@@ -31,6 +32,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await bootstrapCsrf()
         const currentUser = await authService.ensureSession()
         setUser(currentUser)
+
+        if (currentUser) {
+          setupSocket()
+        } else {
+          disconnectSocket()
+        }
       } catch (error) {
         logger.error('Unexpected error in initAuth', error)
         setUser(null)
@@ -40,6 +47,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     void initAuth()
+
+    return () => {
+      disconnectSocket()
+    }
   }, [])
 
   const login = async (
@@ -55,6 +66,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
+      setupSocket()
     } catch (error) {
       logger.error('Unexpected error in login', error)
       setUser(null)
@@ -76,6 +88,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
+      setupSocket()
     } catch (error) {
       logger.error('Unexpected error in register', error)
       setUser(null)
@@ -85,10 +98,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = async () => {
     try {
       await authService.signOut()
+      disconnectSocket()
     } catch (error) {
       logger.error('Logout error', error)
     } finally {
-      // Clear session storage on logout
       sessionStorage.removeItem('svg_prompt_draft')
       setUser(null)
     }

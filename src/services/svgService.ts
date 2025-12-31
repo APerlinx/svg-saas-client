@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { attachCsrfInterceptor } from '../services/csrfInterceptor'
 import { logger } from './logger'
+import { connectSocket, waitForSocketConnected } from '../lib/socket'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
@@ -53,6 +54,7 @@ export interface GenerationProgressUpdate {
   job: Job
   duplicate?: boolean
   queue?: QueueStats
+  progress?: number
 }
 
 interface GenerateSvgParams {
@@ -63,8 +65,32 @@ interface GenerateSvgParams {
   idempotencyKey: string
 }
 
+type GenerationJobUpdatePayload = {
+  jobId: string
+  status: Job['status']
+  progress?: number
+  generationId?: string | null
+  errorCode?: string | null
+  errorMessage?: string | null
+}
+
 interface GenerateSvgOptions {
   onStatusUpdate?: (update: GenerationProgressUpdate) => void
+  timeoutMs?: number
+}
+
+function isGenerationJobUpdatePayload(
+  value: unknown
+): value is GenerationJobUpdatePayload {
+  if (typeof value !== 'object' || value === null) return false
+  const v = value as Record<string, unknown>
+  return (
+    typeof v.jobId === 'string' &&
+    (v.status === 'QUEUED' ||
+      v.status === 'RUNNING' ||
+      v.status === 'SUCCEEDED' ||
+      v.status === 'FAILED')
+  )
 }
 
 function normalizeError(error: unknown): never {
@@ -96,21 +122,80 @@ export async function generateSvg(
       }
     )
 
-    const { job, duplicate, queue, credits } = response.data
+    const socket = connectSocket()
+    await waitForSocketConnected(socket)
+    const { job, duplicate, queue } = response.data
+    const jobId = job.id
 
     options?.onStatusUpdate?.({ job, duplicate, queue })
 
     if (duplicate && (job.status === 'SUCCEEDED' || job.status === 'FAILED')) {
-      logger.debug('Returning completed duplicate job', { jobId: job.id })
       return response.data
     }
 
-    // Poll for completion
-    return await pollJobCompletion(
-      job.id,
-      { duplicate, queue, credits },
-      options?.onStatusUpdate
-    )
+    if (job.status === 'SUCCEEDED' || job.status === 'FAILED') {
+      return response.data
+    }
+
+    return await new Promise<GenerateSvgResponse>((resolve, reject) => {
+      const timeoutMs = options?.timeoutMs ?? 120_000
+      let settled = false
+
+      const cleanup = () => {
+        socket.off('generation-job:update', onUpdate)
+        clearTimeout(timer)
+      }
+
+      const finish = (fn: () => void) => {
+        if (settled) return
+        settled = true
+        cleanup()
+        fn()
+      }
+
+      const timer = setTimeout(() => {
+        finish(() => reject(new Error(`Timed out waiting for job ${jobId}`)))
+      }, timeoutMs)
+
+      const onUpdate = async (payload: unknown) => {
+        if (!isGenerationJobUpdatePayload(payload)) return
+        if (payload.jobId !== jobId) return
+
+        const progress =
+          typeof payload.progress === 'number' ? payload.progress : undefined
+
+        const updatedJob: Job = {
+          ...job,
+          status: payload.status,
+          generationId: payload.generationId ?? job.generationId,
+          errorCode: payload.errorCode ?? job.errorCode,
+          errorMessage: payload.errorMessage ?? job.errorMessage,
+        }
+
+        options?.onStatusUpdate?.({
+          job: updatedJob,
+          duplicate,
+          queue,
+          progress,
+        })
+
+        const isTerminal =
+          payload.status === 'SUCCEEDED' || payload.status === 'FAILED'
+
+        if (!isTerminal) return
+
+        try {
+          const finalRes = await api.get<GenerateSvgResponse>(
+            `/svg/generation-jobs/${jobId}`
+          )
+          finish(() => resolve(finalRes.data))
+        } catch (e) {
+          finish(() => reject(e))
+        }
+      }
+
+      socket.on('generation-job:update', onUpdate)
+    })
   } catch (error) {
     logger.error('Error generating SVG', error)
 
@@ -124,80 +209,4 @@ export async function generateSvg(
 
     normalizeError(error)
   }
-}
-
-async function pollJobCompletion(
-  jobId: string,
-  metadata: { duplicate?: boolean; queue?: QueueStats; credits?: number },
-  onStatusUpdate?: (update: GenerationProgressUpdate) => void
-): Promise<GenerateSvgResponse> {
-  const MAX_POLL_TIME = 60_000
-  const startTime = Date.now()
-  let pollDelay = 2_000
-  const MAX_DELAY = 10_000
-  let consecutiveErrors = 0
-  const MAX_CONSECUTIVE_ERRORS = 3
-
-  return new Promise<GenerateSvgResponse>((resolve, reject) => {
-    const poll = async () => {
-      // Timeout check
-      if (Date.now() - startTime > MAX_POLL_TIME) {
-        reject(new Error('SVG generation timed out after 60 seconds'))
-        return
-      }
-
-      try {
-        const pollResponse = await api.get<{ job: Job; credits?: number }>(
-          `/svg/generation-jobs/${jobId}`
-        )
-        const { job, credits: latestCredits } = pollResponse.data
-
-        if (latestCredits !== undefined) {
-          metadata.credits = latestCredits
-        }
-
-        logger.debug('Polling job status', { status: job.status, jobId })
-        onStatusUpdate?.({
-          job,
-          duplicate: metadata.duplicate,
-          queue: metadata.queue,
-        })
-
-        if (job.status === 'SUCCEEDED') {
-          resolve({ job, ...metadata })
-        } else if (job.status === 'FAILED') {
-          reject(new Error(job.errorMessage || 'SVG generation failed'))
-        } else {
-          // Still QUEUED/RUNNING → poll again with backoff
-          consecutiveErrors = 0
-          pollDelay = Math.min(pollDelay * 1.5, MAX_DELAY)
-          setTimeout(poll, pollDelay)
-        }
-      } catch (pollError) {
-        consecutiveErrors++
-
-        // Fatal errors → stop immediately
-        if (axios.isAxiosError(pollError)) {
-          const status = pollError.response?.status
-          if (status === 401 || status === 403 || status === 404) {
-            reject(pollError)
-            return
-          }
-        }
-
-        // Transient errors → retry
-        if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
-          reject(new Error('Polling failed after multiple network errors'))
-        } else {
-          logger.warn('Poll attempt failed, retrying...', {
-            attempt: consecutiveErrors,
-            jobId,
-          })
-          setTimeout(poll, Math.min(pollDelay * 0.5, 2_000))
-        }
-      }
-    }
-
-    poll()
-  })
 }
