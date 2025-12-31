@@ -21,7 +21,6 @@ export function getSocket() {
 export function connectSocket() {
   const s = getSocket()
   if (!s.connected) {
-    console.log('[socket] attempting connection...')
     s.connect()
   }
   return s
@@ -29,42 +28,43 @@ export function connectSocket() {
 
 export function disconnectSocket() {
   if (!socket) return
-  console.log('[socket] disconnect requested')
   socket.disconnect()
-  console.log('[socket] connected after disconnect?', socket.connected)
 }
 
 export function setupSocket() {
-  const socket = connectSocket()
-  socket.off('server:ready')
-  socket.on('server:ready', (msg) => console.log('[socket] server ready', msg))
+  connectSocket()
+}
 
-  socket.off('connect')
-  socket.on('connect', () =>
-    console.log('[socket] connected', {
-      id: socket.id,
-      ts: new Date().toISOString(),
-    })
-  )
+export function waitForSocketConnected(
+  socket: Socket,
+  timeoutMs = 8000
+): Promise<void> {
+  if (socket.connected) return Promise.resolve()
 
-  socket.off('disconnect')
-  socket.on('disconnect', (reason) =>
-    console.log('[socket] disconnected', {
-      reason,
-      ts: new Date().toISOString(),
-    })
-  )
+  return new Promise<void>((resolve, reject) => {
+    const onConnect = () => {
+      cleanup()
+      resolve()
+    }
+    const onError = (err: Error) => {
+      cleanup()
+      reject(err)
+    }
 
-  socket.off('connect_error')
-  socket.on('connect_error', (err) =>
-    console.log('[socket] connect_error', {
-      message: err.message,
-      stack: err.stack,
-    })
-  )
+    const timer = window.setTimeout(() => {
+      cleanup()
+      reject(new Error('Socket connection timed out'))
+    }, timeoutMs)
 
-  socket.off('reconnect_attempt')
-  socket.on('reconnect_attempt', (attempt) =>
-    console.log('[socket] reconnect attempt', attempt)
-  )
+    const cleanup = () => {
+      clearTimeout(timer)
+      socket.off('connect', onConnect)
+      socket.off('connect_error', onError)
+    }
+
+    socket.on('connect', onConnect)
+    socket.on('connect_error', onError)
+
+    socket.connect()
+  })
 }
