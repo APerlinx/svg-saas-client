@@ -14,8 +14,8 @@ export default function LoaderIcon({
       <path
         fill="none"
         stroke="#000000"
-        stroke-linecap="round"
-        stroke-width="2"
+        strokeLinecap="round"
+        strokeWidth="2"
         d="M12 6.99998C9.1747 6.99987 6.99997 9.24998 7 12C7.00003 14.55 9.02119 17 12 17C14.7712 17 17 14.75 17 12"
       >
         <animateTransform

@@ -281,7 +281,7 @@ export default function PromptGenerator() {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4">
-      <div className="bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)]  border-rgba(255, 255, 255, 0.08) rounded-2xl sm:rounded-3xl shadow-xl p-2 sm:p-4">
+      <div className="bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)]  border-rgba(255, 255, 255, 0.08) rounded-2xl sm:rounded-3xl shadow-xl p-4">
         <form onSubmit={handleSubmit} className="p-1 sm:p-1.5">
           <div className="relative bg-[rgb(17_17_17/55%)] rounded-2xl sm:rounded-3xl">
             <label htmlFor="prompt" className="sr-only">
@@ -295,15 +295,15 @@ export default function PromptGenerator() {
               }
               placeholder="Choose a style and describe what you want to generate..."
               rows={5}
-              className="w-full bg-transparent text-white placeholder-white rounded-xl p-3 sm:p-4 pr-4 sm:pr-6 pb-32 sm:pb-16 resize-none focus:outline-none text-sm sm:text-base"
+              className="w-full bg-transparent text-white placeholder-white rounded-xl p-3 sm:p-4 pr-4 sm:pr-6 pb-23 sm:pb-16 resize-none focus:outline-none text-sm sm:text-base"
             />
 
             <div
-              className="absolute bottom-0 left-0 right-0 flex items-center justify-between p-2 sm:p-3 gap-1.5 sm:gap-3"
+              className="absolute bottom-0 left-0 right-0 flex items-center justify-between p-2 sm:p-3 gap-1.5 sm:gap-3 max-[420px]:flex-wrap max-[420px]:items-stretch max-[420px]:gap-2"
               ref={dropdownRef}
             >
               {/* Controls - Stay in one row, shrink on mobile */}
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 max-[420px]:w-full max-[420px]:flex-none">
                 <label htmlFor="style" className="sr-only">
                   Style
                 </label>
@@ -349,12 +349,12 @@ export default function PromptGenerator() {
                 type="submit"
                 className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-sm font-semibold text-black bg-white/90 rounded-3xl hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 ${
                   shake ? 'animate-shake' : ''
-                }`}
+                } max-[420px]:w-full max-[420px]:basis-full`}
                 disabled={isGenerating || !formData.prompt.trim()}
                 aria-label={isGenerating ? 'Generating...' : 'Generate'}
               >
                 <Pencil size="20" className="text-black" />
-                <span className="hidden sm:inline">
+                <span className="hidden sm:inline max-[420px]:inline">
                   {isGenerating ? 'Generating...' : 'Generate'}
                 </span>
               </button>
