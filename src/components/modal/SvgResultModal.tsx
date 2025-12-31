@@ -166,10 +166,11 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
       fullScreenOnMobile
       disableContentScroll
       showCloseButton={!isGenerating}
-      contentClassName="px-3 sm:px-8 pt-10 sm:pt-16 pb-3 sm:pb-8"
+      panelClassName="sm:max-h-[90vh]"
+      contentClassName="px-3 sm:px-6 lg:px-8 pt-10 sm:pt-12 lg:pt-16 pb-3 sm:pb-6 lg:pb-8"
     >
       <div
-        className="flex flex-col lg:grid lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 h-full min-h-0 min-w-0"
+        className="flex flex-col sm:grid sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 h-full min-h-0 min-w-0"
         data-testid="svg-result-modal"
       >
         {/* Left side - SVG Preview */}
@@ -187,7 +188,7 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
 
           {/* SVG Preview Container */}
           <div
-            className="bg-[rgba(150,149,149,0.55)] rounded-2xl p-3 sm:p-6 lg:p-8 flex items-center justify-center h-52 sm:h-80 lg:h-[400px] border-2 border-wizard-orange/20 relative overflow-hidden min-w-0"
+            className="bg-[rgba(150,149,149,0.55)] rounded-2xl p-3 sm:p-6 lg:p-8 flex items-center justify-center h-52 sm:h-72 lg:h-[400px] border-2 border-wizard-orange/20 relative overflow-hidden min-w-0"
             style={{
               backgroundImage: `
                 radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
