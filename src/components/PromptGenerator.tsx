@@ -40,7 +40,6 @@ export default function PromptGenerator() {
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault()
     setError(null)
-    // generation hook owns modal error state
 
     // Close any open dropdowns
     setOpenDropdown(null)
@@ -165,7 +164,6 @@ export default function PromptGenerator() {
               className="absolute bottom-0 left-0 right-0 flex items-center justify-between p-2 sm:p-3 gap-1.5 sm:gap-3 max-[420px]:flex-wrap max-[420px]:items-stretch max-[420px]:gap-2"
               ref={dropdownRef}
             >
-              {/* Controls - Stay in one row, shrink on mobile */}
               <div className="flex items-center gap-1.5 sm:gap-2 z-50 flex-1 min-w-0 max-[420px]:w-full max-[420px]:flex-none">
                 <label htmlFor="style" className="sr-only">
                   Style
@@ -207,7 +205,6 @@ export default function PromptGenerator() {
                 />
               </div>
 
-              {/* Generate Button - Icon only on mobile, text on desktop */}
               <button
                 type="submit"
                 className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-sm font-semibold text-black bg-white/90 rounded-3xl hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 ${
@@ -228,7 +225,6 @@ export default function PromptGenerator() {
         </form>
       </div>
 
-      {/* Error message outside both boxes */}
       {error && (
         <p className="text-red-400 text-sm mt-3 px-2 animate-fadeIn">
           ⚠️ {error}

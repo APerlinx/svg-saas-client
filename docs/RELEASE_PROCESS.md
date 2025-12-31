@@ -3,7 +3,7 @@
 ## Pre-Release Checklist
 
 1. ✅ All tests pass (`npm run test && npm run test:e2e`)
-2. ✅ Code committed to `feat/bullmq-job-polling-and-ux` branch
+2. ✅ Code committed to your release branch
 3. ✅ Documentation updated (README, CHANGELOG, BETA_CHECKLIST)
 4. ✅ Version bumped in `package.json` to `0.2.0`
 
@@ -12,14 +12,14 @@
 ### 1. Push Feature Branch
 
 ```bash
-git push origin feat/bullmq-job-polling-and-ux
+git push origin <your-release-branch>
 ```
 
 ### 2. Create Pull Request
 
 - Go to GitHub: https://github.com/APerlinx/svg-saas-client
 - Click "Pull requests" → "New pull request"
-- Base: `main` ← Compare: `feat/bullmq-job-polling-and-ux`
+- Base: `main` ← Compare: `<your-release-branch>`
 - Title: `Release v0.2.0 - BullMQ Integration & Progress UX`
 - Description: Paste changelog from `CHANGELOG.md`
 - Create PR and wait for CI checks to pass
@@ -27,6 +27,7 @@ git push origin feat/bullmq-job-polling-and-ux
 ### 3. Merge to Main
 
 Once CI is green:
+
 - Review changes one final time
 - Click "Squash and merge" or "Merge pull request"
 - Delete feature branch after merge
@@ -39,7 +40,7 @@ git checkout main
 git pull origin main
 
 # Create annotated tag with message
-git tag -a v0.2.0 -m "Release v0.2.0 - BullMQ job polling with progress UI"
+git tag -a v0.2.0 -m "Release v0.2.0 - Async jobs with real-time progress UI"
 
 # Push tag to remote
 git push origin v0.2.0
@@ -57,11 +58,13 @@ git push origin v0.2.0
 ### 6. Verify Deployment
 
 **Vercel (Frontend):**
+
 - Vercel will auto-deploy `main` branch
 - Check: https://vercel.com/your-project/deployments
 - Verify: https://your-app.vercel.app
 
 **Smoke Test:**
+
 1. Visit production URL
 2. Sign in with test account
 3. Generate an SVG
@@ -72,13 +75,15 @@ git push origin v0.2.0
 ### 7. Monitor Production
 
 **First 24 Hours:**
+
 - Check Sentry for errors: https://sentry.io
 - Monitor backend logs on Render
 - Watch for 429 rate limit issues
 - Check job queue metrics (if dashboard available)
 
 **Success Criteria:**
-- Zero Sentry errors related to job polling
+
+- Zero Sentry errors related to job updates/progress
 - Credits update correctly in 100% of cases
 - No duplicate jobs created
 - Modal UX feels responsive and polished
@@ -113,4 +118,3 @@ git push origin v0.2.1-hotfix
 ---
 
 **Questions?** Open an issue or contact [@APerlinx](https://github.com/APerlinx)
-

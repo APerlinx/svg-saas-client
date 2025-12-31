@@ -5,28 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **SVG Generation Updates**: Progress is now driven by WebSocket (Socket.IO) events instead of polling
+  - Listen for `generation-job:update` and filter by `jobId`
+  - Use server-sent `progress` (0–100) to drive the progress UI
+  - On `SUCCEEDED`/`FAILED`, perform a final `GET /svg/generation-jobs/:id` to fetch the SVG + updated credits
+
 ## [0.2.0] - 2025-12-29
 
 ### Added
 
-- **BullMQ Job Polling**: Async job processing with real-time status updates
-  - Poll `/svg/generation-jobs/:id` with exponential backoff (2s → 10s)
+- **BullMQ Async Jobs**: Async job processing with real-time status updates
+
   - Handle QUEUED, RUNNING, SUCCEEDED, FAILED states
-  - Timeout protection (60s max polling time)
+  - Timeout protection while waiting for terminal status
   - Transient error retry with circuit breaker (max 3 consecutive errors)
 
 - **Idempotency System**: Per-attempt keys prevent duplicate job creation
+
   - Generate UUID per form submission attempt
   - Reset key when prompt/style/model/privacy changes
   - Backend validates key uniqueness and payload consistency
 
 - **Professional Progress Modal**: Real-time generation status with UX polish
+
   - Animated progress bar with gradient styling
   - Status-specific messaging (queue position, AI activity, completion)
   - Modal dismissal disabled during active generation
   - Graceful error states with actionable messaging
 
-- **Real-Time Credit Updates**: Credits refresh from polling responses
+- **Real-Time Credit Updates**: Credits refresh from terminal job result
+
   - No page refresh needed after generation
   - Credits captured from terminal job status (SUCCEEDED/FAILED)
   - Immediate UI sync via `updateUserCredits` callback
@@ -39,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Breaking**: `generateSvg` now requires `idempotencyKey` parameter
+
   - Old: `generateSvg({ prompt, style, privacy, model })`
   - New: `generateSvg({ prompt, style, privacy, model, idempotencyKey }, { onStatusUpdate? })`
 
@@ -73,4 +86,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Playwright E2E test suite
 - CI/CD with GitHub Actions
 - Vercel deployment configuration
-
