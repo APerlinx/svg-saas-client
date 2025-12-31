@@ -10,7 +10,7 @@
 
 - **AI-Powered SVG Generation**: Create custom SVGs using GPT-4o and GPT-5 models
 - **Async Job Processing**: BullMQ-powered queue with real-time progress tracking
-- **Real-Time Credit Management**: Instant credit updates via polling responses
+- **Real-Time Credit Management**: Instant credit updates on job completion (no refresh)
 - **Idempotency Protection**: Per-attempt keys prevent duplicate job creation
 - **Professional Progress UI**: Animated progress bar with status-specific messaging
 - **Multiple Export Formats**: Raw SVG, React components, TypeScript, CDN URLs, PNG downloads
@@ -196,7 +196,7 @@ client/
 - Privacy controls (public/private)
 - Async job processing with BullMQ
 - Real-time progress updates (QUEUED → RUNNING → SUCCEEDED/FAILED)
-- Exponential backoff polling (2s to 10s intervals)
+- Live progress via WebSockets (Socket.IO)
 - Idempotency keys to prevent duplicate submissions
 ```
 
@@ -204,14 +204,14 @@ client/
 
 1. **Submit** - Frontend sends generation request with idempotency key
 2. **Queue** - Backend creates BullMQ job and returns job ID
-3. **Poll** - Frontend polls `/svg/generation-jobs/:id` every 2-10s
-4. **Progress** - Modal shows live status with animated progress bar
-5. **Complete** - SVG delivered with updated credit balance
+3. **Stream** - Frontend listens for `generation-job:update` and filters by `jobId`
+4. **Progress** - Modal shows status + server-sent progress percentage (0–100)
+5. **Complete** - On SUCCEEDED/FAILED, frontend fetches `/svg/generation-jobs/:id` to get SVG + credits
 
 ### Credit System
 
 - Real-time credit display in header
-- Instant updates from polling responses (no refresh needed)
+- Instant updates from terminal job result (no refresh needed)
 - Credits deducted only on successful generation
 - Low credit warnings with banner
 - Pricing page with purchase options
@@ -366,6 +366,11 @@ wizard-gray-medium: #4A5568
 ```
 
 ## 🌐 Environment Variables
+
+Notes:
+
+- Socket.IO uses the same origin as `VITE_API_BASE_URL` (the client derives the socket origin from it).
+- Ensure your backend exposes Socket.IO on that origin and supports authenticated `withCredentials` cookies.
 
 | Variable            | Description               | Required | Default                     |
 | ------------------- | ------------------------- | -------- | --------------------------- |

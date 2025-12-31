@@ -2,10 +2,10 @@
 
 ## Core Features ✅
 
-- [x] BullMQ job polling with exponential backoff
+- [x] BullMQ async jobs with WebSocket (Socket.IO) progress updates
 - [x] Per-attempt idempotency keys
 - [x] Real-time progress modal with animated UI
-- [x] Credit updates from polling responses
+- [x] Credit updates from terminal job result (no refresh needed)
 - [x] Type-safe Job/QueueStats interfaces exported
 - [x] Modal close button disabled during generation
 
@@ -29,11 +29,11 @@
 ## Production Readiness 🚀
 
 - [ ] CI green on PR
-- [ ] No secrets in client code (only VITE_* env vars)
+- [ ] No secrets in client code (only VITE\_\* env vars)
 - [ ] Sentry DSN configured for production
 - [ ] Backend idempotency validation deployed
 - [ ] Rate limiting tested (429 with retry-after header)
-- [ ] Job polling tested under load
+- [ ] Job update delivery (Socket.IO) tested under load
 
 ## Deployment 🌐
 
@@ -47,9 +47,8 @@
 ## Rollback Plan 🔄
 
 If critical issues found:
+
 1. Revert `main` to previous commit
 2. Force push: `git push origin main --force`
 3. Vercel will auto-deploy previous version
 4. Tag hotfix branch from reverted state
-
-
