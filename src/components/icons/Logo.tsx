@@ -14,9 +14,9 @@ export const Logo = ({ className, size }: LogoIconProps) => (
     <g
       fill="none"
       stroke="#101828"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
     >
       <rect width="22" height="16" x="1" y="4" rx="3" />
       <circle cx="7" cy="10" r="1" />
