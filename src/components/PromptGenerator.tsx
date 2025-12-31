@@ -7,172 +7,40 @@ import Dropdown from './ui/Dropdown'
 import PrivacySwitch from './ui/PrivacySwitch'
 import SvgResultModal from './modal/SvgResultModal'
 import Modal from './modal/Modal'
-import {
-  generateSvg,
-  type GenerationProgressUpdate,
-  type QueueStats,
-} from '../services/svgService'
 import { useAuth } from '../hooks/useAuth'
 import { Link } from 'react-router-dom'
+import { usePromptDraft } from './promptGenerator/usePromptDraft'
+import { useSvgGeneration } from './promptGenerator/useSvgGeneration'
 
 const SESSION_KEY = 'svg_prompt_draft'
-
-type JobStatus = GenerationProgressUpdate['job']['status']
-
-interface ProgressState {
-  status: JobStatus
-  percent: number
-  label: string
-  subtext?: string
-}
-
-const PROGRESS_COPY: Record<
-  JobStatus,
-  {
-    percent: number
-    label: string
-    subtext: (ctx: { queue?: QueueStats; duplicate?: boolean }) => string
-  }
-> = {
-  QUEUED: {
-    percent: 18,
-    label: 'Queued for generation',
-    subtext: ({ queue }) =>
-      queue && queue.waiting > 0
-        ? `~${queue.waiting} request${
-            queue.waiting > 1 ? 's' : ''
-          } ahead of you`
-        : 'Securing a rendering slot... hold tight.',
-  },
-  RUNNING: {
-    percent: 62,
-    label: 'Illustrating vector shapes',
-    subtext: () => 'Our model is sketching curves, gradients, and strokes.',
-  },
-  SUCCEEDED: {
-    percent: 100,
-    label: 'Applying finishing touches',
-    subtext: ({ duplicate }) =>
-      duplicate
-        ? 'We found an identical SVG in your recent history.'
-        : 'Optimizing paths and preparing your download options.',
-  },
-  FAILED: {
-    percent: 100,
-    label: 'Generation failed',
-    subtext: () => 'Something went wrong. Please try again shortly.',
-  },
-}
-
-const DEFAULT_PROGRESS: ProgressState = {
-  status: 'QUEUED',
-  percent: 12,
-  label: 'Preparing your request',
-  subtext: 'Connecting to our rendering studio...',
-}
-
-const buildProgressState = (
-  status: JobStatus,
-  queue?: QueueStats,
-  duplicate?: boolean,
-  progress?: number
-): ProgressState => {
-  const config = PROGRESS_COPY[status] ?? PROGRESS_COPY.QUEUED
-  const normalizedProgress =
-    typeof progress === 'number' && Number.isFinite(progress)
-      ? Math.min(Math.max(Math.round(progress), 0), 100)
-      : undefined
-
-  const percent =
-    status === 'SUCCEEDED' || status === 'FAILED'
-      ? 100
-      : normalizedProgress ?? config.percent
-
-  return {
-    status,
-    percent,
-    label: config.label,
-    subtext: config.subtext({ queue, duplicate }),
-  }
-}
 
 export default function PromptGenerator() {
   const { user, updateUserCredits } = useAuth()
 
-  // Load from sessionStorage on mount
-  const [formData, setFormData] = useState<PromptFormData>(() => {
-    const saved = sessionStorage.getItem(SESSION_KEY)
-    if (saved) {
-      try {
-        return JSON.parse(saved)
-      } catch {
-        // Invalid JSON, use defaults
-      }
-    }
-    return {
-      prompt: '',
-      style: 'minimal',
-      isPrivate: false,
-      model: 'gpt-4o',
-    }
+  const generation = useSvgGeneration({ updateUserCredits })
+
+  const [formData, setFormData] = usePromptDraft<PromptFormData>(SESSION_KEY, {
+    prompt: '',
+    style: 'minimal',
+    isPrivate: false,
+    model: 'gpt-4o',
   })
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false)
-  const [generatedSvg, setGeneratedSvg] = useState<string>('')
-  const [isGenerating, setIsGenerating] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [shake, setShake] = useState<boolean>(false)
-  const [progressState, setProgressState] =
-    useState<ProgressState>(DEFAULT_PROGRESS)
-  const [modalError, setModalError] = useState<string | null>(null)
   const idempotencyKeyRef = useRef<string | null>(null)
-  const generationAttemptRef = useRef<string | null>(null)
-  const activeJobIdRef = useRef<string | null>(null)
-  const [modalKey, setModalKey] = useState<string>('svg-result')
-
-  // Save to sessionStorage whenever formData changes
-  useEffect(() => {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(formData))
-  }, [formData])
 
   useEffect(() => {
     idempotencyKeyRef.current = null
   }, [formData.prompt, formData.style, formData.model, formData.isPrivate])
 
-  const handleProgressUpdate = (
-    update: GenerationProgressUpdate,
-    attemptId: string
-  ) => {
-    if (generationAttemptRef.current !== attemptId) return
-
-    if (!activeJobIdRef.current) {
-      activeJobIdRef.current = update.job.id
-    }
-
-    if (activeJobIdRef.current !== update.job.id) return
-
-    setProgressState(
-      buildProgressState(
-        update.job.status,
-        update.queue,
-        update.duplicate,
-        update.progress
-      )
-    )
-  }
-
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault()
     setError(null)
-    setModalError(null)
-
-    const attemptId = crypto.randomUUID()
-    setModalKey(attemptId)
-    generationAttemptRef.current = attemptId
-    activeJobIdRef.current = null
+    // generation hook owns modal error state
 
     // Close any open dropdowns
     setOpenDropdown(null)
@@ -198,50 +66,17 @@ export default function PromptGenerator() {
       return
     }
 
-    setGeneratedSvg('')
-    setProgressState(DEFAULT_PROGRESS)
-    setIsModalOpen(true)
-    setIsGenerating(true)
-
     try {
       if (!idempotencyKeyRef.current) {
         idempotencyKeyRef.current = crypto.randomUUID()
       }
 
-      const result = await generateSvg(
-        {
-          prompt: formData.prompt,
-          style: formData.style,
-          privacy: formData.isPrivate,
-          model: formData.model,
-          idempotencyKey: idempotencyKeyRef.current,
-        },
-        {
-          onStatusUpdate: (update) => handleProgressUpdate(update, attemptId),
-        }
-      )
-
-      if (generationAttemptRef.current !== attemptId) return
-
-      if (!result.job.generation?.svg) {
-        throw new Error('Generation completed but no SVG was returned.')
-      }
-
-      setProgressState(
-        buildProgressState(result.job.status, result.queue, result.duplicate)
-      )
-      setGeneratedSvg(result.job.generation.svg)
+      await generation.startGeneration({
+        formData,
+        idempotencyKey: idempotencyKeyRef.current,
+      })
       idempotencyKeyRef.current = null
-
-      // Update credits immediately if backend returns updated count
-      if (result.credits !== undefined) {
-        updateUserCredits(result.credits)
-      }
-
-      setIsModalOpen(true)
     } catch (err) {
-      if (generationAttemptRef.current !== attemptId) return
-
       let errorMessage =
         'Unable to generate SVG. Please ensure your description uses valid characters and try again.'
 
@@ -263,18 +98,9 @@ export default function PromptGenerator() {
         )
       }
 
-      setModalError(errorMessage)
-      setProgressState({
-        status: 'FAILED',
-        percent: 100,
-        label: 'Generation failed',
-        subtext: errorMessage,
-      })
       triggerShake()
     } finally {
-      if (generationAttemptRef.current === attemptId) {
-        setIsGenerating(false)
-      }
+      // generation hook owns isGenerating state
     }
   }
 
@@ -310,15 +136,11 @@ export default function PromptGenerator() {
   }
 
   const handleModalClose = () => {
-    setIsModalOpen(false)
-    setModalError(null)
-    if (!isGenerating) {
+    generation.closeModal()
+    if (!generation.isGenerating) {
       idempotencyKeyRef.current = null
     }
   }
-
-  const isModalGenerating =
-    !modalError && (!generatedSvg || isGenerating) && isModalOpen
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4">
@@ -344,7 +166,7 @@ export default function PromptGenerator() {
               ref={dropdownRef}
             >
               {/* Controls - Stay in one row, shrink on mobile */}
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 max-[420px]:w-full max-[420px]:flex-none">
+              <div className="flex items-center gap-1.5 sm:gap-2 z-50 flex-1 min-w-0 max-[420px]:w-full max-[420px]:flex-none">
                 <label htmlFor="style" className="sr-only">
                   Style
                 </label>
@@ -391,12 +213,14 @@ export default function PromptGenerator() {
                 className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-sm font-semibold text-black bg-white/90 rounded-3xl hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 ${
                   shake ? 'animate-shake' : ''
                 } max-[420px]:w-full max-[420px]:basis-full`}
-                disabled={isGenerating || !formData.prompt.trim()}
-                aria-label={isGenerating ? 'Generating...' : 'Generate'}
+                disabled={generation.isGenerating || !formData.prompt.trim()}
+                aria-label={
+                  generation.isGenerating ? 'Generating...' : 'Generate'
+                }
               >
                 <Pencil size="20" className="text-black" />
                 <span className="hidden sm:inline max-[420px]:inline">
-                  {isGenerating ? 'Generating...' : 'Generate'}
+                  {generation.isGenerating ? 'Generating...' : 'Generate'}
                 </span>
               </button>
             </div>
@@ -413,14 +237,14 @@ export default function PromptGenerator() {
 
       {/* SVG Result Modal */}
       <SvgResultModal
-        key={modalKey}
-        isOpen={isModalOpen}
+        key={generation.modalKey}
+        isOpen={generation.isModalOpen}
         onClose={handleModalClose}
-        svgCode={generatedSvg}
+        svgCode={generation.generatedSvg}
         prompt={formData.prompt}
-        isGenerating={isModalGenerating}
-        progress={progressState}
-        error={modalError}
+        isGenerating={generation.isModalGenerating}
+        progress={generation.progressState}
+        error={generation.modalError}
       />
 
       {/* Auth Required Modal */}
