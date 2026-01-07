@@ -24,6 +24,7 @@ export function useSvgGeneration({
 }: UseSvgGenerationOptions) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [generatedSvg, setGeneratedSvg] = useState('')
+  const [generationId, setGenerationId] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [progressState, setProgressState] =
     useState<ProgressState>(DEFAULT_PROGRESS)
@@ -65,6 +66,7 @@ export function useSvgGeneration({
     activeJobIdRef.current = null
 
     setGeneratedSvg('')
+    setGenerationId(null)
     setProgressState(DEFAULT_PROGRESS)
     setModalError(null)
     setIsModalOpen(true)
@@ -94,7 +96,7 @@ export function useSvgGeneration({
         buildProgressState(result.job.status, result.queue, result.duplicate)
       )
       setGeneratedSvg(result.job.generation.svg)
-
+      setGenerationId(result.job.generation.id)
       if (result.credits !== undefined) {
         updateUserCredits(result.credits)
       }
@@ -144,6 +146,7 @@ export function useSvgGeneration({
     isGenerating,
     isModalGenerating,
     generatedSvg,
+    generationId,
     progressState,
     modalError,
     modalKey,

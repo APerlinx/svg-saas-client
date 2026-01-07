@@ -98,8 +98,6 @@ export default function PromptGenerator() {
       }
 
       triggerShake()
-    } finally {
-      // generation hook owns isGenerating state
     }
   }
 
@@ -237,6 +235,7 @@ export default function PromptGenerator() {
         isOpen={generation.isModalOpen}
         onClose={handleModalClose}
         svgCode={generation.generatedSvg}
+        generationId={generation.generationId}
         prompt={formData.prompt}
         isGenerating={generation.isModalGenerating}
         progress={generation.progressState}
