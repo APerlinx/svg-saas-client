@@ -79,6 +79,10 @@ interface GenerateSvgOptions {
   timeoutMs?: number
 }
 
+interface DownloadSvgResponse {
+  downloadUrl?: string
+}
+
 function isGenerationJobUpdatePayload(
   value: unknown
 ): value is GenerationJobUpdatePayload {
@@ -207,6 +211,19 @@ export async function generateSvg(
       }
     }
 
+    normalizeError(error)
+  }
+}
+
+export async function downloadSvg(
+  generationId: string
+): Promise<DownloadSvgResponse> {
+  try {
+    const response = await api.get<DownloadSvgResponse>(
+      `/svg/${generationId}/download`
+    )
+    return response.data
+  } catch (error) {
     normalizeError(error)
   }
 }

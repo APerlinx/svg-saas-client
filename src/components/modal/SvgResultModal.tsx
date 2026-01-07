@@ -9,11 +9,13 @@ import { ImageIcon } from '../icons/ImageIcon'
 import { CheckIcon } from '../icons/CheckIcon'
 import { EditIcon } from '../icons/EditIcon'
 import { logger } from '../../services/logger'
+import { downloadSvg } from '../../services/svgService'
 
 interface SvgResultModalProps {
   isOpen: boolean
   onClose: () => void
   svgCode: string
+  generationId?: string | null
   prompt?: string
   isGenerating?: boolean
   progress?: {
@@ -28,12 +30,15 @@ export default function SvgResultModal({
   isOpen,
   onClose,
   svgCode,
+  generationId,
   prompt,
   isGenerating,
   progress,
   error,
 }: SvgResultModalProps) {
   const [copiedButton, setCopiedButton] = useState<string | null>(null)
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [downloadError, setDownloadError] = useState<string | null>(null)
   const previewRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -102,14 +107,43 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
     }
   }
 
-  const handleDownloadSVG = () => {
-    const blob = new Blob([svgCode], { type: 'image/svg+xml' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `generated-svg-${Date.now()}.svg`
-    a.click()
-    URL.revokeObjectURL(url)
+  const handleDownloadSVG = async () => {
+    if (isDownloading) return
+
+    setDownloadError(null)
+
+    if (!generationId) {
+      const blob = new Blob([svgCode], { type: 'image/svg+xml' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `generated-svg-${Date.now()}.svg`
+      a.click()
+      URL.revokeObjectURL(url)
+      return
+    }
+    try {
+      setIsDownloading(true)
+
+      const response = await downloadSvg(generationId)
+      const downloadUrl = response.downloadUrl
+      if (!downloadUrl) {
+        throw new Error('Download link is missing.')
+      }
+
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.target = '_blank'
+      link.rel = 'noopener noreferrer'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (err) {
+      logger.error('Failed to download SVG', err)
+      setDownloadError('Download failed. Please try again.')
+    } finally {
+      setIsDownloading(false)
+    }
   }
 
   const handleDownloadPNG = () => {
@@ -264,15 +298,15 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
           <div className="flex gap-2 sm:gap-3">
             <button
               onClick={handleDownloadSVG}
-              disabled={disableExportActions}
+              disabled={disableExportActions || isDownloading}
               className={`flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all shadow-md text-sm ${
-                disableExportActions
+                disableExportActions || isDownloading
                   ? 'bg-white/10 text-white/40 cursor-not-allowed'
                   : 'bg-wizard-orange text-white hover:bg-wizard-orange/90 hover:shadow-lg'
               }`}
             >
               <DownloadIcon className="w-5 h-5" />
-              Download SVG
+              {isDownloading ? 'Preparing download...' : 'Download SVG'}
             </button>
 
             <button
@@ -291,6 +325,10 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
               </span>
             </button>
           </div>
+
+          {downloadError && (
+            <p className="text-red-400 text-xs mt-2">{downloadError}</p>
+          )}
         </div>
 
         {/* Right side - Code & Actions */}
