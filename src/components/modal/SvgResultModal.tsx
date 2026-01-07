@@ -131,16 +131,29 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
         throw new Error('Download link is missing.')
       }
 
+      const fileResponse = await fetch(downloadUrl)
+      if (!fileResponse.ok) {
+        throw new Error(`Failed to download (HTTP ${fileResponse.status}).`)
+      }
+
+      const blob = await fileResponse.blob()
+      const objectUrl = URL.createObjectURL(blob)
+      const filename = `chatsvg-${generationId}.svg`
+
       const link = document.createElement('a')
-      link.href = downloadUrl
-      link.target = '_blank'
-      link.rel = 'noopener noreferrer'
+      link.href = objectUrl
+      link.download = filename
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+
+      // Give the browser a tick to start reading the Blob.
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000)
     } catch (err) {
       logger.error('Failed to download SVG', err)
-      setDownloadError('Download failed. Please try again.')
+      setDownloadError(
+        'Download failed. If this keeps happening, enable CORS for your S3 bucket (or proxy the download through your backend) and try again.'
+      )
     } finally {
       setIsDownloading(false)
     }
