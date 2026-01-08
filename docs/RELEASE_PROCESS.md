@@ -61,7 +61,7 @@ git push origin v0.2.0
 
 - Vercel will auto-deploy `main` branch
 - Check: https://vercel.com/your-project/deployments
-- Verify: https://your-app.vercel.app
+- Verify: https://chatsvg.dev
 
 **Smoke Test:**
 
@@ -77,7 +77,7 @@ git push origin v0.2.0
 **First 24 Hours:**
 
 - Check Sentry for errors: https://sentry.io
-- Monitor backend logs on Render
+- Monitor backend logs/infrastructure in the server deployment (AWS)
 - Watch for 429 rate limit issues
 - Check job queue metrics (if dashboard available)
 

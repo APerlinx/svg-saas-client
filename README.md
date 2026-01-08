@@ -2,9 +2,10 @@
 
 [![CI Status](<https://github.com/APerlinx/svg-saas-client/workflows/CI%20(client%20e2e)/badge.svg>)](https://github.com/APerlinx/svg-saas-client/actions)
 [![Deploy Status](https://img.shields.io/badge/deploy-Vercel-black)](https://vercel.com)
-[![Render](https://img.shields.io/badge/API-Render-blue)](https://chatsvg-api.onrender.com)
+[![Website](https://img.shields.io/badge/website-chatsvg.dev-brightgreen)](https://chatsvg.dev)
+[![API](https://img.shields.io/badge/api-api.chatsvg.dev-blue)](https://api.chatsvg.dev)
 
-> A production-ready SaaS frontend for AI-powered SVG generation with enterprise-grade authentication, real-time credit management, and modern React architecture. Built with TypeScript, comprehensive testing (Playwright E2E), Sentry error tracking, and CI/CD automation.
+> Frontend for chatSVG (https://chatsvg.dev) — a React + TypeScript app for AI-powered SVG generation with real-time job progress (Socket.IO), authenticated sessions, and secure S3 signed-URL downloads. Includes Playwright E2E tests, Sentry monitoring, and CI automation.
 
 ## 🚀 Features
 
@@ -14,6 +15,7 @@
 - **Idempotency Protection**: Per-attempt keys prevent duplicate job creation
 - **Professional Progress UI**: Animated progress bar with status-specific messaging
 - **Multiple Export Formats**: Raw SVG, React components, TypeScript, CDN URLs, PNG downloads
+- **Secure Downloads**: Completed SVGs can be downloaded via short-lived signed URLs
 - **Privacy Controls**: Public/private generation options
 - **Session Management**: Persistent draft prompts and secure authentication
 - **Responsive Design**: Mobile-first UI with Tailwind CSS
@@ -100,6 +102,13 @@ npm run dev
 ```
 
 The app will be available at `http://localhost:5173`
+
+## 🌐 Production
+
+- **Frontend:** https://chatsvg.dev
+- **Backend API:** https://api.chatsvg.dev
+
+This repository contains the frontend only. Backend/infrastructure details live in the server repository.
 
 ## 📜 Available Scripts
 
@@ -310,9 +319,7 @@ Production deployments are triggered **only from `main`**:
   - Preview deployments for pull requests
   - Environment variables configured in Vercel dashboard
 
-- **Backend API** deploys to **Render**
-  - Connected to server repository
-  - Auto-deploy on `main` branch updates
+- **Backend API** is deployed from the server repository (AWS EC2 / k3s)
 
 **Preview deployments** may be created for pull requests, but **production is always based on `main`**.
 
@@ -434,6 +441,7 @@ npm run type-check
 
 - **Issues:** [GitHub Issues](https://github.com/APerlinx/svg-saas-client/issues)
 - **Documentation:** [docs/](docs/)
+- **Frontend Architecture:** [docs/FRONTEND_ARCHITECTURE.md](docs/FRONTEND_ARCHITECTURE.md)
 - **Sentry Setup:** [docs/SENTRY_SETUP.md](docs/SENTRY_SETUP.md)
 
 ---
