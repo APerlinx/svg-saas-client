@@ -52,7 +52,7 @@ const PROGRESS_COPY: Record<
 
 export const DEFAULT_PROGRESS: ProgressState = {
   status: 'QUEUED',
-  percent: 12,
+  percent: 0,
   label: 'Preparing your request',
   subtext: 'Connecting to our rendering studio...',
 }

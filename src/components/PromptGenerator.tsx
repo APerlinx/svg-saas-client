@@ -32,10 +32,29 @@ export default function PromptGenerator() {
   const [error, setError] = useState<string | null>(null)
   const [shake, setShake] = useState<boolean>(false)
   const idempotencyKeyRef = useRef<string | null>(null)
+  const resumeAttemptedRef = useRef(false)
+  const { isGenerating, handleExistingJob } = generation
 
   useEffect(() => {
     idempotencyKeyRef.current = null
   }, [formData.prompt, formData.style, formData.model, formData.isPrivate])
+
+  useEffect(() => {
+    // If user logs out and back in, allow another resume attempt
+    resumeAttemptedRef.current = false
+  }, [user?.id])
+
+  useEffect(() => {
+    if (!user) return
+    if (resumeAttemptedRef.current) return
+    if (isGenerating) return
+
+    const existingJobId = sessionStorage.getItem('active_svg_job_id')
+    if (!existingJobId) return
+
+    resumeAttemptedRef.current = true
+    void handleExistingJob(existingJobId)
+  }, [user, isGenerating, handleExistingJob])
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault()
@@ -90,7 +109,7 @@ export default function PromptGenerator() {
         errorMessage.toLowerCase().includes('credit') ||
         errorMessage.toLowerCase().includes('insufficient')
       ) {
-        setError(errorMessage)
+        setError('You do not have enough credits to generate an SVG.')
       } else {
         setError(
           'Unable to generate SVG. Please ensure your description uses valid characters and try again.'
@@ -107,6 +126,7 @@ export default function PromptGenerator() {
   }
 
   useEffect(() => {
+    /// TODO: check if i still need this ?!
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -134,9 +154,6 @@ export default function PromptGenerator() {
 
   const handleModalClose = () => {
     generation.closeModal()
-    if (!generation.isGenerating) {
-      idempotencyKeyRef.current = null
-    }
   }
 
   return (
@@ -224,9 +241,7 @@ export default function PromptGenerator() {
       </div>
 
       {error && (
-        <p className="text-red-400 text-sm mt-3 px-2 animate-fadeIn">
-          ⚠️ {error}
-        </p>
+        <p className="text-red-400 text-sm mt-3 px-2 animate-fadeIn">{error}</p>
       )}
 
       {/* SVG Result Modal */}

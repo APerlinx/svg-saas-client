@@ -152,7 +152,7 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
     } catch (err) {
       logger.error('Failed to download SVG', err)
       setDownloadError(
-        'Download failed. If this keeps happening, enable CORS for your S3 bucket (or proxy the download through your backend) and try again.'
+        'Download failed, Please try again later or contact support.'
       )
     } finally {
       setIsDownloading(false)
@@ -161,12 +161,10 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
 
   const handleDownloadPNG = () => {
     // Coming soon - will convert SVG to PNG
-    alert('PNG download coming soon!')
   }
 
   const handleEdit = () => {
     // Coming soon - open editor
-    alert('Edit feature coming soon!')
   }
 
   const copyButtons = [
@@ -353,9 +351,10 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
           {showErrorState ? (
             <div className="bg-[rgb(17_17_17/55%)] border border-red-500/30 rounded-2xl p-4 text-white/80 space-y-3">
               <p className="text-sm leading-relaxed">
-                The renderer hit an unexpected issue while processing your
-                prompt. Please close this modal, adjust your prompt, and try
-                again. If the problem persists, reach out via support.
+                Something went wrong while completing your request. Check the
+                preview panel for the exact message. Close this modal and try
+                again, if the issue persists, contact support and include the
+                message shown.
               </p>
               <button
                 onClick={onClose}

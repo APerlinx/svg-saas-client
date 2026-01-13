@@ -1,5 +1,6 @@
 import { Component, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { logger } from '../services/logger'
 
 interface Props {
   children: ReactNode
@@ -21,7 +22,13 @@ export class AppErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('AppErrorBoundary caught an error:', error, errorInfo)
+    logger.error('AppErrorBoundary caught an error', error, {
+      componentStack: errorInfo.componentStack,
+    })
+
+    if (import.meta.env.DEV) {
+      console.error('AppErrorBoundary caught an error:', error, errorInfo)
+    }
   }
 
   render() {
