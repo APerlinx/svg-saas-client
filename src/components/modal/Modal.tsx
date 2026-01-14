@@ -7,18 +7,14 @@ interface ModalProps {
   isOpen: boolean
   onClose: () => void
   children: React.ReactNode
-  /** Additional classes for the outer container (fixed inset wrapper). */
   containerClassName?: string
-  /** Additional classes for the modal panel. */
   panelClassName?: string
-  /** Additional classes for the content wrapper. */
   contentClassName?: string
-  /** Disable the built-in scroll container (use when content is guaranteed to fit). */
   disableContentScroll?: boolean
-  /** Make the panel fullscreen on mobile (keeps current sizing on >= sm). */
   fullScreenOnMobile?: boolean
-  /** Hides the close icon/button when false (defaults to true). */
   showCloseButton?: boolean
+  closeOnBackdropClick?: boolean
+  closeOnEsc?: boolean
 }
 
 function Modal({
@@ -31,6 +27,8 @@ function Modal({
   disableContentScroll,
   fullScreenOnMobile,
   showCloseButton = true,
+  closeOnBackdropClick = false,
+  closeOnEsc = false,
 }: ModalProps) {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -39,7 +37,9 @@ function Modal({
 
     if (!isOpen) return
 
-    document.addEventListener('keydown', handleEsc)
+    if (closeOnEsc) {
+      document.addEventListener('keydown', handleEsc)
+    }
 
     const scrollY = window.scrollY
 
@@ -63,7 +63,9 @@ function Modal({
     document.body.style.overflowX = 'hidden'
 
     return () => {
-      document.removeEventListener('keydown', handleEsc)
+      if (closeOnEsc) {
+        document.removeEventListener('keydown', handleEsc)
+      }
 
       document.documentElement.style.overflow = prevHtmlOverflow
       document.body.style.position = prevBodyPosition
@@ -76,7 +78,7 @@ function Modal({
 
       window.scrollTo(0, scrollY)
     }
-  }, [isOpen, onClose])
+  }, [isOpen, onClose, closeOnEsc])
 
   if (!isOpen) return null
 
@@ -87,7 +89,7 @@ function Modal({
         className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300 ${
           isOpen ? 'opacity-100' : 'opacity-0'
         }`}
-        onClick={onClose}
+        onClick={closeOnBackdropClick ? onClose : undefined}
       />
 
       {/* Modal container  */}

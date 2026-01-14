@@ -103,6 +103,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       logger.error('Logout error', error)
     } finally {
       sessionStorage.removeItem('svg_prompt_draft')
+      sessionStorage.removeItem('active_svg_job_id')
       setUser(null)
     }
   }
