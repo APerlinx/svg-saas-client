@@ -6,30 +6,52 @@ import Bell from './icons/BellIcon'
 import GalleryIcon from './icons/GalleryIcon'
 import PricingIcon from './icons/PricingIcon'
 import { Logo } from './icons/Logo'
+import Notification from './Notification'
+import { useNotifications } from '../hooks/useNotifications'
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth()
+  const { unreadCount, isLoadingBadge, loadLatestAndMarkSeen } =
+    useNotifications()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const notificationRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isNotificationOpen) return
+    void loadLatestAndMarkSeen()
+  }, [isNotificationOpen, loadLatestAndMarkSeen])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node
+
       if (
+        isDropdownOpen &&
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        !dropdownRef.current.contains(target)
       ) {
         setIsDropdownOpen(false)
       }
+
+      if (
+        isNotificationOpen &&
+        notificationRef.current &&
+        !notificationRef.current.contains(target)
+      ) {
+        setIsNotificationOpen(false)
+      }
     }
 
-    if (isDropdownOpen) {
+    if (isDropdownOpen || isNotificationOpen) {
       document.addEventListener('mousedown', handleClickOutside)
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isDropdownOpen])
+  }, [isDropdownOpen, isNotificationOpen])
 
   const handleLogout = async () => {
     await logout()
@@ -180,17 +202,37 @@ export default function Header() {
                   </div>
 
                   {/* Notification Bell */}
-                  <button
-                    className="p-1 md:p-1.5 hover:bg-gray-100/60 rounded-lg transition-colors relative group"
-                    aria-label="Notifications"
-                  >
-                    <Bell size="20" className=" text-gray-700" />
+                  <div className="relative" ref={notificationRef}>
+                    <button
+                      className="p-1 md:p-1.5 mt-1.5 hover:bg-gray-100/60 rounded-lg transition-colors relative group"
+                      aria-label={
+                        unreadCount > 0
+                          ? `Notifications (${unreadCount} new)`
+                          : 'Notifications'
+                      }
+                      onClick={() => setIsNotificationOpen((v) => !v)}
+                    >
+                      <span className="relative inline-flex">
+                        <Bell
+                          size="20"
+                          className={`text-gray-700 inline-block  ${
+                            !isLoadingBadge && unreadCount > 0
+                              ? 'animate-bell-wiggle'
+                              : ''
+                          }`}
+                        />
 
-                    {/* Coming Soon Tooltip */}
-                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                      Coming Soon
-                    </span>
-                  </button>
+                        {!isLoadingBadge && unreadCount > 0 && (
+                          <span
+                            className="absolute top-0.5 right-[3px] h-1.5 w-1.5 rounded-full bg-red-600"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </span>
+                    </button>
+
+                    {isNotificationOpen && <Notification />}
+                  </div>
                 </>
               ) : (
                 <>
