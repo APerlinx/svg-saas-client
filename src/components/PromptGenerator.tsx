@@ -11,13 +11,19 @@ import { useAuth } from '../hooks/useAuth'
 import { Link } from 'react-router-dom'
 import { usePromptDraft } from './promptGenerator/usePromptDraft'
 import { useSvgGeneration } from './promptGenerator/useSvgGeneration'
+import { useNotifications } from '../hooks/useNotifications'
 
 const SESSION_KEY = 'svg_prompt_draft'
 
 export default function PromptGenerator() {
   const { user, updateUserCredits } = useAuth()
 
-  const generation = useSvgGeneration({ updateUserCredits })
+  const { refreshBadgeCount } = useNotifications()
+
+  const generation = useSvgGeneration({
+    updateUserCredits,
+    refreshNotificationBadgeCount: refreshBadgeCount,
+  })
 
   const [formData, setFormData] = usePromptDraft<PromptFormData>(SESSION_KEY, {
     prompt: '',
@@ -126,7 +132,6 @@ export default function PromptGenerator() {
   }
 
   useEffect(() => {
-    /// TODO: check if i still need this ?!
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&

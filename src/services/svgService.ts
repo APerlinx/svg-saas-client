@@ -199,7 +199,6 @@ export async function generateSvg(
           finish(() => reject(e))
         }
       }
-
       socket.on('generation-job:update', onUpdate)
     })
   } catch (error) {

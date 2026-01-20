@@ -5,6 +5,7 @@ import './index.css'
 import { router } from './routes'
 import { AuthProvider } from './context/AuthProvider'
 import { ToastProvider } from './context/ToastProvider'
+import { NotificationsProvider } from './context/NotificationsProvider'
 import { initSentry } from './services/logger'
 import { AppErrorBoundary } from './components/AppErrorBoundary'
 
@@ -15,9 +16,11 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppErrorBoundary>
       <AuthProvider>
-        <ToastProvider>
-          <RouterProvider router={router} />
-        </ToastProvider>
+        <NotificationsProvider>
+          <ToastProvider>
+            <RouterProvider router={router} />
+          </ToastProvider>
+        </NotificationsProvider>
       </AuthProvider>
     </AppErrorBoundary>
   </StrictMode>

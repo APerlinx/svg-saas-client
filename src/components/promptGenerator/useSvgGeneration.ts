@@ -14,6 +14,7 @@ import { logger } from '../../services/logger'
 
 interface UseSvgGenerationOptions {
   updateUserCredits: (credits: number) => void
+  refreshNotificationBadgeCount?: () => Promise<void>
 }
 
 interface StartGenerationArgs {
@@ -23,6 +24,7 @@ interface StartGenerationArgs {
 
 export function useSvgGeneration({
   updateUserCredits,
+  refreshNotificationBadgeCount,
 }: UseSvgGenerationOptions) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [generatedSvg, setGeneratedSvg] = useState('')
@@ -56,6 +58,17 @@ export function useSvgGeneration({
         update.progress
       )
     )
+  }
+
+  const refreshBadge = async (attemptId: string) => {
+    if (!refreshNotificationBadgeCount) return
+    if (generationAttemptRef.current !== attemptId) return
+
+    try {
+      await refreshNotificationBadgeCount()
+    } catch (e) {
+      logger.error('Failed to refresh notification badge count', e)
+    }
   }
 
   const startGeneration = async ({
@@ -92,6 +105,7 @@ export function useSvgGeneration({
 
       if (result.job.status === 'FAILED') {
         const errorMessage = result.job.errorMessage || 'SVG generation failed.'
+        await refreshBadge(attemptId)
         sessionStorage.removeItem('active_svg_job_id')
         throw new Error(errorMessage)
       }
@@ -111,6 +125,8 @@ export function useSvgGeneration({
       }
 
       setIsModalOpen(true)
+
+      await refreshBadge(attemptId)
     } catch (err) {
       if (generationAttemptRef.current !== attemptId) return
 
@@ -131,6 +147,8 @@ export function useSvgGeneration({
         label: 'Generation failed',
         subtext: errorMessage,
       })
+
+      void refreshBadge(attemptId)
 
       throw new Error(errorMessage)
     } finally {
@@ -180,6 +198,8 @@ export function useSvgGeneration({
           subtext: 'SVG generation completed successfully.',
         })
         sessionStorage.removeItem('active_svg_job_id')
+
+        await refreshBadge(attemptId)
         return
       }
 
@@ -193,6 +213,8 @@ export function useSvgGeneration({
           subtext: errorMessage,
         })
         sessionStorage.removeItem('active_svg_job_id')
+
+        await refreshBadge(attemptId)
         return
       }
 
