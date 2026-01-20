@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Use server-sent `progress` (0–100) to drive the progress UI
   - On `SUCCEEDED`/`FAILED`, perform a final `GET /svg/generation-jobs/:id` to fetch the SVG + updated credits
 
+### Fixed
+
+- **SVG Generation**: Add polling fallback after Socket.IO timeout in `generateSvg` for reliability when realtime events are missed
+
 ## [0.2.0] - 2025-12-29
 
 ### Added
