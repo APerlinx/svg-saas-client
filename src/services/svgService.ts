@@ -144,12 +144,27 @@ export async function generateSvg(
     }
 
     return await new Promise<GenerateSvgResponse>((resolve, reject) => {
-      const timeoutMs = options?.timeoutMs ?? 120_000
+      const socketTimeoutMs = options?.timeoutMs ?? 120_000
+      const pollingIntervalMs = 5_000
+      const pollingTimeoutMs = socketTimeoutMs
+
       let settled = false
+      let stopPolling: (() => void) | null = null
+      let pollingDeadlineTimer: number | null = null
 
       const cleanup = () => {
         socket.off('generation-job:update', onUpdate)
-        clearTimeout(timer)
+        clearTimeout(socketTimer)
+
+        if (stopPolling) {
+          stopPolling()
+          stopPolling = null
+        }
+
+        if (pollingDeadlineTimer !== null) {
+          clearTimeout(pollingDeadlineTimer)
+          pollingDeadlineTimer = null
+        }
       }
 
       const finish = (fn: () => void) => {
@@ -159,9 +174,50 @@ export async function generateSvg(
         fn()
       }
 
-      const timer = setTimeout(() => {
-        finish(() => reject(new Error(`Timed out waiting for job ${jobId}`)))
-      }, timeoutMs)
+      const pollingFallback = () => {
+        logger.warn(
+          `Socket update timeout for job ${jobId}, falling back to polling`
+        )
+
+        const interval = window.setInterval(async () => {
+          try {
+            const polledRes = await api.get<GenerateSvgResponse>(
+              `/svg/generation-jobs/${jobId}`
+            )
+
+            const polledJob = polledRes.data.job
+            const isTerminal =
+              polledJob.status === 'SUCCEEDED' || polledJob.status === 'FAILED'
+
+            if (isTerminal) {
+              finish(() => resolve(polledRes.data))
+            }
+          } catch (e) {
+            logger.error('Error polling for job status', e)
+          }
+        }, pollingIntervalMs)
+
+        return () => window.clearInterval(interval)
+      }
+
+      const startPollingFallbackIfNeeded = () => {
+        if (settled) return
+        if (stopPolling) return
+
+        // Stop listening to socket updates once we switch to polling.
+        socket.off('generation-job:update', onUpdate)
+        stopPolling = pollingFallback()
+
+        pollingDeadlineTimer = window.setTimeout(() => {
+          finish(() =>
+            reject(
+              new Error(
+                `Timed out waiting for job ${jobId} (socket + polling fallback)`
+              )
+            )
+          )
+        }, pollingTimeoutMs)
+      }
 
       const onUpdate = async (payload: unknown) => {
         if (!isGenerationJobUpdatePayload(payload)) return
@@ -199,6 +255,11 @@ export async function generateSvg(
           finish(() => reject(e))
         }
       }
+
+      const socketTimer = window.setTimeout(() => {
+        startPollingFallbackIfNeeded()
+      }, socketTimeoutMs)
+
       socket.on('generation-job:update', onUpdate)
     })
   } catch (error) {

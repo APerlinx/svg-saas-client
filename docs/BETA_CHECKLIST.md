@@ -34,6 +34,11 @@
 - [ ] Backend idempotency validation deployed
 - [ ] Rate limiting tested (429 with retry-after header)
 - [ ] Job update delivery (Socket.IO) tested under load
+- [ ] Polling fallback hardened (when Socket.IO updates are missing):
+  - [ ] Add jitter to polling interval to avoid thundering herd
+  - [ ] Respect `Retry-After` on 429 responses (delay next poll accordingly)
+  - [ ] Consider backoff/cap strategy for prolonged polling windows
+  - [ ] Validate total timeout budget (socket wait + polling fallback) matches desired UX
 
 ## Deployment 🌐
 
