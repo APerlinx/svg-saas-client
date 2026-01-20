@@ -18,9 +18,14 @@
 - **Secure Downloads**: Completed SVGs can be downloaded via short-lived signed URLs
 - **Privacy Controls**: Public/private generation options
 - **Session Management**: Persistent draft prompts and secure authentication
+- **Notifications (v1)**: Bell dropdown with unread indicator for job + credit events
 - **Responsive Design**: Mobile-first UI with Tailwind CSS
 - **Error Tracking**: Production-ready Sentry integration
 - **Type Safety**: Full TypeScript coverage with strict checks
+
+Docs:
+
+- `docs/NOTIFICATIONS.md`
 
 ## 🛠️ Tech Stack
 

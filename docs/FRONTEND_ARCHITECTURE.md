@@ -14,6 +14,7 @@ flowchart TB
   Router --> Layout[App Layout\n`src/App.tsx`]
 
   Layout --> Auth[AuthProvider\n`src/context/AuthProvider.tsx`]
+  Layout --> Notifs[NotificationsProvider\n`src/context/NotificationsProvider.tsx`]
   Layout --> Toast[ToastProvider\n`src/context/ToastProvider.tsx`]
   Layout --> Sentry[Sentry init\n`src/services/logger.ts`]
 
@@ -43,8 +44,11 @@ Entry point: `src/main.tsx`
 - Wraps the app with:
   - `AppErrorBoundary` (top-level error boundary)
   - `AuthProvider` (session bootstrap + user state)
+  - `NotificationsProvider` (badge count + dropdown list state)
   - `ToastProvider` (toast notifications)
   - `RouterProvider` (`src/routes/index.tsx`)
+
+See `docs/NOTIFICATIONS.md` for the Notifications v1 feature.
 
 ### Auth bootstrap
 
