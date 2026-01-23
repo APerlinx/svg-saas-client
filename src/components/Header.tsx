@@ -64,17 +64,17 @@ export default function Header() {
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-1.5 group cursor-pointer shrink-0"
+            className="flex items-center gap-0.5 group cursor-pointer shrink-0"
           >
             <div className="flex items-center justify-center ">
               <Logo
-                size="24"
+                size="28"
                 className="text-gray-900 group-hover:scale-105 transition-transform"
               />
             </div>
 
             <span className="font-semibold text-base sm:text-lg tracking-tight text-gray-900 ">
-              chatSVG
+              ChatSVG
             </span>
             <span className="hidden lg:inline-block text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full ml-1">
               Beta
