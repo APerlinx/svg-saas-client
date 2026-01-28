@@ -1,0 +1,5 @@
+# Normalize text files and keep consistent line endings across platforms
+* text=auto
+
+# Keep SVGs LF to avoid CRLF churn/noisy diffs
+*.svg text eol=lf

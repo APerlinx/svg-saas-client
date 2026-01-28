@@ -9,11 +9,6 @@ const api = axios.create({
 })
 attachCsrfInterceptor(api)
 
-interface ApiError {
-  message?: string
-  error?: string
-}
-
 export interface Job {
   id: string
   status: 'QUEUED' | 'RUNNING' | 'SUCCEEDED' | 'FAILED'
@@ -83,8 +78,22 @@ interface DownloadSvgResponse {
   downloadUrl?: string
 }
 
+export type PublicGenerationItem = {
+  id: string
+  svgUrl: string | null
+  prompt: string
+  style: string
+  model: string
+  createdAt: string
+}
+
+export type PublicGenerationsResponse = {
+  publicGenerations: PublicGenerationItem[]
+  nextCursor: string | null
+}
+
 function isGenerationJobUpdatePayload(
-  value: unknown
+  value: unknown,
 ): value is GenerationJobUpdatePayload {
   if (typeof value !== 'object' || value === null) return false
   const v = value as Record<string, unknown>
@@ -97,22 +106,46 @@ function isGenerationJobUpdatePayload(
   )
 }
 
+interface ApiError {
+  message?: string
+  error?: string
+  errorCode?: string
+}
+export class ApiRequestError extends Error {
+  status?: number
+  errorCode?: string
+
+  constructor(message: string, opts?: { status?: number; errorCode?: string }) {
+    super(message)
+    this.name = 'ApiRequestError'
+    this.status = opts?.status
+    this.errorCode = opts?.errorCode
+  }
+}
+
 function normalizeError(error: unknown): never {
   if (axios.isAxiosError(error)) {
     const err = error as AxiosError<ApiError>
+    const data = err.response?.data
+
     const msg =
-      err.response?.data?.error ||
-      err.response?.data?.message ||
+      data?.error ||
+      data?.message ||
       err.response?.statusText ||
       'Unexpected server error'
-    throw new Error(msg)
+
+    throw new ApiRequestError(msg, {
+      status: err.response?.status,
+      errorCode: data?.errorCode,
+    })
   }
+
   throw error as Error
 }
 
 export async function generateSvg(
   { prompt, style, privacy, model, idempotencyKey }: GenerateSvgParams,
-  options?: GenerateSvgOptions
+  options?: GenerateSvgOptions,
 ): Promise<GenerateSvgResponse> {
   try {
     const response = await api.post<GenerateSvgResponse>(
@@ -123,7 +156,7 @@ export async function generateSvg(
           'Content-Type': 'application/json',
           'x-idempotency-key': idempotencyKey,
         },
-      }
+      },
     )
 
     const socket = connectSocket()
@@ -176,13 +209,13 @@ export async function generateSvg(
 
       const pollingFallback = () => {
         logger.warn(
-          `Socket update timeout for job ${jobId}, falling back to polling`
+          `Socket update timeout for job ${jobId}, falling back to polling`,
         )
 
         const interval = window.setInterval(async () => {
           try {
             const polledRes = await api.get<GenerateSvgResponse>(
-              `/svg/generation-jobs/${jobId}`
+              `/svg/generation-jobs/${jobId}`,
             )
 
             const polledJob = polledRes.data.job
@@ -212,9 +245,9 @@ export async function generateSvg(
           finish(() =>
             reject(
               new Error(
-                `Timed out waiting for job ${jobId} (socket + polling fallback)`
-              )
-            )
+                `Timed out waiting for job ${jobId} (socket + polling fallback)`,
+              ),
+            ),
           )
         }, pollingTimeoutMs)
       }
@@ -248,7 +281,7 @@ export async function generateSvg(
 
         try {
           const finalRes = await api.get<GenerateSvgResponse>(
-            `/svg/generation-jobs/${jobId}`
+            `/svg/generation-jobs/${jobId}`,
           )
           finish(() => resolve(finalRes.data))
         } catch (e) {
@@ -278,11 +311,11 @@ export async function generateSvg(
 }
 
 export async function getExistingJob(
-  jobId: string
+  jobId: string,
 ): Promise<GenerateSvgResponse> {
   try {
     const response = await api.get<GenerateSvgResponse>(
-      `/svg/generation-jobs/${jobId}`
+      `/svg/generation-jobs/${jobId}`,
     )
 
     if (!response.data.job) throw new Error('Job not found')
@@ -329,13 +362,13 @@ export async function getExistingJob(
 
       const pollingFallback = () => {
         logger.warn(
-          `Socket update timeout for job ${jobId}, falling back to polling`
+          `Socket update timeout for job ${jobId}, falling back to polling`,
         )
 
         const interval = setInterval(async () => {
           try {
             const polledRes = await api.get<GenerateSvgResponse>(
-              `/svg/generation-jobs/${jobId}`
+              `/svg/generation-jobs/${jobId}`,
             )
 
             const polledJob = polledRes.data.job
@@ -365,9 +398,9 @@ export async function getExistingJob(
           finish(() =>
             reject(
               new Error(
-                `Timed out waiting for job ${jobId} (socket + polling fallback)`
-              )
-            )
+                `Timed out waiting for job ${jobId} (socket + polling fallback)`,
+              ),
+            ),
           )
         }, pollingTimeoutMs)
       }
@@ -382,7 +415,7 @@ export async function getExistingJob(
 
         try {
           const finalRes = await api.get<GenerateSvgResponse>(
-            `/svg/generation-jobs/${jobId}`
+            `/svg/generation-jobs/${jobId}`,
           )
           finish(() => resolve(finalRes.data))
         } catch (e) {
@@ -402,11 +435,27 @@ export async function getExistingJob(
 }
 
 export async function downloadSvg(
-  generationId: string
+  generationId: string,
 ): Promise<DownloadSvgResponse> {
   try {
     const response = await api.get<DownloadSvgResponse>(
-      `/svg/${generationId}/download`
+      `/svg/${generationId}/download`,
+    )
+    return response.data
+  } catch (error) {
+    normalizeError(error)
+  }
+}
+
+export async function getPublicSvgs(
+  limit: number,
+  cursor?: string,
+  style?: string,
+  model?: string,
+): Promise<PublicGenerationsResponse> {
+  try {
+    const response = await api.get<PublicGenerationsResponse>(
+      `/svg/public?limit=${limit}${cursor ? `&cursor=${cursor}` : ''}${style ? `&style=${encodeURIComponent(style)}` : ''}${model ? `&model=${encodeURIComponent(model)}` : ''}`,
     )
     return response.data
   } catch (error) {
