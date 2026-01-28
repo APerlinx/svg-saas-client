@@ -200,7 +200,7 @@ export default function Gallery() {
 
           <div className="mt-6">
             {isLoading ? (
-              <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(140px,1fr))]">
+              <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
                 {Array.from({ length: 18 }).map((_, i) => (
                   <div
                     key={i}
@@ -219,7 +219,7 @@ export default function Gallery() {
               </div>
             ) : (
               <>
-                <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(140px,1fr))]">
+                <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
                   {items.map((item) => {
                     const clickable = Boolean(item.svgUrl)
                     return (
