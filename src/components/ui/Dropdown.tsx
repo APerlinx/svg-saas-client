@@ -1,5 +1,6 @@
 import ChatGptIcon from '../icons/ChatGptIcon'
 import GoogleIcon from '../icons/GoogleIcon'
+import ClaudeIcon from '../icons/ClaudeIcon'
 import ChevronDownIcon from '../icons/ChevronDownIcon'
 import CheckmarkIcon from '../icons/CheckmarkIcon'
 import type { PromptFormData } from '../../types/svg'
@@ -24,7 +25,14 @@ interface DropdownProps {
 const getIcon = (iconName?: string) => {
   if (iconName === 'chat-gpt') return 'chat-gpt'
   if (iconName === 'google') return 'google'
+  if (iconName === 'claude') return 'claude'
   return null
+}
+
+function IconGlyph({ icon }: { icon: 'chat-gpt' | 'google' | 'claude' }) {
+  if (icon === 'chat-gpt') return <ChatGptIcon className="w-4 h-4 text-black" />
+  if (icon === 'google') return <GoogleIcon className="w-4 h-4" />
+  return <ClaudeIcon className="w-4 h-4 text-wizard-orange" />
 }
 
 export default function Dropdown({
@@ -43,7 +51,7 @@ export default function Dropdown({
 
   const partnerModels = options.filter((opt) => opt.section === 'partner')
   const comingSoonModels = options.filter(
-    (opt) => opt.section === 'coming-soon'
+    (opt) => opt.section === 'coming-soon',
   )
 
   return (
@@ -59,8 +67,10 @@ export default function Dropdown({
           <div className="w-5 h-5 bg-white rounded flex items-center justify-center shrink-0">
             {modelIcon === 'chat-gpt' ? (
               <ChatGptIcon className="w-3.5 h-3.5 text-black" />
-            ) : (
+            ) : modelIcon === 'google' ? (
               <GoogleIcon className="w-3.5 h-3.5" />
+            ) : (
+              <ClaudeIcon className="w-3.5 h-3.5 text-wizard-orange" />
             )}
           </div>
         )}
@@ -92,11 +102,7 @@ export default function Dropdown({
                   >
                     {icon && (
                       <div className="w-6 h-6 bg-white rounded flex items-center justify-center shrink-0">
-                        {icon === 'chat-gpt' ? (
-                          <ChatGptIcon className="w-4 h-4 text-black" />
-                        ) : (
-                          <GoogleIcon className="w-4 h-4" />
-                        )}
+                        <IconGlyph icon={icon} />
                       </div>
                     )}
                     <span className="flex-1">{option.label}</span>
@@ -122,20 +128,20 @@ export default function Dropdown({
               {comingSoonModels.map((option) => {
                 const icon = getIcon(option.icon)
                 const isSelected = selectedValue === option.value
+                const isDisabled = true
                 return (
                   <button
                     key={option.value}
                     type="button"
-                    onClick={() => onChange(field, option.value)}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-wizard-gray-medium/20 flex items-center gap-2 last:rounded-b-lg"
+                    onClick={() => {
+                      if (!isDisabled) onChange(field, option.value)
+                    }}
+                    disabled={isDisabled}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-wizard-gray-medium/20 flex items-center gap-2 last:rounded-b-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                   >
                     {icon && (
                       <div className="w-6 h-6 bg-white rounded flex items-center justify-center shrink-0">
-                        {icon === 'chat-gpt' ? (
-                          <ChatGptIcon className="w-4 h-4" />
-                        ) : (
-                          <GoogleIcon className="w-4 h-4" />
-                        )}
+                        <IconGlyph icon={icon} />
                       </div>
                     )}
                     <span className="flex-1">{option.label}</span>

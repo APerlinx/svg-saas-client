@@ -3,6 +3,7 @@ import { AI_MODELS } from '../constants/models'
 import { SVG_STYLES } from '../constants/svgStyles'
 import ChatGptIcon from '../components/icons/ChatGptIcon'
 import GoogleIcon from '../components/icons/GoogleIcon'
+import ClaudeIcon from '../components/icons/ClaudeIcon'
 import type {
   PublicGenerationsResponse,
   PublicGenerationItem,
@@ -25,6 +26,9 @@ function ModelIcon({ icon }: { icon?: string }) {
   if (icon === 'google') {
     return <GoogleIcon size="16" className="h-4 w-4" />
   }
+  if (icon === 'claude') {
+    return <ClaudeIcon size="16" className="text-wizard-orange" />
+  }
   return null
 }
 
@@ -38,6 +42,7 @@ export default function Gallery() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const requestIdRef = useRef(0)
+  const filtersRef = useRef<HTMLElement | null>(null)
 
   const styleOptions = useMemo(
     () => [{ value: 'all', label: 'All' }, ...SVG_STYLES],
@@ -117,75 +122,86 @@ export default function Gallery() {
   return (
     <div className="w-full max-w-none mx-auto py-10 sm:py-14 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
-        <div className="h-fit">
-          <aside className="w-full lg:fixed lg:top-44 lg:w-[260px] h-fit rounded-3xl border border-gray-200/60 bg-white/70 backdrop-blur-sm p-5">
-            <div className="text-sm font-semibold text-gray-900">Filters</div>
+        <aside
+          id="gallery-filters"
+          ref={filtersRef}
+          className="w-full lg:w-[260px] h-fit rounded-3xl border border-gray-200/60 bg-white/70 backdrop-blur-sm p-5"
+        >
+          <div className="text-sm font-semibold text-gray-900">Filters</div>
 
-            <div className="mt-4">
-              <div className="text-xs font-semibold text-gray-700">Style</div>
-              <div className="mt-2 flex flex-col gap-0.5">
-                {styleOptions.map((opt) => {
-                  const isActive = styleFilter === opt.value
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      className={cn(
-                        'w-full text-left text-sm transition-colors rounded-md px-2 py-1',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wizard-orange/40',
-                        isActive
+          <div className="mt-4">
+            <div className="text-xs font-semibold text-gray-700">Style</div>
+            <div className="mt-2 flex flex-col gap-0.5">
+              {styleOptions.map((opt) => {
+                const isActive = styleFilter === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={cn(
+                      'w-full text-left text-sm transition-colors rounded-md px-2 py-1',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wizard-orange/40',
+                      isActive
+                        ? 'text-gray-900 font-semibold'
+                        : 'text-gray-600 hover:text-gray-900',
+                    )}
+                    onClick={() => setStyleFilter(opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <div className="text-xs font-semibold text-gray-700">Model</div>
+            <div className="mt-2 flex flex-col gap-0.5">
+              {modelOptions.map((opt) => {
+                const isActive = modelFilter === opt.value
+                const icon =
+                  opt.value === 'all'
+                    ? undefined
+                    : (opt as (typeof AI_MODELS)[number]).icon
+
+                const isComingSoon =
+                  opt.value !== 'all' &&
+                  (opt as (typeof AI_MODELS)[number]).section === 'coming-soon'
+
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={cn(
+                      'w-full text-left text-sm transition-colors rounded-md px-2 py-1',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wizard-orange/40',
+                      isComingSoon
+                        ? 'text-gray-400 cursor-not-allowed opacity-70'
+                        : isActive
                           ? 'text-gray-900 font-semibold'
                           : 'text-gray-600 hover:text-gray-900',
-                      )}
-                      onClick={() => setStyleFilter(opt.value)}
-                    >
-                      {opt.label}
-                    </button>
-                  )
-                })}
-              </div>
+                    )}
+                    onClick={() => {
+                      if (!isComingSoon) setModelFilter(opt.value)
+                    }}
+                    disabled={isComingSoon}
+                  >
+                    <span className="inline-flex items-center gap-2">
+                      <ModelIcon icon={icon} />
+                      <span>{opt.label}</span>
+                    </span>
+                  </button>
+                )
+              })}
             </div>
+          </div>
 
-            <div className="mt-6">
-              <div className="text-xs font-semibold text-gray-700">Model</div>
-              <div className="mt-2 flex flex-col gap-0.5">
-                {modelOptions.map((opt) => {
-                  const isActive = modelFilter === opt.value
-                  const icon =
-                    opt.value === 'all'
-                      ? undefined
-                      : (opt as (typeof AI_MODELS)[number]).icon
-
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      className={cn(
-                        'w-full text-left text-sm transition-colors rounded-md px-2 py-1',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wizard-orange/40',
-                        isActive
-                          ? 'text-gray-900 font-semibold'
-                          : 'text-gray-600 hover:text-gray-900',
-                      )}
-                      onClick={() => setModelFilter(opt.value)}
-                    >
-                      <span className="inline-flex items-center gap-2">
-                        <ModelIcon icon={icon} />
-                        <span>{opt.label}</span>
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
+          {errorMessage && (
+            <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {errorMessage}
             </div>
-
-            {errorMessage && (
-              <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                {errorMessage}
-              </div>
-            )}
-          </aside>
-        </div>
+          )}
+        </aside>
 
         <main>
           <div className="rounded-3xl bg-linear-to-r from-wizard-blue/15 to-wizard-gold/10 backdrop-blur-sm border border-gray-200/50 p-6 sm:p-8">
@@ -200,7 +216,7 @@ export default function Gallery() {
 
           <div className="mt-6">
             {isLoading ? (
-              <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
+              <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(140px,1fr))]">
                 {Array.from({ length: 18 }).map((_, i) => (
                   <div
                     key={i}
@@ -219,7 +235,7 @@ export default function Gallery() {
               </div>
             ) : (
               <>
-                <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
+                <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(140px,1fr))]">
                   {items.map((item) => {
                     const clickable = Boolean(item.svgUrl)
                     return (
@@ -279,6 +295,19 @@ export default function Gallery() {
           </div>
         </main>
       </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          filtersRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          })
+        }}
+        className="fixed bottom-6 right-6 z-40 rounded-full px-4 py-2 text-sm font-semibold text-gray-900 bg-white/80 border border-gray-200/70 backdrop-blur-sm hover:bg-white transition-colors"
+      >
+        Back to filters
+      </button>
     </div>
   )
 }
