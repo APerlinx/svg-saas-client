@@ -5,6 +5,11 @@ import getInitials from '../utils/getInitials'
 import Bell from './icons/BellIcon'
 import GalleryIcon from './icons/GalleryIcon'
 import PricingIcon from './icons/PricingIcon'
+import LampIcon from './icons/LampIcon'
+import BugIcon from './icons/BugIcon'
+import SuggestionIcon from './icons/SuggestionIcon'
+import DocsIcon from './icons/DocsIcon'
+import PillSnakeBorder from './icons/PillSnakeBorder'
 import { Logo } from './icons/Logo'
 import Notification from './Notification'
 import { useNotifications } from '../hooks/useNotifications'
@@ -15,8 +20,10 @@ export default function Header() {
     useNotifications()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isNotificationOpen, setIsNotificationOpen] = useState(false)
+  const [isIdeaMenuOpen, setIsIdeaMenuOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const notificationRef = useRef<HTMLDivElement>(null)
+  const ideaMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!isNotificationOpen) return
@@ -42,20 +49,59 @@ export default function Header() {
       ) {
         setIsNotificationOpen(false)
       }
+
+      if (
+        isIdeaMenuOpen &&
+        ideaMenuRef.current &&
+        !ideaMenuRef.current.contains(target)
+      ) {
+        setIsIdeaMenuOpen(false)
+      }
     }
 
-    if (isDropdownOpen || isNotificationOpen) {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setIsDropdownOpen(false)
+      setIsNotificationOpen(false)
+      setIsIdeaMenuOpen(false)
+    }
+
+    if (isDropdownOpen || isNotificationOpen || isIdeaMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', handleKeyDown)
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isDropdownOpen, isNotificationOpen])
+  }, [isDropdownOpen, isNotificationOpen, isIdeaMenuOpen])
 
   const handleLogout = async () => {
     await logout()
     setIsDropdownOpen(false)
+  }
+
+  const handleToggleIdeaMenu = () => {
+    setIsIdeaMenuOpen((open) => !open)
+    setIsDropdownOpen(false)
+    setIsNotificationOpen(false)
+  }
+
+  const handleSelectIdeaAction = () => {
+    setIsIdeaMenuOpen(false)
+  }
+
+  const handleToggleNotifications = () => {
+    setIsNotificationOpen((open) => !open)
+    setIsDropdownOpen(false)
+    setIsIdeaMenuOpen(false)
+  }
+
+  const handleToggleUserMenu = () => {
+    setIsDropdownOpen((open) => !open)
+    setIsNotificationOpen(false)
+    setIsIdeaMenuOpen(false)
   }
   return (
     <header className="backdrop-blur-sm bg-white/50 border-b border-gray-200/50 sticky top-0 z-50">
@@ -85,36 +131,106 @@ export default function Header() {
           <div className="flex items-center gap-1 shrink-0">
             {/* Navigation - Always Visible */}
             <nav className="flex items-center gap-0.5">
-              <div className="relative group">
-                <Link
-                  to="/gallery"
-                  className="flex items-center gap-1.5 px-2 py-1.5 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
-                  title="Gallery"
-                >
-                  <GalleryIcon size="20" className="text-current shrink-0" />
-                  <span className="hidden md:inline">Gallery</span>
-                </Link>
-                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                  Coming Soon
-                </span>
-              </div>
               <Link
                 to="/pricing"
-                className="flex items-center gap-1.5 px-2 py-1.5 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
+                className="pill-snake-border bg-wizard-orange/10 flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-full transition-colors "
                 title="Pricing"
               >
-                <PricingIcon size="20" className="text-current shrink-0" />
-                <span className="hidden md:inline">Buy now</span>
+                <PillSnakeBorder className="pill-snake-border__svg" />
+                <PricingIcon
+                  size="20"
+                  className="pill-snake-border__content text-white shrink-0"
+                />
+                <span className="pill-snake-border__content hidden md:inline">
+                  Buy now
+                </span>
+              </Link>
+              <Link
+                to="/gallery"
+                className="flex items-center gap-1.5 px-2 py-1.5 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
+                title="Gallery"
+              >
+                <GalleryIcon size="20" className="text-current shrink-0" />
+                <span className="hidden md:inline">Gallery</span>
+              </Link>
+
+              <Link
+                to="/docs"
+                className="flex items-center gap-1.5 px-2 py-1.5 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
+                title="Docs"
+              >
+                <DocsIcon size="20" className="text-current shrink-0" />
+                <span className="hidden md:inline">Docs</span>
               </Link>
             </nav>
 
             {/* Auth Section with Divider */}
             <div className="flex items-center gap-1 pl-2 sm:pl-3 border-l-2 border-gray-200 ml-1">
+              {/* Idea Menu */}
+              <div className="relative" ref={ideaMenuRef}>
+                <button
+                  type="button"
+                  onClick={handleToggleIdeaMenu}
+                  className="p-1 md:p-1.5 hover:bg-gray-100/60 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wizard-orange/40"
+                  aria-label="Ideas"
+                  aria-haspopup="menu"
+                  aria-expanded={isIdeaMenuOpen}
+                >
+                  <SuggestionIcon size="20" className="text-gray-700" />
+                </button>
+
+                {isIdeaMenuOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-72 backdrop-blur-md bg-white/90 border border-gray-200/50 rounded-lg shadow-lg py-2 z-50"
+                    role="menu"
+                    aria-label="Ideas menu"
+                  >
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={handleSelectIdeaAction}
+                      className="w-full px-3 py-2 flex items-start gap-3 text-left hover:bg-gray-100/60 transition-colors"
+                    >
+                      <span className="mt-0.5 h-9 w-9 rounded-lg bg-gray-100/60 border border-gray-200/40 flex items-center justify-center shrink-0">
+                        <LampIcon size="18" className="text-gray-900" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium text-gray-900">
+                          Submit an idea
+                        </span>
+                        <span className="block text-xs text-gray-500 mt-0.5">
+                          Share a feature request or improvement
+                        </span>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={handleSelectIdeaAction}
+                      className="w-full px-3 py-2 flex items-start gap-3 text-left hover:bg-gray-100/60 transition-colors"
+                    >
+                      <span className="mt-0.5 h-9 w-9 rounded-lg bg-gray-100/60 border border-gray-200/40 flex items-center justify-center shrink-0">
+                        <BugIcon size="18" className="text-gray-900" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium text-gray-900">
+                          Report a bug
+                        </span>
+                        <span className="block text-xs text-gray-500 mt-0.5">
+                          Tell us what's broken or confusing
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
               {isAuthenticated && user ? (
                 <>
                   <div className="relative" ref={dropdownRef}>
                     <button
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      onClick={handleToggleUserMenu}
                       className="flex items-center gap-1 px-1.5 md:px-2 py-1 hover:bg-gray-100/60 rounded-lg transition-colors"
                       aria-label="User menu"
                     >
@@ -210,7 +326,7 @@ export default function Header() {
                           ? `Notifications (${unreadCount} new)`
                           : 'Notifications'
                       }
-                      onClick={() => setIsNotificationOpen((v) => !v)}
+                      onClick={handleToggleNotifications}
                     >
                       <span className="relative inline-flex">
                         <Bell

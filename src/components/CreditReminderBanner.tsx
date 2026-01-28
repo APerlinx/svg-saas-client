@@ -68,7 +68,7 @@ export default function CreditReminderBanner() {
 
   const isDashboard = useMemo(
     () => location.pathname === '/',
-    [location.pathname]
+    [location.pathname],
   )
 
   const credits = user?.credits ?? 0
@@ -97,7 +97,7 @@ export default function CreditReminderBanner() {
   }
 
   return (
-    <div className="fixed top-12 sm:top-14 left-0 right-0 z-40 pointer-events-none">
+    <div className="absolute top-12 sm:top-14 left-0 right-0 z-40 pointer-events-none">
       <div className="pointer-events-auto">
         <div className="max-w-2xl mx-auto px-4 sm:px-4 lg:px-6 ">
           <div className="py-2 animate-slideDown">

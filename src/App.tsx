@@ -44,11 +44,11 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col ">
+    <div className="min-h-screen flex flex-col relative">
       <Header />
       <CreditReminderBanner />
 
-      <main className="grow flex items-center justify-center px-4 py-8 sm:py-16">
+      <main className="grow flex items-start justify-center px-4 py-8 sm:py-16">
         <Outlet />
       </main>
 
