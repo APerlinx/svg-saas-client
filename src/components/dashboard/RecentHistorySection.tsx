@@ -1,4 +1,5 @@
 import MoonEmptyStateIcon from '../icons/MoonEmptyStateIcon'
+import { Link } from 'react-router-dom'
 
 export type RecentHistoryItem = {
   id: string
@@ -13,6 +14,7 @@ type Props = {
 
 export default function RecentHistorySection({ items }: Props) {
   const hasItems = Boolean(items && items.length > 0)
+  const canNavigate = items !== null
 
   return (
     <section>
@@ -24,26 +26,62 @@ export default function RecentHistorySection({ items }: Props) {
         </div>
 
         <div className="w-full sm:w-auto sm:ml-auto flex justify-end">
-          <button
-            type="button"
-            className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors"
-            disabled={!hasItems}
-          >
-            View all
-          </button>
+          {canNavigate ? (
+            <Link
+              to="/history"
+              className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              View all
+            </Link>
+          ) : (
+            <span className="text-sm font-semibold text-gray-400 cursor-not-allowed">
+              View all
+            </span>
+          )}
         </div>
       </div>
 
       <div className="rounded-3xl border border-gray-200/60 bg-white/60 p-8 sm:p-10 text-center shadow-sm">
-        <div className="mx-auto flex items-center justify-center">
-          <MoonEmptyStateIcon className="h-36 w-36 sm:h-44 sm:w-44" />
-        </div>
-        <div className="text-lg sm:text-xl font-semibold text-gray-900">
-          No SVGs to show yet
-        </div>
-        <div className="mt-2 text-sm text-gray-600 max-w-md mx-auto">
-          Your generated SVGs will appear here.
-        </div>
+        {hasItems ? (
+          <div className="mx-auto max-w-4xl">
+            <div className="text-sm font-semibold text-gray-700">
+              Your recent SVGs
+            </div>
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {items!.map((item) => (
+                <div
+                  key={item.id}
+                  className="aspect-square rounded-2xl border border-gray-200/70 bg-white/60 overflow-hidden"
+                  aria-label="Your SVG preview"
+                >
+                  <div className="h-full w-full bg-white/45 flex items-center justify-center">
+                    {item.svgUrl ? (
+                      <img
+                        src={item.svgUrl}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-contain p-3"
+                      />
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="mx-auto flex items-center justify-center">
+              <MoonEmptyStateIcon className="h-36 w-36 sm:h-44 sm:w-44" />
+            </div>
+            <div className="text-lg sm:text-xl font-semibold text-gray-900">
+              No SVGs to show yet
+            </div>
+            <div className="mt-2 text-sm text-gray-600 max-w-md mx-auto">
+              Your generated SVGs will appear here.
+            </div>
+          </>
+        )}
       </div>
     </section>
   )

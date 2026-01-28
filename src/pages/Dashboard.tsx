@@ -9,6 +9,7 @@ import {
   getPublicSvgs,
   type PublicGenerationItem,
 } from '../services/svgService'
+import { fetchGenerationHistory } from '../services/userService'
 import RecentHistorySection, {
   type RecentHistoryItem,
 } from '../components/dashboard/RecentHistorySection'
@@ -35,9 +36,18 @@ export default function Dashboard() {
         return
       }
 
-      // TODO: Wire this when a user history service exists.
-      const res: RecentHistoryItem[] = []
-      if (!cancelled) setHistoryItems(res)
+      try {
+        const data = await fetchGenerationHistory({ limit: 6, cursor: null })
+        const mapped: RecentHistoryItem[] = data.generations.map((g) => ({
+          id: g.id,
+          svgUrl: g.svgUrl,
+          prompt: g.prompt,
+          createdAt: g.createdAt,
+        }))
+        if (!cancelled) setHistoryItems(mapped)
+      } catch {
+        if (!cancelled) setHistoryItems([])
+      }
     }
 
     void run()

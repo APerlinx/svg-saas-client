@@ -6,6 +6,7 @@ import NotFound from '../components/NotFound'
 import Pricing from '../pages/Pricing'
 import Docs from '../pages/Docs'
 import Gallery from '../pages/Gallery'
+import UserHistory from '../pages/UserHistory'
 import SignIn from '../pages/auth/SignIn'
 import SignUp from '../pages/auth/SignUp'
 import ForgotPassword from '../pages/auth/ForgotPassword'
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
       {
         path: 'gallery',
         element: <Gallery />,
+      },
+      {
+        path: 'history',
+        element: <UserHistory />,
       },
       {
         path: 'pricing',
