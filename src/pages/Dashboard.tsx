@@ -70,7 +70,7 @@ export default function Dashboard() {
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="min-h-[calc(100svh-6rem)] grid grid-rows-[1fr_auto]">
           <div className="pt-6 sm:pt-10 flex items-center">
-            <div id="prompt" className="w-full">
+            <div id="prompt-section" className="w-full">
               <div className="text-center mb-6 sm:mb-8">
                 <div className="text-sm font-semibold text-gray-700">
                   Welcome to ChatSVG
