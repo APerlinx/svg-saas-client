@@ -1,7 +1,7 @@
 // frontend/src/constants/models.ts
 /**
  * Valid AI models
- * IMPORTANT: Keep this in sync with the backend version!
+ * IMPORTANT: Keep this in sync with the backend version! except coming soon models
  * Last updated: 2025-12-9
  */
 export const AI_MODELS = [
@@ -18,6 +18,12 @@ export const AI_MODELS = [
     section: 'partner',
   },
   { value: 'gemini', label: 'Gemini', icon: 'google', section: 'coming-soon' },
+  {
+    value: 'claude-3-5-sonnet',
+    label: 'Claude 3.5 Sonnet',
+    icon: 'claude',
+    section: 'coming-soon',
+  },
 ] as const
 
 export const VALID_MODELS = AI_MODELS.map((m) => m.value)

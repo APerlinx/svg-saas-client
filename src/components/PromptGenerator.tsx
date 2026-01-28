@@ -2,7 +2,7 @@ import { useState, type FormEvent, useRef, useEffect } from 'react'
 import type { PromptFormData } from '../types/svg'
 import { Pencil } from './icons/PencilIcon'
 import { SVG_STYLES } from '../constants/svgStyles'
-import { AI_MODELS } from '../constants/models'
+import { AI_MODELS, DEFAULT_MODEL } from '../constants/models'
 import Dropdown from './ui/Dropdown'
 import PrivacySwitch from './ui/PrivacySwitch'
 import SvgResultModal from './modal/SvgResultModal'
@@ -84,7 +84,7 @@ export default function PromptGenerator() {
 
     if (formData.prompt.trim().length < 10) {
       setError(
-        'Please provide a more detailed description (at least 10 characters)'
+        'Please provide a more detailed description (at least 10 characters)',
       )
       triggerShake()
       return
@@ -118,7 +118,7 @@ export default function PromptGenerator() {
         setError('You do not have enough credits to generate an SVG.')
       } else {
         setError(
-          'Unable to generate SVG. Please ensure your description uses valid characters and try again.'
+          'Unable to generate SVG. Please ensure your description uses valid characters and try again.',
         )
       }
 
@@ -151,6 +151,16 @@ export default function PromptGenerator() {
   const selectedModel = AI_MODELS.find((opt) => opt.value === formData.model)
   const selectedModelLabel = selectedModel?.label || 'Model'
   const selectedModelIcon = selectedModel?.icon
+
+  useEffect(() => {
+    if (
+      selectedModel?.section === 'coming-soon' &&
+      formData.model !== DEFAULT_MODEL
+    ) {
+      setFormData({ ...formData, model: DEFAULT_MODEL })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedModel?.section])
 
   const handleDropdownChange = (field: keyof PromptFormData, value: string) => {
     setFormData({ ...formData, [field]: value })
