@@ -40,12 +40,15 @@ export default defineConfig({
       // Run backend + worker from ./server with NODE_ENV=test
       command: 'npm run dev:test:full --prefix ./server',
       port: 4000,
+      timeout: 120_000,
       reuseExistingServer: !process.env.CI,
     },
     {
       // Frontend dev server (Vite)
-      command: 'npm run dev',
+      // Use strictPort so Playwright doesn't hang if 5173 is already taken.
+      command: 'npm run dev -- --port 5173 --strictPort',
       port: 5173,
+      timeout: 120_000,
       reuseExistingServer: !process.env.CI,
     },
   ],
