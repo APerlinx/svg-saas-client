@@ -151,3 +151,43 @@ button {
     animation: none;
   }
 }
+
+.pill-snake-border {
+  position: relative;
+  isolation: isolate;
+  border-radius: 9999px;
+  border: none;
+}
+
+.pill-snake-border__svg {
+  position: absolute;
+  inset: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pill-snake-border__content {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes pill-snake-dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.pill-snake-border__snake {
+  stroke: var(--color-wizard-orange);
+  stroke-linecap: round;
+  stroke-dasharray: 9 91;
+  animation: pill-snake-dash 3.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill-snake-border__snake {
+    animation: none;
+  }
+}

@@ -13,8 +13,8 @@ const Crown = ({ size, className = 'text-gray-700' }: CrownProps) => (
   >
     <defs>
       <linearGradient id="crownGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style={{ stopColor: '#1a2348', stopOpacity: 1 }} />
-        <stop offset="50%" style={{ stopColor: '#f3aa4d', stopOpacity: 1 }} />
+        <stop offset="0%" style={{ stopColor: '#c55a30', stopOpacity: 1 }} />
+        <stop offset="50%" style={{ stopColor: '#d57835', stopOpacity: 1 }} />
         <stop offset="100%" style={{ stopColor: '#5887b4', stopOpacity: 1 }} />
       </linearGradient>
     </defs>

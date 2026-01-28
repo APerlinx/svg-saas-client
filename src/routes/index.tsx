@@ -4,6 +4,7 @@ import Dashboard from '../pages/Dashboard'
 import ErrorBoundary from '../components/ErrorBoundary'
 import NotFound from '../components/NotFound'
 import Pricing from '../pages/Pricing'
+import Docs from '../pages/Docs'
 import Gallery from '../pages/Gallery'
 import SignIn from '../pages/auth/SignIn'
 import SignUp from '../pages/auth/SignUp'
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
       {
         path: 'pricing',
         element: <Pricing />,
+      },
+      {
+        path: 'docs',
+        element: <Docs />,
       },
       {
         path: 'signin',
