@@ -3,66 +3,68 @@ import PromptGenerator from '../components/PromptGenerator'
 import GalleryIcon from '../components/icons/GalleryIcon'
 import { CodeIcon } from '../components/icons/CodeIcon'
 import InfoIcon from '../components/icons/InfoIcon'
-import MoonEmptyStateIcon from '../components/icons/MoonEmptyStateIcon'
-
-type CommunityItem = {
-  id: string
-  title: string
-  subtitle: string
-  accent: 'orange' | 'blue' | 'purple'
-}
-
-const COMMUNITY_PREVIEW: CommunityItem[] = [
-  {
-    id: 'wireframe-hero',
-    title: 'Landing Hero',
-    subtitle: 'Minimal • Flat • No background',
-    accent: 'orange',
-  },
-  {
-    id: 'icon-set',
-    title: 'Icon Set',
-    subtitle: 'Consistent strokes',
-    accent: 'blue',
-  },
-  {
-    id: 'empty-state',
-    title: 'Empty State',
-    subtitle: 'Product UI illustration',
-    accent: 'purple',
-  },
-  {
-    id: 'diagram',
-    title: 'Diagram',
-    subtitle: 'Clear labels & shapes',
-    accent: 'blue',
-  },
-  {
-    id: 'badge',
-    title: 'Badge',
-    subtitle: 'Brand-ready mark',
-    accent: 'orange',
-  },
-  {
-    id: 'mascot',
-    title: 'Mascot',
-    subtitle: 'Simple silhouette',
-    accent: 'purple',
-  },
-]
-
-function accentBg(accent: CommunityItem['accent']) {
-  switch (accent) {
-    case 'orange':
-      return 'from-wizard-orange/25 to-wizard-gold/10'
-    case 'blue':
-      return 'from-wizard-blue/25 to-wizard-purple/10'
-    case 'purple':
-      return 'from-wizard-purple/20 to-wizard-blue/10'
-  }
-}
+import { useEffect, useState } from 'react'
+import { useAuth } from '../hooks/useAuth'
+import {
+  getPublicSvgs,
+  type PublicGenerationItem,
+} from '../services/svgService'
+import RecentHistorySection, {
+  type RecentHistoryItem,
+} from '../components/dashboard/RecentHistorySection'
+import CommunityRemixSection from '../components/dashboard/CommunityRemixSection'
 
 export default function Dashboard() {
+  const { user } = useAuth()
+  const userId = user?.id
+
+  const [historyItems, setHistoryItems] = useState<RecentHistoryItem[] | null>(
+    null,
+  )
+  const [communityItems, setCommunityItems] = useState<PublicGenerationItem[]>(
+    [],
+  )
+  const [isCommunityLoading, setIsCommunityLoading] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+
+    const run = async () => {
+      if (!userId) {
+        setHistoryItems(null)
+        return
+      }
+
+      // TODO: Wire this when a user history service exists.
+      const res: RecentHistoryItem[] = []
+      if (!cancelled) setHistoryItems(res)
+    }
+
+    void run()
+    return () => {
+      cancelled = true
+    }
+  }, [userId])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const run = async () => {
+      setIsCommunityLoading(true)
+      try {
+        const data = await getPublicSvgs(12)
+        if (!cancelled) setCommunityItems(data.publicGenerations)
+      } finally {
+        if (!cancelled) setIsCommunityLoading(false)
+      }
+    }
+
+    void run()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   return (
     <>
       <AmbientWaves />
@@ -165,55 +167,12 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-10 sm:mt-12 space-y-10 sm:space-y-12">
-          <section>
-            <div className="flex items-end justify-between gap-4 flex-wrap">
-              <div className="w-full text-center">
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  Recent stuff
-                </h2>
-              </div>
+          <RecentHistorySection items={user ? historyItems : null} />
 
-              <div className="w-full sm:w-auto sm:ml-auto flex justify-end">
-                <button
-                  type="button"
-                  className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors"
-                >
-                  View all
-                </button>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-gray-200/60 bg-white/60 p-8 sm:p-10 text-center shadow-sm">
-              <div className="mx-auto flex items-center justify-center">
-                <MoonEmptyStateIcon className="h-36 w-36 sm:h-44 sm:w-44" />
-              </div>
-              <div className="text-lg sm:text-xl font-semibold text-gray-900">
-                No SVGs to show yet
-              </div>
-              <div className="mt-2 text-sm text-gray-600 max-w-md mx-auto">
-                Your generated SVGs will appear here.
-              </div>
-            </div>
-          </section>
-
-          {/* Community */}
-          <section>
-            <h2 className="text-center text-2xl sm:text-3xl font-bold text-gray-900">
-              Remix SVGs from the community
-            </h2>
-
-            <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              {COMMUNITY_PREVIEW.map((item) => (
-                <div
-                  key={item.id}
-                  className={`aspect-square rounded-2xl border border-gray-200/70 bg-linear-to-br ${accentBg(item.accent)} overflow-hidden`}
-                  aria-label="Public SVG preview"
-                >
-                  <div className="h-full w-full bg-white/45 flex items-center justify-center"></div>
-                </div>
-              ))}
-            </div>
-          </section>
+          <CommunityRemixSection
+            items={communityItems}
+            isLoading={isCommunityLoading}
+          />
         </div>
       </div>
     </>
