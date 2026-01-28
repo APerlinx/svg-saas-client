@@ -7,6 +7,24 @@ export default function AmbientWaves() {
       aria-hidden="true"
     >
       <defs>
+        <linearGradient
+          id="ambientRainbowSnake"
+          x1="0"
+          y1="0"
+          x2="1200"
+          y2="0"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="var(--color-wizard-orange-dark)" />
+          <stop offset="10%" stopColor="var(--color-wizard-orange-light)" />
+          <stop offset="22%" stopColor="var(--color-wizard-gold)" />
+          <stop offset="34%" stopColor="var(--color-wizard-gold-light)" />
+          <stop offset="50%" stopColor="var(--color-wizard-blue)" />
+          <stop offset="62%" stopColor="var(--color-wizard-blue-light)" />
+          <stop offset="74%" stopColor="var(--color-wizard-purple)" />
+          <stop offset="86%" stopColor="var(--color-wizard-blue-medium)" />
+          <stop offset="100%" stopColor="var(--color-wizard-orange)" />
+        </linearGradient>
         <style>{`
           .bg {
             fill: #ffffff;
@@ -37,6 +55,37 @@ export default function AmbientWaves() {
           .d3 { animation-delay: -6s; }
           .d4 { animation-delay: -8s; }
 
+          .top-snake {
+            fill: none;
+            stroke: url(#ambientRainbowSnake);
+            stroke-linecap: round;
+            vector-effect: non-scaling-stroke;
+            stroke-dasharray: 14 86;
+            animation: ambient-snake-dash 3.8s linear infinite;
+          }
+
+          .top-snake--glow {
+            stroke-width: 7;
+            opacity: 0.14;
+          }
+
+          .top-snake--core {
+            stroke-width: 2.5;
+            opacity: 0.95;
+          }
+
+          @keyframes ambient-snake-dash {
+            to {
+              stroke-dashoffset: -100;
+            }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .top-snake {
+              animation: none;
+            }
+          }
+
           @keyframes breathe {
             0%   { transform: scaleY(0.92); opacity: 0.65; }
             45%  { transform: scaleY(1.06); opacity: 0.90; }
@@ -61,6 +110,26 @@ export default function AmbientWaves() {
         <g className="breath d1">
           <path
             className="wave"
+            d="M-50 190
+               C  50 150, 150 230, 250 190
+               S 450 230, 550 190
+               S 750 230, 850 190
+               S1050 230, 1150 190
+               S1300 230, 1400 190"
+          />
+          <path
+            className="top-snake top-snake--glow"
+            pathLength="100"
+            d="M-50 190
+               C  50 150, 150 230, 250 190
+               S 450 230, 550 190
+               S 750 230, 850 190
+               S1050 230, 1150 190
+               S1300 230, 1400 190"
+          />
+          <path
+            className="top-snake top-snake--core"
+            pathLength="100"
             d="M-50 190
                C  50 150, 150 230, 250 190
                S 450 230, 550 190
