@@ -142,6 +142,8 @@ export default function SvgQuickActionsMenu({
   const [busyId, setBusyId] = useState<string | null>(null)
   const [svgSource, setSvgSource] = useState<string | null>(null)
 
+  const [deleteArmed, setDeleteArmed] = useState(false)
+
   const [placement, setPlacement] = useState<'down' | 'up'>('down')
   const [menuMaxHeight, setMenuMaxHeight] = useState<number | null>(null)
 
@@ -219,6 +221,10 @@ export default function SvgQuickActionsMenu({
     }
   }, [open])
 
+  useEffect(() => {
+    if (!open) setDeleteArmed(false)
+  }, [open])
+
   useLayoutEffect(() => {
     if (!open) return
 
@@ -290,6 +296,7 @@ export default function SvgQuickActionsMenu({
     fn: () => Promise<void>,
     opts?: {
       successLabel?: string
+      errorLabel?: string
       closeOnDone?: boolean
       closeOnError?: boolean
       showInlineSuccess?: boolean
@@ -306,7 +313,7 @@ export default function SvgQuickActionsMenu({
       if (opts?.closeOnDone) setOpen(false)
     } catch (e) {
       if (opts?.showInlineError !== false) {
-        flashInlineStatus(actionId, 'error', 'Failed')
+        flashInlineStatus(actionId, 'error', opts?.errorLabel ?? 'Failed')
       }
       logger.error(`QuickActions failed: ${actionId}`, e)
       if (opts?.closeOnError) setOpen(false)
@@ -460,18 +467,28 @@ export default function SvgQuickActionsMenu({
       danger: true,
       icon: <span className="text-sm font-bold leading-none">×</span>,
       onSelect: async () => {
+        if (busyId) return
+
+        if (!deleteArmed) {
+          setDeleteArmed(true)
+          return
+        }
+
+        setDeleteArmed(false)
         await handleAction(
           'delete',
           async () => {
-            const ok = window.confirm('Delete this SVG? This cannot be undone.')
-            if (!ok) return
             await deleteGeneration(generationId)
-            onDeleted?.(generationId)
+            window.setTimeout(() => {
+              onDeleted?.(generationId)
+            }, 2000)
           },
           {
-            closeOnDone: true,
-            showInlineSuccess: false,
+            successLabel: 'Deleted successfully',
+            errorLabel: 'Delete failed',
+            showInlineSuccess: true,
             showInlineError: true,
+            closeOnDone: true,
           },
         )
       },
@@ -585,7 +602,9 @@ export default function SvgQuickActionsMenu({
                       ? inlineLabel
                       : isBusy
                         ? 'Working…'
-                        : action.label}
+                        : action.id === 'delete' && deleteArmed
+                          ? 'Confirm'
+                          : action.label}
                   </span>
                 </button>
               )
