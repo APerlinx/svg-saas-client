@@ -16,6 +16,7 @@ import { DownloadIcon } from '../icons/DownloadIcon'
 import { ImageIcon } from '../icons/ImageIcon'
 import InfoIcon from '../icons/InfoIcon'
 import { EditIcon } from '../icons/EditIcon'
+import { TrashIcon } from '../icons/TrashIcon'
 
 type Props = {
   generationId: string
@@ -465,7 +466,7 @@ export default function SvgQuickActionsMenu({
       id: 'delete',
       label: 'Delete SVG',
       danger: true,
-      icon: <span className="text-sm font-bold leading-none">×</span>,
+      icon: <TrashIcon className="w-4 h-4" />,
       onSelect: async () => {
         if (busyId) return
 
@@ -536,7 +537,7 @@ export default function SvgQuickActionsMenu({
           <div className="sticky top-0 px-3 py-2 text-[11px] font-semibold text-gray-500 uppercase tracking-wide bg-white/95 backdrop-blur-md">
             Quick actions
           </div>
-          <div className="py-1 overflow-y-auto overscroll-contain">
+          <div className="pt-1 pb-2 overflow-y-auto overscroll-contain">
             {actions.map((action) => {
               const isBusy = busyId === action.id
               const isDisabled = Boolean(action.disabled) || Boolean(busyId)
