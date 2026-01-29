@@ -177,7 +177,14 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-10 sm:mt-12 space-y-10 sm:space-y-12">
-          <RecentHistorySection items={user ? historyItems : null} />
+          <RecentHistorySection
+            items={user ? historyItems : null}
+            onDeleted={(generationId) => {
+              setHistoryItems((prev) =>
+                prev ? prev.filter((it) => it.id !== generationId) : prev,
+              )
+            }}
+          />
 
           <CommunityRemixSection
             items={communityItems}

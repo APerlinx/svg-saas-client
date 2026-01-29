@@ -1,5 +1,6 @@
 import MoonEmptyStateIcon from '../icons/MoonEmptyStateIcon'
 import { Link } from 'react-router-dom'
+import SvgQuickActionsMenu from '../ui/SvgQuickActionsMenu'
 
 export type RecentHistoryItem = {
   id: string
@@ -10,9 +11,10 @@ export type RecentHistoryItem = {
 
 type Props = {
   items: RecentHistoryItem[] | null
+  onDeleted?: (generationId: string) => void
 }
 
-export default function RecentHistorySection({ items }: Props) {
+export default function RecentHistorySection({ items, onDeleted }: Props) {
   const hasItems = Boolean(items && items.length > 0)
   const canNavigate = items !== null
 
@@ -51,9 +53,29 @@ export default function RecentHistorySection({ items }: Props) {
               {items!.map((item) => (
                 <div
                   key={item.id}
-                  className="aspect-square rounded-2xl border border-gray-200/70 bg-white/60 overflow-hidden"
+                  onMouseEnter={() => {
+                    window.dispatchEvent(
+                      new CustomEvent('svgqa:hover', {
+                        detail: { generationId: item.id },
+                      }),
+                    )
+                  }}
+                  onFocus={() => {
+                    window.dispatchEvent(
+                      new CustomEvent('svgqa:hover', {
+                        detail: { generationId: item.id },
+                      }),
+                    )
+                  }}
+                  className="relative group aspect-square rounded-2xl border border-gray-200/70 bg-white/60"
                   aria-label="Your SVG preview"
                 >
+                  <SvgQuickActionsMenu
+                    generationId={item.id}
+                    svgUrl={item.svgUrl}
+                    variant="private"
+                    onDeleted={onDeleted}
+                  />
                   <div className="h-full w-full bg-white/45 flex items-center justify-center">
                     {item.svgUrl ? (
                       <img

@@ -4,6 +4,7 @@ import {
   fetchGenerationHistory,
   type UserGeneration,
 } from '../services/userService'
+import SvgQuickActionsMenu from '../components/ui/SvgQuickActionsMenu'
 
 type LoadState = 'idle' | 'loading' | 'error'
 
@@ -124,9 +125,33 @@ export default function UserHistory() {
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="aspect-square rounded-2xl border border-gray-200/70 bg-white/60 overflow-hidden"
+                    onMouseEnter={() => {
+                      window.dispatchEvent(
+                        new CustomEvent('svgqa:hover', {
+                          detail: { generationId: item.id },
+                        }),
+                      )
+                    }}
+                    onFocus={() => {
+                      window.dispatchEvent(
+                        new CustomEvent('svgqa:hover', {
+                          detail: { generationId: item.id },
+                        }),
+                      )
+                    }}
+                    className="relative group aspect-square rounded-2xl border border-gray-200/70 bg-white/60"
                     aria-label="Your SVG preview"
                   >
+                    <SvgQuickActionsMenu
+                      generationId={item.id}
+                      svgUrl={item.svgUrl}
+                      variant="private"
+                      onDeleted={(generationId) => {
+                        setItems((prev) =>
+                          prev.filter((it) => it.id !== generationId),
+                        )
+                      }}
+                    />
                     <div className="h-full w-full bg-white/45 flex items-center justify-center">
                       {item.svgUrl ? (
                         <img

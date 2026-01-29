@@ -61,3 +61,14 @@ export async function fetchGenerationHistory(params: {
     normalizeError(error)
   }
 }
+
+export async function deleteGeneration(generationId: string): Promise<void> {
+  try {
+    await api.delete(
+      `${USER_API.generationHistory}/${encodeURIComponent(generationId)}`,
+    )
+  } catch (error) {
+    logger.error('Error deleting generation', error)
+    normalizeError(error)
+  }
+}

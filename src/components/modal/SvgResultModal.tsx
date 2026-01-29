@@ -10,6 +10,11 @@ import { CheckIcon } from '../icons/CheckIcon'
 import { EditIcon } from '../icons/EditIcon'
 import { logger } from '../../services/logger'
 import { downloadSvg } from '../../services/svgService'
+import {
+  svgToDataUri,
+  svgToReactComponent,
+  svgToTypeScriptComponent,
+} from '../../utils/svgExport'
 
 interface SvgResultModalProps {
   isOpen: boolean
@@ -57,45 +62,6 @@ export default function SvgResultModal({
     ;(svgEl as unknown as HTMLElement).style.maxHeight = '100%'
     ;(svgEl as unknown as HTMLElement).style.display = 'block'
   }, [isOpen, svgCode])
-
-  // Convert SVG to React component format
-  const convertToReact = (svg: string): string => {
-    const reactSvg = svg
-      .replace(/class=/g, 'className=')
-      .replace(/stroke-width/g, 'strokeWidth')
-      .replace(/stroke-linecap/g, 'strokeLinecap')
-      .replace(/stroke-linejoin/g, 'strokeLinejoin')
-      .replace(/fill-rule/g, 'fillRule')
-      .replace(/clip-rule/g, 'clipRule')
-      .replace(/clip-path/g, 'clipPath')
-      .replace(/<svg/, '<svg {...props}')
-
-    return `export const SvgIcon = (props) => (
-  ${reactSvg}
-)`
-  }
-
-  // Convert SVG to TypeScript component
-  const convertToTypeScript = (svg: string): string => {
-    const reactSvg = convertToReact(svg)
-    return `interface SvgIconProps {
-  className?: string
-  size?: number
-}
-
-export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
-  ${reactSvg.replace(
-    '<svg',
-    '<svg className={className} width={size} height={size}'
-  )}
-)`
-  }
-
-  // Generate CDN-ready SVG (data URI)
-  const convertToCDN = (svg: string): string => {
-    const encoded = encodeURIComponent(svg)
-    return `data:image/svg+xml,${encoded}`
-  }
 
   const handleCopy = async (content: string, buttonId: string) => {
     try {
@@ -152,7 +118,7 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
     } catch (err) {
       logger.error('Failed to download SVG', err)
       setDownloadError(
-        'Download failed, Please try again later or contact support.'
+        'Download failed, Please try again later or contact support.',
       )
     } finally {
       setIsDownloading(false)
@@ -177,19 +143,19 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
     {
       id: 'react',
       label: 'React',
-      content: convertToReact(svgCode),
+      content: svgToReactComponent(svgCode),
       icon: <ReactIcon className="w-4 h-4" />,
     },
     {
       id: 'typescript',
       label: 'TypeScript',
-      content: convertToTypeScript(svgCode),
+      content: svgToTypeScriptComponent(svgCode),
       icon: <TypeScriptIcon className="w-4 h-4" />,
     },
     {
       id: 'cdn',
       label: 'Data URI',
-      content: convertToCDN(svgCode),
+      content: svgToDataUri(svgCode),
       icon: <LinkIcon className="w-4 h-4" />,
     },
   ]
@@ -376,8 +342,8 @@ export const SvgIcon = ({ className, size = 24 }: SvgIconProps) => (
                       disableExportActions
                         ? 'bg-[rgb(17_17_17/40%)] text-white/30 cursor-not-allowed'
                         : copiedButton === button.id
-                        ? 'bg-green-500 text-white'
-                        : 'bg-[rgb(17_17_17/55%)] text-white/90 hover:bg-[rgb(17_17_17/70%)] border border-wizard-orange/20'
+                          ? 'bg-green-500 text-white'
+                          : 'bg-[rgb(17_17_17/55%)] text-white/90 hover:bg-[rgb(17_17_17/70%)] border border-wizard-orange/20'
                     }`}
                   >
                     {copiedButton === button.id ? (

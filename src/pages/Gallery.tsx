@@ -4,6 +4,7 @@ import { SVG_STYLES } from '../constants/svgStyles'
 import ChatGptIcon from '../components/icons/ChatGptIcon'
 import GoogleIcon from '../components/icons/GoogleIcon'
 import ClaudeIcon from '../components/icons/ClaudeIcon'
+import SvgQuickActionsMenu from '../components/ui/SvgQuickActionsMenu'
 import type {
   PublicGenerationsResponse,
   PublicGenerationItem,
@@ -239,16 +240,39 @@ export default function Gallery() {
                   {items.map((item) => {
                     const clickable = Boolean(item.svgUrl)
                     return (
-                      <button
+                      <div
                         key={item.id}
-                        type="button"
-                        onClick={() => handleOpenItem(item)}
-                        disabled={!clickable}
+                        role={clickable ? 'button' : undefined}
+                        tabIndex={clickable ? 0 : undefined}
+                        onMouseEnter={() => {
+                          window.dispatchEvent(
+                            new CustomEvent('svgqa:hover', {
+                              detail: { generationId: item.id },
+                            }),
+                          )
+                        }}
+                        onFocus={() => {
+                          window.dispatchEvent(
+                            new CustomEvent('svgqa:hover', {
+                              detail: { generationId: item.id },
+                            }),
+                          )
+                        }}
+                        onClick={() => {
+                          if (clickable) handleOpenItem(item)
+                        }}
+                        onKeyDown={(e) => {
+                          if (!clickable) return
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            handleOpenItem(item)
+                          }
+                        }}
                         className={cn(
-                          'group aspect-square rounded-2xl border border-gray-200/60 bg-white/70 p-6 flex items-center justify-center transition-all',
+                          'relative z-0 hover:z-30 focus-within:z-30 group aspect-square rounded-2xl border border-gray-200/60 bg-white/70 p-6 flex items-center justify-center transition-all',
                           clickable
                             ? 'cursor-pointer hover:bg-white hover:shadow-sm hover:-translate-y-0.5'
-                            : 'cursor-default opacity-70',
+                            : 'cursor-default',
                         )}
                         aria-label={
                           clickable
@@ -256,6 +280,11 @@ export default function Gallery() {
                             : 'SVG preview unavailable'
                         }
                       >
+                        <SvgQuickActionsMenu
+                          generationId={item.id}
+                          svgUrl={item.svgUrl}
+                          variant="public"
+                        />
                         {item.svgUrl ? (
                           <img
                             src={item.svgUrl}
@@ -265,11 +294,11 @@ export default function Gallery() {
                             className="w-full h-full object-contain"
                           />
                         ) : (
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500 opacity-70">
                             No preview
                           </div>
                         )}
-                      </button>
+                      </div>
                     )
                   })}
                 </div>
