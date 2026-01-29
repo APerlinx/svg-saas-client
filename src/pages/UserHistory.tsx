@@ -68,118 +68,170 @@ export default function UserHistory() {
 
   const isLoading = state === 'loading'
 
+  const formatCreatedAt = (value: string) => {
+    const date = new Date(value)
+    if (!Number.isFinite(date.getTime())) return value
+    return new Intl.DateTimeFormat(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+    }).format(date)
+  }
+
+  const shortenPrompt = (prompt: string, maxLen = 70) => {
+    const trimmed = prompt.trim().replace(/\s+/g, ' ')
+    if (trimmed.length <= maxLen) return trimmed
+    return `${trimmed.slice(0, maxLen - 1)}…`
+  }
+
   return (
     <div className="w-full max-w-none mx-auto py-10 sm:py-14 px-4">
-      <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
-        <aside className="w-full lg:w-[260px] h-fit rounded-3xl border border-gray-200/60 bg-white/70 backdrop-blur-sm p-5">
-          <div className="text-sm font-semibold text-gray-900">History</div>
-          <div className="mt-2 text-sm text-gray-600">
-            All of your generated SVGs.
+      <div className="rounded-3xl bg-linear-to-r from-wizard-blue/15 to-wizard-gold/10 backdrop-blur-sm border border-gray-200/50 p-6 sm:p-8">
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+          {title}
+        </h1>
+        <p className="text-gray-700 mt-2 max-w-2xl">
+          Your personal gallery of generated SVGs.
+        </p>
+      </div>
+
+      {!userId ? (
+        <div className="mt-6 rounded-3xl border border-gray-200/60 bg-white/60 p-8 sm:p-10 text-center shadow-sm">
+          <div className="text-lg sm:text-xl font-semibold text-gray-900">
+            Sign in to view your history
           </div>
-
-          {!userId ? (
-            <div className="mt-6 rounded-2xl border border-gray-200/70 bg-white/60 px-4 py-3 text-sm text-gray-700">
-              Sign in to view your history.
-            </div>
-          ) : null}
-
-          {errorMessage ? (
-            <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {errorMessage}
-            </div>
-          ) : null}
-        </aside>
-
-        <main>
-          <div className="rounded-3xl bg-linear-to-r from-wizard-blue/15 to-wizard-gold/10 backdrop-blur-sm border border-gray-200/50 p-6 sm:p-8">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              {title}
-            </h1>
-            <p className="text-gray-700 mt-2 max-w-2xl">
-              Your personal gallery of generated SVGs.
-            </p>
+          <div className="mt-2 text-sm text-gray-600 max-w-md mx-auto">
+            Your generated SVGs will show up here once you’re signed in.
           </div>
+        </div>
+      ) : null}
 
-          <div className="mt-6">
-            {isLoading ? (
-              <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(140px,1fr))]">
-                {Array.from({ length: 24 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="aspect-square rounded-2xl border border-gray-200/70 bg-white/60 overflow-hidden"
-                    aria-label="Loading your SVG preview"
-                  >
-                    <div className="h-full w-full bg-white/45 flex items-center justify-center">
-                      <div className="h-full w-full bg-gray-100 animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
+      {errorMessage ? (
+        <div className="mt-6 rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
+        </div>
+      ) : null}
+
+      <div className="mt-6">
+        {isLoading ? (
+          <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
+            {Array.from({ length: 18 }).map((_, i) => (
               <div
-                className={cn(
-                  'grid gap-4',
-                  'grid-cols-[repeat(auto-fill,minmax(140px,1fr))]',
-                )}
+                key={i}
+                className="rounded-2xl border border-gray-200/70 bg-white/60 overflow-hidden"
+                aria-label="Loading your SVG preview"
               >
-                {items.map((item) => (
-                  <div
-                    key={item.id}
-                    onMouseEnter={() => {
-                      window.dispatchEvent(
-                        new CustomEvent('svgqa:hover', {
-                          detail: { generationId: item.id },
-                        }),
+                <div className="aspect-square bg-white/45 flex items-center justify-center">
+                  <div className="h-full w-full bg-gray-100 animate-pulse" />
+                </div>
+                <div className="p-4">
+                  <div className="h-4 w-4/5 rounded bg-gray-100 animate-pulse" />
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <div className="h-3 rounded bg-gray-100 animate-pulse" />
+                    <div className="h-3 rounded bg-gray-100 animate-pulse" />
+                    <div className="h-3 rounded bg-gray-100 animate-pulse" />
+                    <div className="h-3 rounded bg-gray-100 animate-pulse" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div
+            className={cn(
+              'grid gap-4',
+              'grid-cols-[repeat(auto-fill,minmax(220px,1fr))]',
+            )}
+          >
+            {items.map((item) => (
+              <div
+                key={item.id}
+                onMouseEnter={() => {
+                  window.dispatchEvent(
+                    new CustomEvent('svgqa:hover', {
+                      detail: { generationId: item.id },
+                    }),
+                  )
+                }}
+                onFocus={() => {
+                  window.dispatchEvent(
+                    new CustomEvent('svgqa:hover', {
+                      detail: { generationId: item.id },
+                    }),
+                  )
+                }}
+                className="relative z-0 hover:z-30 focus-within:z-30 group rounded-2xl border border-gray-200/70 bg-white/60 overflow-hidden transition-all"
+                aria-label="Your SVG card"
+              >
+                <div className="relative aspect-square bg-white/45 flex items-center justify-center">
+                  <SvgQuickActionsMenu
+                    generationId={item.id}
+                    svgUrl={item.svgUrl}
+                    variant="private"
+                    onDeleted={(generationId) => {
+                      setItems((prev) =>
+                        prev.filter((it) => it.id !== generationId),
                       )
                     }}
-                    onFocus={() => {
-                      window.dispatchEvent(
-                        new CustomEvent('svgqa:hover', {
-                          detail: { generationId: item.id },
-                        }),
-                      )
-                    }}
-                    className="relative group aspect-square rounded-2xl border border-gray-200/70 bg-white/60"
-                    aria-label="Your SVG preview"
-                  >
-                    <SvgQuickActionsMenu
-                      generationId={item.id}
-                      svgUrl={item.svgUrl}
-                      variant="private"
-                      onDeleted={(generationId) => {
-                        setItems((prev) =>
-                          prev.filter((it) => it.id !== generationId),
-                        )
-                      }}
+                  />
+
+                  {item.svgUrl ? (
+                    <img
+                      src={item.svgUrl}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-contain p-5"
                     />
-                    <div className="h-full w-full bg-white/45 flex items-center justify-center">
-                      {item.svgUrl ? (
-                        <img
-                          src={item.svgUrl}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-contain p-3"
-                        />
-                      ) : null}
+                  ) : (
+                    <div className="text-sm text-gray-500">No preview</div>
+                  )}
+                </div>
+
+                <div className="p-4">
+                  <div
+                    className="text-sm font-semibold text-gray-900 truncate"
+                    title={item.prompt}
+                  >
+                    {shortenPrompt(item.prompt)}
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
+                    <div className="text-gray-500">Created</div>
+                    <div className="text-gray-700 font-medium text-right">
+                      {formatCreatedAt(item.createdAt)}
+                    </div>
+                    <div className="text-gray-500">Style</div>
+                    <div
+                      className="text-gray-700 font-medium text-right truncate"
+                      title={item.style}
+                    >
+                      {item.style}
+                    </div>
+                    <div className="text-gray-500">Model</div>
+                    <div
+                      className="text-gray-700 font-medium text-right truncate"
+                      title={item.model}
+                    >
+                      {item.model}
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-
-            {!isLoading && userId && items.length === 0 && !errorMessage ? (
-              <div className="mt-6 rounded-3xl border border-gray-200/60 bg-white/60 p-8 sm:p-10 text-center shadow-sm">
-                <div className="text-lg sm:text-xl font-semibold text-gray-900">
-                  No SVGs to show yet
-                </div>
-                <div className="mt-2 text-sm text-gray-600 max-w-md mx-auto">
-                  Generate your first SVG on the dashboard.
                 </div>
               </div>
-            ) : null}
+            ))}
           </div>
-        </main>
+        )}
+
+        {!isLoading && userId && items.length === 0 && !errorMessage ? (
+          <div className="mt-6 rounded-3xl border border-gray-200/60 bg-white/60 p-8 sm:p-10 text-center shadow-sm">
+            <div className="text-lg sm:text-xl font-semibold text-gray-900">
+              No SVGs to show yet
+            </div>
+            <div className="mt-2 text-sm text-gray-600 max-w-md mx-auto">
+              Generate your first SVG on the dashboard.
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   )

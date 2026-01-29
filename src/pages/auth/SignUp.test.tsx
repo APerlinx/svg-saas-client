@@ -4,17 +4,9 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import SignUp from './SignUp'
 
-/* 
-Test Issues (7 passed - 2 Failed) : 
-1.Under "shows error message if register fails" - Unable to find element with the text : 
-/Failed to create account. Please try again./i
-2.Under "calls register and navigates on successful submit" - Expected mock function to have been called with:
-['Test User', ...(3)']
- */
-
 // --- Mocks ---
 
-const registerMock = vi.fn()
+const registerMock = vi.hoisted(() => vi.fn())
 
 vi.mock('../../hooks/useAuth', () => ({
   useAuth: () => ({
@@ -65,11 +57,10 @@ vi.mock('../../components/auth/AuthDivider', () => ({
 }))
 
 // Mock useNavigate
-const mockNavigate = vi.fn()
+const mockNavigate = vi.hoisted(() => vi.fn())
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual<typeof import('react-router-dom')>(
-    'react-router-dom'
-  )
+  const actual =
+    await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -92,7 +83,7 @@ describe('SignUp', () => {
     expect(screen.getByLabelText(/Confirm Password/i)).toBeInTheDocument()
     expect(screen.getAllByRole('checkbox')[0]).toBeInTheDocument()
     expect(
-      screen.getAllByRole('button', { name: /Create Account/i })[0]
+      screen.getAllByRole('button', { name: /Create Account/i })[0],
     ).toBeInTheDocument()
   })
 
@@ -150,7 +141,7 @@ describe('SignUp', () => {
     fireEvent.click(screen.getAllByRole('checkbox')[0])
 
     expect(
-      screen.getAllByRole('button', { name: /Create Account/i })[0]
+      screen.getAllByRole('button', { name: /Create Account/i })[0],
     ).not.toBeDisabled()
   })
 
@@ -171,18 +162,26 @@ describe('SignUp', () => {
     fireEvent.change(screen.getAllByLabelText(/Confirm Password/i)[0], {
       target: { value: 'Password123!' },
     })
-    fireEvent.click(screen.getAllByRole('checkbox')[0])
+    const termsCheckbox = screen.getAllByRole('checkbox')[0] as HTMLInputElement
+    fireEvent.change(termsCheckbox, { target: { checked: true } })
+    expect(termsCheckbox.checked).toBe(true)
+    expect(screen.getAllByText(/Passwords match/i)[0]).toBeInTheDocument()
 
-    fireEvent.click(
-      screen.getAllByRole('button', { name: /Create Account/i })[0]
-    )
+    const submitButton = screen.getAllByRole('button', {
+      name: /Create Account/i,
+    })[0]
+    expect(submitButton).not.toBeDisabled()
+
+    const form = screen.getAllByLabelText(/Full Name/i)[0].closest('form')
+    expect(form).toBeTruthy()
+    fireEvent.submit(form as HTMLFormElement)
 
     await waitFor(() => {
       expect(registerMock).toHaveBeenCalledWith(
         'Test User',
         'test@example.com',
         'Password123!',
-        true
+        true,
       )
       expect(mockNavigate).toHaveBeenCalledWith('/')
     })
@@ -205,15 +204,23 @@ describe('SignUp', () => {
     fireEvent.change(screen.getAllByLabelText(/Confirm Password/i)[0], {
       target: { value: 'Password123!' },
     })
-    fireEvent.click(screen.getAllByRole('checkbox')[0])
+    const termsCheckbox = screen.getAllByRole('checkbox')[0] as HTMLInputElement
+    fireEvent.change(termsCheckbox, { target: { checked: true } })
+    expect(termsCheckbox.checked).toBe(true)
+    expect(screen.getAllByText(/Passwords match/i)[0]).toBeInTheDocument()
 
-    fireEvent.click(
-      screen.getAllByRole('button', { name: /Create Account/i })[0]
-    )
+    const submitButton = screen.getAllByRole('button', {
+      name: /Create Account/i,
+    })[0]
+    expect(submitButton).not.toBeDisabled()
+
+    const form = screen.getAllByLabelText(/Full Name/i)[0].closest('form')
+    expect(form).toBeTruthy()
+    fireEvent.submit(form as HTMLFormElement)
 
     await waitFor(() => {
       expect(
-        screen.getByText(/Failed to create account\. Please try again\./i)
+        screen.getByText(/Failed to create account\. Please try again\./i),
       ).toBeInTheDocument()
     })
   })
