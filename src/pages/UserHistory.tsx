@@ -160,21 +160,21 @@ export default function UserHistory() {
                     }),
                   )
                 }}
-                className="relative z-0 hover:z-30 focus-within:z-30 group rounded-2xl border border-gray-200/70 bg-white/60 overflow-hidden transition-all"
+                className="relative z-0 hover:z-30 focus-within:z-30 group rounded-2xl border border-gray-200/70 bg-white/60 transition-all"
                 aria-label="Your SVG card"
               >
-                <div className="relative aspect-square bg-white/45 flex items-center justify-center">
-                  <SvgQuickActionsMenu
-                    generationId={item.id}
-                    svgUrl={item.svgUrl}
-                    variant="private"
-                    onDeleted={(generationId) => {
-                      setItems((prev) =>
-                        prev.filter((it) => it.id !== generationId),
-                      )
-                    }}
-                  />
+                <SvgQuickActionsMenu
+                  generationId={item.id}
+                  svgUrl={item.svgUrl}
+                  variant="private"
+                  onDeleted={(generationId) => {
+                    setItems((prev) =>
+                      prev.filter((it) => it.id !== generationId),
+                    )
+                  }}
+                />
 
+                <div className="relative aspect-square bg-white/45 flex items-center justify-center overflow-hidden rounded-t-2xl">
                   {item.svgUrl ? (
                     <img
                       src={item.svgUrl}
