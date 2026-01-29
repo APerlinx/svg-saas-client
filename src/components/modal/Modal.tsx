@@ -99,7 +99,7 @@ function Modal({
         }`}
       >
         <div
-          className={`bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)] backdrop-blur-xl shadow-2xl w-full max-w-6xl border-2 border-wizard-orange/30 pointer-events-auto transform transition-all duration-500 ease-out box-border flex flex-col min-w-0 ${
+          className={`bg-[linear-gradient(180deg,rgb(0_0_0/4%)_0%,rgb(0_0_0/20%)_100%)] backdrop-blur-xl shadow-2xl w-full max-w-6xl border border-white/10 ring-1 ring-white/5 pointer-events-auto transform transition-all duration-500 ease-out box-border flex flex-col min-w-0 ${
             isOpen ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
           } ${
             fullScreenOnMobile
@@ -164,7 +164,7 @@ function Modal({
         }
       `}</style>
     </>,
-    modalRoot
+    modalRoot,
   )
 }
 

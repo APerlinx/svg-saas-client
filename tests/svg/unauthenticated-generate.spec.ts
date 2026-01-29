@@ -5,10 +5,10 @@ test('unauthenticated user cannot generate SVG', async ({ page }) => {
 
   const generateButton = page.getByRole('button', { name: /^Generate$/i })
 
-  // Initially disabled because prompt is empty
-  await expect(generateButton).toBeDisabled()
+  // Button stays enabled; validation errors are shown via toast.
+  await expect(generateButton).toBeEnabled()
 
-  // Fill the prompt so the button becomes enabled
+  // Fill the prompt so generation can proceed
   await page
     .getByLabel(/prompt/i)
     .fill('Minimal SVG icon of a pencil drawing a line')
@@ -22,11 +22,11 @@ test('unauthenticated user cannot generate SVG', async ({ page }) => {
   await expect(modal).toBeVisible()
   await expect(modal).toContainText(/sign in required/i)
   await expect(modal).toContainText(
-    /to generate custom svgs, you need to be signed in/i
+    /to generate custom svgs, you need to be signed in/i,
   )
 
   await expect(
-    modal.getByRole('link', { name: /create account/i })
+    modal.getByRole('link', { name: /create account/i }),
   ).toBeVisible()
   await expect(modal.getByRole('link', { name: /^sign in$/i })).toBeVisible()
 })

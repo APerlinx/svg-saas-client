@@ -15,6 +15,7 @@ import {
   svgToReactComponent,
   svgToTypeScriptComponent,
 } from '../../utils/svgExport'
+import { downloadBlob, svgTextToPngBlob } from '../../utils/svgPng'
 
 interface SvgResultModalProps {
   isOpen: boolean
@@ -125,8 +126,21 @@ export default function SvgResultModal({
     }
   }
 
-  const handleDownloadPNG = () => {
-    // Coming soon - will convert SVG to PNG
+  const handleDownloadPNG = async () => {
+    if (!svgCode) return
+    try {
+      setDownloadError(null)
+      const pngBlob = await svgTextToPngBlob(svgCode)
+      const name = generationId
+        ? `chatsvg-${generationId}.png`
+        : `generated-svg-${Date.now()}.png`
+      downloadBlob(pngBlob, name)
+    } catch (err) {
+      logger.error('Failed to download PNG', err)
+      setDownloadError(
+        'Download failed, Please try again later or contact support.',
+      )
+    }
   }
 
   const handleEdit = () => {
@@ -178,7 +192,7 @@ export default function SvgResultModal({
       disableContentScroll
       showCloseButton={!isGenerating}
       panelClassName="sm:max-h-[90vh]"
-      contentClassName="px-3 sm:px-6 lg:px-8 pt-10 sm:pt-12 lg:pt-16 pb-3 sm:pb-6 lg:pb-8"
+      contentClassName="px-3 sm:px-6 lg:px-8 pt-10 sm:pt-12 lg:pt-16 pb-4 sm:pb-6 lg:pb-8"
     >
       <div
         className="flex flex-col sm:grid sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 h-full min-h-0 min-w-0"
@@ -198,17 +212,7 @@ export default function SvgResultModal({
           </div>
 
           {/* SVG Preview Container */}
-          <div
-            className="bg-[rgba(150,149,149,0.55)] rounded-2xl p-3 sm:p-6 lg:p-8 flex items-center justify-center h-52 sm:h-72 lg:h-[400px] border-2 border-wizard-orange/20 relative overflow-hidden min-w-0"
-            style={{
-              backgroundImage: `
-                radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
-                radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px)
-              `,
-              backgroundSize: '20px 20px',
-              backgroundPosition: '0 0, 10px 10px',
-            }}
-          >
+          <div className="bg-[rgb(17_17_17/55%)] rounded-2xl sm:rounded-3xl p-3 sm:p-6 lg:p-8 flex items-center justify-center h-52 sm:h-72 lg:h-[400px] border border-white/10 relative overflow-hidden min-w-0">
             {showProgressState && (
               <div className="w-full max-w-lg text-center flex flex-col items-center gap-4">
                 <div className="w-16 h-16 rounded-full border-2 border-dashed border-white/40 flex items-center justify-center">
@@ -287,19 +291,17 @@ export default function SvgResultModal({
             </button>
 
             <button
+              type="button"
               onClick={handleDownloadPNG}
               disabled={disableExportActions}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all relative group text-sm ${
+              className={`flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all relative text-sm ${
                 disableExportActions
                   ? 'bg-white/5 text-white/30 cursor-not-allowed'
                   : 'bg-white/10 text-white/70 hover:bg-white/20'
               }`}
             >
               <ImageIcon className="w-5 h-5" />
-              PNG
-              <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                Coming Soon
-              </span>
+              Download PNG
             </button>
           </div>
 
@@ -362,7 +364,7 @@ export default function SvgResultModal({
               </div>
 
               {/* Code Preview */}
-              <div className="bg-[rgb(17_17_17/55%)] rounded-lg p-3 sm:p-4 border border-wizard-orange/20 overflow-hidden relative min-h-[120px] flex flex-col">
+              <div className="bg-[rgb(17_17_17/55%)] rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-white/10 overflow-hidden relative min-h-[120px] flex flex-col">
                 {isPreviewReady ? (
                   <pre className="text-[11px] sm:text-xs text-white/80 font-mono whitespace-pre-wrap break-all max-h-20 sm:max-h-40 overflow-hidden flex-1">
                     <code>{svgCode}</code>

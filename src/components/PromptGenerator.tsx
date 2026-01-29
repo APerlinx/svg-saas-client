@@ -12,11 +12,14 @@ import { Link } from 'react-router-dom'
 import { usePromptDraft } from './promptGenerator/usePromptDraft'
 import { useSvgGeneration } from './promptGenerator/useSvgGeneration'
 import { useNotifications } from '../hooks/useNotifications'
+import { useToast } from '../hooks/useToast'
 
 const SESSION_KEY = 'svg_prompt_draft'
 
 export default function PromptGenerator() {
   const { user, updateUserCredits } = useAuth()
+
+  const { showToast } = useToast()
 
   const { refreshBadgeCount } = useNotifications()
 
@@ -35,7 +38,6 @@ export default function PromptGenerator() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
   const [shake, setShake] = useState<boolean>(false)
   const idempotencyKeyRef = useRef<string | null>(null)
   const resumeAttemptedRef = useRef(false)
@@ -64,7 +66,6 @@ export default function PromptGenerator() {
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault()
-    setError(null)
 
     // Close any open dropdowns
     setOpenDropdown(null)
@@ -77,14 +78,15 @@ export default function PromptGenerator() {
 
     // Validation
     if (!formData.prompt.trim()) {
-      setError('Please enter a prompt to generate your SVG')
+      showToast('Please enter a prompt to generate your SVG.', 'error')
       triggerShake()
       return
     }
 
     if (formData.prompt.trim().length < 10) {
-      setError(
-        'Please provide a more detailed description (at least 10 characters)',
+      showToast(
+        'Please provide a more detailed description (at least 10 characters).',
+        'error',
       )
       triggerShake()
       return
@@ -100,28 +102,9 @@ export default function PromptGenerator() {
         idempotencyKey: idempotencyKeyRef.current,
       })
       idempotencyKeyRef.current = null
-    } catch (err) {
-      let errorMessage =
-        'Unable to generate SVG. Please ensure your description uses valid characters and try again.'
-
-      if (err && typeof err === 'object' && 'message' in err) {
-        const message = (err as Error).message
-        if (message?.trim()) {
-          errorMessage = message
-        }
-      }
-
-      if (
-        errorMessage.toLowerCase().includes('credit') ||
-        errorMessage.toLowerCase().includes('insufficient')
-      ) {
-        setError('You do not have enough credits to generate an SVG.')
-      } else {
-        setError(
-          'Unable to generate SVG. Please ensure your description uses valid characters and try again.',
-        )
-      }
-
+    } catch {
+      // Errors are displayed inside the result modal (via generation.modalError).
+      // Keep this catch to avoid unhandled promise rejections from the submit handler.
       triggerShake()
     }
   }
@@ -240,7 +223,7 @@ export default function PromptGenerator() {
                 className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-sm font-semibold text-black bg-white/90 rounded-3xl hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 ${
                   shake ? 'animate-shake' : ''
                 } max-[420px]:w-full max-[420px]:basis-full`}
-                disabled={generation.isGenerating || !formData.prompt.trim()}
+                disabled={generation.isGenerating}
                 aria-label={
                   generation.isGenerating ? 'Generating...' : 'Generate'
                 }
@@ -254,10 +237,6 @@ export default function PromptGenerator() {
           </div>
         </form>
       </div>
-
-      {error && (
-        <p className="text-red-400 text-sm mt-3 px-2 animate-fadeIn">{error}</p>
-      )}
 
       {/* SVG Result Modal */}
       <SvgResultModal
