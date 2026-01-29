@@ -462,3 +462,12 @@ export async function getPublicSvgs(
     normalizeError(error)
   }
 }
+
+export async function getSvgCode(
+  generationId: string,
+): Promise<{ id: string; svg: string | null }> {
+  const response = await api.get<{ id: string; svg: string | null }>(
+    `/svg/${encodeURIComponent(generationId)}/source`,
+  )
+  return response.data
+}
