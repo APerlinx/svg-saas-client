@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import getInitials from '../utils/getInitials'
@@ -16,6 +16,8 @@ import { useNotifications } from '../hooks/useNotifications'
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
   const { unreadCount, isLoadingBadge, loadLatestAndMarkSeen } =
     useNotifications()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -88,8 +90,10 @@ export default function Header() {
     setIsNotificationOpen(false)
   }
 
-  const handleSelectIdeaAction = () => {
+  const handleSelectIdeaAction = (type: 'idea' | 'bug') => {
+    const from = `${location.pathname}${location.search}`
     setIsIdeaMenuOpen(false)
+    navigate(`/contact?type=${type}`, { state: { from } })
   }
 
   const handleToggleNotifications = () => {
@@ -188,7 +192,7 @@ export default function Header() {
                     <button
                       type="button"
                       role="menuitem"
-                      onClick={handleSelectIdeaAction}
+                      onClick={() => handleSelectIdeaAction('idea')}
                       className="w-full px-3 py-2 flex items-start gap-3 text-left hover:bg-gray-100/60 transition-colors"
                     >
                       <span className="mt-0.5 h-9 w-9 rounded-lg bg-gray-100/60 border border-gray-200/40 flex items-center justify-center shrink-0">
@@ -207,7 +211,7 @@ export default function Header() {
                     <button
                       type="button"
                       role="menuitem"
-                      onClick={handleSelectIdeaAction}
+                      onClick={() => handleSelectIdeaAction('bug')}
                       className="w-full px-3 py-2 flex items-start gap-3 text-left hover:bg-gray-100/60 transition-colors"
                     >
                       <span className="mt-0.5 h-9 w-9 rounded-lg bg-gray-100/60 border border-gray-200/40 flex items-center justify-center shrink-0">
