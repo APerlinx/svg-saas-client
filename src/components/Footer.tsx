@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
@@ -35,17 +37,12 @@ export default function Footer() {
                 Coming Soon
               </span>
             </div>
-            <div className="relative group">
-              <a
-                href="#"
-                className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors inline-block"
-              >
-                Contact
-              </a>
-              <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                Coming Soon
-              </span>
-            </div>
+            <Link
+              to="/contact"
+              className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors inline-block"
+            >
+              Contact
+            </Link>
           </div>
         </div>
       </div>
