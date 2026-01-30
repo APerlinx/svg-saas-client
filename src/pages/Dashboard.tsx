@@ -2,7 +2,7 @@ import AmbientWaves from '../assets/Dashboard-background/AmbientWaves'
 import PromptGenerator from '../components/PromptGenerator'
 import GalleryIcon from '../components/icons/GalleryIcon'
 import { CodeIcon } from '../components/icons/CodeIcon'
-import InfoIcon from '../components/icons/InfoIcon'
+import DocsIcon from '../components/icons/DocsIcon'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import {
@@ -132,7 +132,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex items-start gap-4">
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-linear-to-br from-wizard-blue/20 to-wizard-purple/10 border border-wizard-blue/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
-                    <InfoIcon size="18" className="text-gray-900" />
+                    <DocsIcon size="18" className="text-gray-900" />
                   </span>
 
                   <div>
@@ -151,11 +151,11 @@ export default function Dashboard() {
 
               <div className="group relative overflow-hidden rounded-3xl border border-gray-200/60 bg-white/60 p-6 shadow-sm transition-colors hover:bg-white/70 motion-safe:transition-[transform,box-shadow,background-color] motion-safe:duration-300 motion-safe:ease-out motion-safe:hover:-translate-y-1 motion-safe:hover:scale-[1.01] hover:shadow-md">
                 <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <div className="absolute inset-0 bg-linear-to-br from-wizard-purple/5 to-wizard-blue/4" />
+                  <div className="absolute inset-0 bg-linear-to-br from-wizard-red/8 to-wizard-red/3" />
                   <div className="absolute -inset-y-10 -left-1/2 w-1/3 rotate-12 bg-white/25 blur-sm motion-safe:translate-x-[-140%] motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out group-hover:motion-safe:translate-x-[520%]" />
                 </div>
                 <div className="flex items-start gap-4">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-linear-to-br from-wizard-purple/15 to-wizard-blue/10 border border-wizard-purple/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-linear-to-br from-wizard-red/20 to-wizard-red/10 border border-wizard-red/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
                     <GalleryIcon size="18" className="text-gray-900" />
                   </span>
 

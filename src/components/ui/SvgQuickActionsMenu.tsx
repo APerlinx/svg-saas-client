@@ -446,7 +446,7 @@ export default function SvgQuickActionsMenu({
           }
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="sticky top-0 px-3 py-2 text-[11px] font-semibold text-gray-500 uppercase tracking-wide bg-white/95 backdrop-blur-md">
+          <div className="sticky top-0 px-3 py-1.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide bg-white/95 backdrop-blur-md">
             Quick actions
           </div>
           <div className="pt-1 pb-2 overflow-y-auto overscroll-contain">

@@ -20,15 +20,14 @@ function BannerContent({
         </div>
         <div className="text-xs sm:text-sm text-gray-700">
           You have{' '}
-          <span className="font-semibold text-wizard-orange">
-            {credits ?? 0}
+          <span className="inline-flex items-center rounded-full bg-wizard-orange/10 px-2 py-0.5 text-xs font-semibold text-wizard-orange">
+            {credits ?? 0} {credits === 1 ? 'credit' : 'credits'}
           </span>{' '}
-          {credits === 1 ? 'credit' : 'credits'} left. Top up to keep
-          generating.
+          left. Top up to keep generating.
         </div>
         <Link
           to="/pricing"
-          className="flex text-sm font-semibold text-black self-end"
+          className="inline-flex items-center justify-center self-start sm:self-end rounded-xl bg-gray-900 px-3 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
         >
           Get more credits
         </Link>
@@ -46,7 +45,7 @@ function BannerContent({
       </div>
       <Link
         to="/pricing"
-        className="flex text-sm font-semibold text-black self-end"
+        className="inline-flex items-center justify-center self-start sm:self-end rounded-xl bg-gray-900 px-3 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
       >
         Buy credits
       </Link>
@@ -101,19 +100,20 @@ export default function CreditReminderBanner() {
       <div className="pointer-events-auto">
         <div className="max-w-2xl mx-auto px-4 sm:px-4 lg:px-6 ">
           <div className="py-2 animate-slideDown">
-            <div className="relative rounded-2xl border  border-gray-400/50 bg-wizard-gold/30 px-4 sm:px-5 py-3">
+            <div className="relative overflow-hidden rounded-3xl border border-gray-200/60 bg-linear-to-r from-wizard-blue/10 to-wizard-gold/10 backdrop-blur-sm px-4 sm:px-5 py-3 shadow-sm ring-1 ring-white/30">
+              <div className="absolute inset-y-0 left-0 w-1 bg-wizard-orange/50" />
               {/* Close button - top right */}
               <button
                 type="button"
                 onClick={handleDismiss}
-                className="absolute top-2 right-2 inline-flex h-6 w-6 items-center justify-center rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100/70 transition"
+                className="absolute top-2 right-2 inline-flex h-8 w-8 items-center justify-center rounded-xl text-gray-500 hover:text-gray-900 hover:bg-white/50 transition-colors"
                 aria-label="Dismiss reminder"
               >
                 <CloseIcon className="h-4 w-4" />
               </button>
 
               {/* Content */}
-              <div className="pl-3">
+              <div className="pl-4 pr-10">
                 <BannerContent variant={variant} credits={credits} />
               </div>
             </div>
