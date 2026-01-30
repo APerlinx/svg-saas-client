@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Modal from './Modal'
+import SvgCodeTypingPreview from '../ui/SvgCodeTypingPreview'
 import { CodeIcon } from '../icons/CodeIcon'
 import { ReactIcon } from '../icons/ReactIcon'
 import { TypeScriptIcon } from '../icons/TypeScriptIcon'
@@ -214,28 +215,11 @@ export default function SvgResultModal({
           {/* SVG Preview Container */}
           <div className="bg-[rgb(17_17_17/55%)] rounded-2xl sm:rounded-3xl p-3 sm:p-6 lg:p-8 flex items-center justify-center h-52 sm:h-72 lg:h-[400px] border border-white/10 relative overflow-hidden min-w-0">
             {showProgressState && (
-              <div className="w-full max-w-lg text-center flex flex-col items-center gap-4">
-                <div className="w-16 h-16 rounded-full border-2 border-dashed border-white/40 flex items-center justify-center">
-                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-wizard-blue to-wizard-orange animate-pulse" />
-                </div>
-                <div>
-                  <p className="text-white font-semibold text-base sm:text-lg">
-                    {progressLabel}
-                  </p>
-                  <p className="text-white/70 text-sm mt-1">
-                    {progressSubtext}
-                  </p>
-                </div>
-                <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-linear-to-r from-wizard-blue via-wizard-orange/80 to-wizard-orange transition-all duration-500"
-                    style={{ width: `${progressPercent}%` }}
-                  />
-                </div>
-                <p className="text-[12px] text-white/60 uppercase tracking-[0.2em]">
-                  Live status updates
-                </p>
-              </div>
+              <SvgCodeTypingPreview
+                percent={progressPercent}
+                label={progressLabel}
+                subtext={progressSubtext}
+              />
             )}
 
             {showErrorState && (
@@ -366,7 +350,7 @@ export default function SvgResultModal({
               {/* Code Preview */}
               <div className="bg-[rgb(17_17_17/55%)] rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-white/10 overflow-hidden relative min-h-[120px] flex flex-col">
                 {isPreviewReady ? (
-                  <pre className="text-[11px] sm:text-xs text-white/80 font-mono whitespace-pre-wrap break-all max-h-20 sm:max-h-40 overflow-hidden flex-1">
+                  <pre className="scrollbar-dark text-[11px] sm:text-xs text-white/80 font-mono whitespace-pre-wrap break-all max-h-20 sm:max-h-40 overflow-auto flex-1 pr-1">
                     <code>{svgCode}</code>
                   </pre>
                 ) : (
