@@ -187,6 +187,32 @@ button {
   animation: pill-snake-dash 3.8s linear infinite;
 }
 
+/* Dark scrollbar styling (used in modal code preview). */
+.scrollbar-dark {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.18) rgb(0 0 0 / 0.25);
+}
+
+.scrollbar-dark::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: rgb(0 0 0 / 0.25);
+  border-radius: 9999px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.16);
+  border-radius: 9999px;
+  border: 2px solid rgb(0 0 0 / 0.22);
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  background: rgb(255 255 255 / 0.24);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pill-snake-border__snake {
     animation: none;
