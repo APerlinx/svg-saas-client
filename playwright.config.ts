@@ -42,6 +42,8 @@ export default defineConfig({
       port: 4000,
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
+      stdout: 'pipe',
+      stderr: 'pipe',
     },
     {
       // Frontend dev server (Vite)
@@ -50,6 +52,8 @@ export default defineConfig({
       port: 5173,
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
+      stdout: 'pipe',
+      stderr: 'pipe',
     },
   ],
 
