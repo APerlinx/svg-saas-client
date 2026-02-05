@@ -76,30 +76,30 @@ export default function Admin() {
 
   if (isCheckingAuth) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-wizard-purple via-wizard-blue-dark to-wizard-purple-dark flex items-center justify-center p-4">
-        <div className="text-white text-lg">Checking authentication...</div>
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+        <div className="text-white/60 text-sm">Checking authentication...</div>
       </div>
     )
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-wizard-purple via-wizard-blue-dark to-wizard-purple-dark flex items-center justify-center p-4">
-        <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 sm:p-12 max-w-md w-full border border-white/20 shadow-2xl">
-          <h1 className="text-3xl font-bold text-white mb-2 text-center">
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+        <div className="bg-[#111111] rounded-2xl p-8 sm:p-10 max-w-md w-full border border-white/5">
+          <h1 className="text-2xl font-semibold text-white mb-2">
             Admin Access
           </h1>
-          <p className="text-white/70 text-sm mb-8 text-center">
-            Enter your admin email to receive a magic link
+          <p className="text-white/50 text-sm mb-8">
+            Enter your email to receive a magic link
           </p>
 
-          <form onSubmit={handleRequestAccess} className="space-y-6">
+          <form onSubmit={handleRequestAccess} className="space-y-5">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-white/90 mb-2"
+                className="block text-sm font-medium text-white/70 mb-2"
               >
-                Email Address
+                Email
               </label>
               <input
                 id="email"
@@ -108,27 +108,27 @@ export default function Admin() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="admin@example.com"
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-wizard-orange focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-sm placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-transparent transition-all"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-wizard-orange hover:bg-wizard-orange-dark text-white font-semibold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-white text-black font-medium py-2.5 px-6 rounded-lg transition-all hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Sending...' : 'Request Access'}
             </button>
           </form>
 
           {message && (
-            <div className="mt-6 p-4 bg-green-500/20 border border-green-500/40 rounded-xl text-green-100 text-sm">
+            <div className="mt-5 p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm">
               {message}
             </div>
           )}
 
           {error && (
-            <div className="mt-6 p-4 bg-red-500/20 border border-red-500/40 rounded-xl text-red-100 text-sm">
+            <div className="mt-5 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
               {error}
             </div>
           )}
@@ -138,24 +138,24 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-wizard-purple via-wizard-blue-dark to-wizard-purple-dark p-4 sm:p-8">
+    <div className="min-h-screen bg-[#0a0a0a] p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-white">
             Admin Dashboard
           </h1>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <button
               onClick={handleRefresh}
               disabled={isLoading}
-              className="bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-xl transition-all border border-white/20 disabled:opacity-50"
+              className="bg-[#1a1a1a] hover:bg-[#222222] text-white text-sm font-medium py-2 px-4 rounded-lg transition-all border border-white/10 disabled:opacity-50"
             >
               {isLoading ? 'Refreshing...' : 'Refresh'}
             </button>
             <button
               onClick={handleLogout}
-              className="bg-red-500/80 hover:bg-red-500 text-white font-medium py-2 px-4 rounded-xl transition-all shadow-lg"
+              className="bg-[#1a1a1a] hover:bg-red-500/20 text-white text-sm font-medium py-2 px-4 rounded-lg transition-all border border-white/10 hover:border-red-500/30"
             >
               Logout
             </button>
@@ -163,84 +163,88 @@ export default function Admin() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500/40 rounded-xl text-red-100">
+          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
             {error}
           </div>
         )}
 
         {metrics && (
-          <div className="space-y-6">
+          <div className="space-y-5">
             {/* AI Metrics */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-xl">
-              <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                <span className="text-2xl">🤖</span> AI Performance
+            <div className="bg-[#111111] rounded-xl p-5 border border-white/5">
+              <h2 className="text-lg font-semibold text-white mb-4">
+                AI Performance
               </h2>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/20">
-                      <th className="text-left py-3 px-4 text-white/80 font-semibold">
+                    <tr className="border-b border-white/5">
+                      <th className="text-left py-2.5 px-3 text-white/50 font-medium text-sm">
                         Metric
                       </th>
-                      <th className="text-right py-3 px-4 text-white/80 font-semibold">
+                      <th className="text-right py-2.5 px-3 text-white/50 font-medium text-sm">
                         Value
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="text-white">
-                    <tr className="border-b border-white/10">
-                      <td className="py-3 px-4">Total Jobs</td>
-                      <td className="py-3 px-4 text-right font-mono">
+                  <tbody className="text-white/90">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm">Total Jobs</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.ai.totalJobs.toLocaleString()}
                       </td>
                     </tr>
-                    <tr className="border-b border-white/10">
-                      <td className="py-3 px-4">Avg Prompt Tokens</td>
-                      <td className="py-3 px-4 text-right font-mono">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm">Avg Prompt Tokens</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.ai.avgPromptTokens.toLocaleString()}
                       </td>
                     </tr>
-                    <tr className="border-b border-white/10">
-                      <td className="py-3 px-4">Avg Completion Tokens</td>
-                      <td className="py-3 px-4 text-right font-mono">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm">
+                        Avg Completion Tokens
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.ai.avgCompletionTokens.toLocaleString()}
                       </td>
                     </tr>
-                    <tr className="border-b border-white/10">
-                      <td className="py-3 px-4">Total Tokens</td>
-                      <td className="py-3 px-4 text-right font-mono">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm">Total Tokens</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.ai.totalTokens.toLocaleString()}
                       </td>
                     </tr>
-                    <tr className="border-b border-white/10">
-                      <td className="py-3 px-4">Avg Latency</td>
-                      <td className="py-3 px-4 text-right font-mono">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm">Avg Latency</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.ai.avgLatencyMs.toLocaleString()}ms
                       </td>
                     </tr>
-                    <tr className="border-b border-white/10">
-                      <td className="py-3 px-4">P95 Latency</td>
-                      <td className="py-3 px-4 text-right font-mono">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm">P95 Latency</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.ai.p95LatencyMs.toLocaleString()}ms
                       </td>
                     </tr>
-                    <tr className="border-b border-white/10">
-                      <td className="py-3 px-4">Repair Rate</td>
-                      <td className="py-3 px-4 text-right font-mono">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm">Repair Rate</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.ai.repairRate}
                       </td>
                     </tr>
-                    <tr className="border-b border-white/10 bg-wizard-orange/10">
-                      <td className="py-3 px-4 font-semibold">Total Cost</td>
-                      <td className="py-3 px-4 text-right font-mono font-bold text-wizard-orange">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm font-medium">
+                        Total Cost
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm font-medium">
                         {metrics.ai.totalCostUSD}
                       </td>
                     </tr>
-                    <tr className="bg-wizard-orange/10">
-                      <td className="py-3 px-4 font-semibold">
+                    <tr>
+                      <td className="py-2.5 px-3 text-sm font-medium">
                         Avg Cost Per Job
                       </td>
-                      <td className="py-3 px-4 text-right font-mono font-bold text-wizard-orange">
+                      <td className="py-2.5 px-3 text-right font-mono text-sm font-medium">
                         {metrics.ai.avgCostPerJobUSD}
                       </td>
                     </tr>
@@ -250,32 +254,32 @@ export default function Admin() {
             </div>
 
             {/* Job Status */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-xl">
-              <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                <span className="text-2xl">📊</span> Job Statistics
+            <div className="bg-[#111111] rounded-xl p-5 border border-white/5">
+              <h2 className="text-lg font-semibold text-white mb-4">
+                Job Statistics
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div className="bg-green-500/20 rounded-2xl p-4 border border-green-500/30">
-                  <div className="text-green-100 text-sm mb-1">Succeeded</div>
-                  <div className="text-white text-3xl font-bold">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
+                  <div className="text-white/50 text-xs mb-1">Succeeded</div>
+                  <div className="text-white text-2xl font-semibold">
                     {metrics.jobs.succeeded.toLocaleString()}
                   </div>
                 </div>
-                <div className="bg-red-500/20 rounded-2xl p-4 border border-red-500/30">
-                  <div className="text-red-100 text-sm mb-1">Failed</div>
-                  <div className="text-white text-3xl font-bold">
+                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
+                  <div className="text-white/50 text-xs mb-1">Failed</div>
+                  <div className="text-white text-2xl font-semibold">
                     {metrics.jobs.failed.toLocaleString()}
                   </div>
                 </div>
-                <div className="bg-yellow-500/20 rounded-2xl p-4 border border-yellow-500/30">
-                  <div className="text-yellow-100 text-sm mb-1">Queued</div>
-                  <div className="text-white text-3xl font-bold">
+                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
+                  <div className="text-white/50 text-xs mb-1">Queued</div>
+                  <div className="text-white text-2xl font-semibold">
                     {metrics.jobs.queued.toLocaleString()}
                   </div>
                 </div>
-                <div className="bg-blue-500/20 rounded-2xl p-4 border border-blue-500/30">
-                  <div className="text-blue-100 text-sm mb-1">Running</div>
-                  <div className="text-white text-3xl font-bold">
+                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
+                  <div className="text-white/50 text-xs mb-1">Running</div>
+                  <div className="text-white text-2xl font-semibold">
                     {metrics.jobs.running.toLocaleString()}
                   </div>
                 </div>
@@ -283,28 +287,28 @@ export default function Admin() {
 
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <tbody className="text-white">
-                    <tr className="border-b border-white/10">
-                      <td className="py-3 px-4">Total Jobs</td>
-                      <td className="py-3 px-4 text-right font-mono">
+                  <tbody className="text-white/90">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm">Total Jobs</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.jobs.total.toLocaleString()}
                       </td>
                     </tr>
-                    <tr className="border-b border-white/10">
-                      <td className="py-3 px-4">Queue Depth</td>
-                      <td className="py-3 px-4 text-right font-mono">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm">Queue Depth</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.jobs.queueDepth.toLocaleString()}
                       </td>
                     </tr>
-                    <tr className="border-b border-white/10">
-                      <td className="py-3 px-4">Success Rate</td>
-                      <td className="py-3 px-4 text-right font-mono text-green-400">
+                    <tr className="border-b border-white/5">
+                      <td className="py-2.5 px-3 text-sm">Success Rate</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.jobs.successRate}
                       </td>
                     </tr>
                     <tr>
-                      <td className="py-3 px-4">Avg Duration</td>
-                      <td className="py-3 px-4 text-right font-mono">
+                      <td className="py-2.5 px-3 text-sm">Avg Duration</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {(metrics.jobs.avgDurationMs / 1000).toFixed(2)}s
                       </td>
                     </tr>
@@ -314,71 +318,57 @@ export default function Admin() {
             </div>
 
             {/* User Statistics */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-xl">
-              <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                <span className="text-2xl">👥</span> User Activity (Last 30
-                Days)
+            <div className="bg-[#111111] rounded-xl p-5 border border-white/5">
+              <h2 className="text-lg font-semibold text-white mb-4">
+                User Activity (Last 30 Days)
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                <div className="bg-wizard-blue/20 rounded-2xl p-4 border border-wizard-blue/30">
-                  <div className="text-white/80 text-sm mb-1">Active Users</div>
-                  <div className="text-white text-3xl font-bold">
+              <div className="grid grid-cols-2 gap-3 mb-5">
+                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
+                  <div className="text-white/50 text-xs mb-1">Active Users</div>
+                  <div className="text-white text-2xl font-semibold">
                     {metrics.users.activeUsers30d.toLocaleString()}
                   </div>
                 </div>
-                <div className="bg-wizard-orange/20 rounded-2xl p-4 border border-wizard-orange/30">
-                  <div className="text-white/80 text-sm mb-1">
+                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
+                  <div className="text-white/50 text-xs mb-1">
                     Total Generations
                   </div>
-                  <div className="text-white text-3xl font-bold">
+                  <div className="text-white text-2xl font-semibold">
                     {metrics.users.totalGenerations30d.toLocaleString()}
                   </div>
                 </div>
               </div>
 
-              <h3 className="text-lg font-semibold text-white mb-3">
+              <h3 className="text-sm font-medium text-white/70 mb-3">
                 Top Generators
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/20">
-                      <th className="text-left py-3 px-4 text-white/80 font-semibold">
+                    <tr className="border-b border-white/5">
+                      <th className="text-left py-2.5 px-3 text-white/50 font-medium text-sm">
                         Rank
                       </th>
-                      <th className="text-left py-3 px-4 text-white/80 font-semibold">
+                      <th className="text-left py-2.5 px-3 text-white/50 font-medium text-sm">
                         User ID
                       </th>
-                      <th className="text-right py-3 px-4 text-white/80 font-semibold">
+                      <th className="text-right py-2.5 px-3 text-white/50 font-medium text-sm">
                         Generations
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="text-white">
+                  <tbody className="text-white/90">
                     {metrics.users.topGenerators.map((user, idx) => (
-                      <tr
-                        key={user.userId}
-                        className="border-b border-white/10"
-                      >
-                        <td className="py-3 px-4">
-                          <span
-                            className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
-                              idx === 0
-                                ? 'bg-yellow-500/30 text-yellow-200'
-                                : idx === 1
-                                  ? 'bg-gray-400/30 text-gray-200'
-                                  : idx === 2
-                                    ? 'bg-orange-600/30 text-orange-200'
-                                    : 'bg-white/10'
-                            }`}
-                          >
+                      <tr key={user.userId} className="border-b border-white/5">
+                        <td className="py-2.5 px-3">
+                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-[#1a1a1a] border border-white/10 font-medium text-xs">
                             {idx + 1}
                           </span>
                         </td>
-                        <td className="py-3 px-4 font-mono text-sm">
+                        <td className="py-2.5 px-3 font-mono text-sm">
                           {user.userId}
                         </td>
-                        <td className="py-3 px-4 text-right font-mono font-bold">
+                        <td className="py-2.5 px-3 text-right font-mono text-sm font-medium">
                           {user.jobCount.toLocaleString()}
                         </td>
                       </tr>

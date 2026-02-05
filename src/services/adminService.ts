@@ -5,10 +5,10 @@ import type {
   AdminLogoutResponse,
 } from '../types/admin'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
 const adminApi = axios.create({
-  baseURL: `${API_BASE_URL}/api/admin`,
+  baseURL: `${API_BASE_URL}/admin`,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
