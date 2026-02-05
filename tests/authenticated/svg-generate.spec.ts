@@ -22,11 +22,9 @@ test('logged-in user can generate an SVG', async ({ page }) => {
   const modal = page.getByTestId('svg-result-modal')
   await expect(modal).toBeVisible()
 
-  const svgPreview = modal.locator('.svg-preview')
-  await expect(svgPreview).toBeVisible({ timeout: 30000 }) // 30s timeout for generation
-
-  const svg = svgPreview.locator('svg').first()
-  await expect(svg).toBeVisible()
+  // Wait for the actual SVG to appear (after generation completes)
+  const svg = modal.locator('.svg-preview svg').first()
+  await expect(svg).toBeVisible({ timeout: 30000 }) // 30s timeout for generation
   await expect(svg).toHaveAttribute('viewBox')
 
   await expect(modal).toContainText('pencil drawing a line')
