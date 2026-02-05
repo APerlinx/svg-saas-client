@@ -76,30 +76,47 @@ export default function Admin() {
 
   if (isCheckingAuth) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
-        <div className="text-white/60 text-sm">Checking authentication...</div>
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <div className="text-gray-500 text-sm">Checking authentication...</div>
       </div>
     )
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
-        <div className="bg-[#111111] rounded-2xl p-8 sm:p-10 max-w-md w-full border border-white/5">
-          <h1 className="text-2xl font-semibold text-white mb-2">
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <div className="max-w-md w-full">
+          <div className="mb-6 inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-full">
+            <svg
+              className="w-4 h-4 text-blue-600"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span className="text-xs font-medium text-blue-700">
+              Admin Area
+            </span>
+          </div>
+
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Admin Access
           </h1>
-          <p className="text-white/50 text-sm mb-8">
-            Enter your email to receive a magic link
+          <p className="text-gray-600 text-sm mb-8">
+            Enter your email to receive a secure magic link
           </p>
 
           <form onSubmit={handleRequestAccess} className="space-y-5">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-white/70 mb-2"
+                className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Email
+                Email Address
               </label>
               <input
                 id="email"
@@ -108,27 +125,27 @@ export default function Admin() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="admin@example.com"
-                className="w-full px-4 py-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-sm placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-white text-black font-medium py-2.5 px-6 rounded-lg transition-all hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 text-white font-medium py-2.5 px-6 rounded-lg transition-all hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               {isLoading ? 'Sending...' : 'Request Access'}
             </button>
           </form>
 
           {message && (
-            <div className="mt-5 p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm">
+            <div className="mt-5 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
               {message}
             </div>
           )}
 
           {error && (
-            <div className="mt-5 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+            <div className="mt-5 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
               {error}
             </div>
           )}
@@ -138,24 +155,42 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] p-4 sm:p-8">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl sm:text-3xl font-semibold text-white">
-            Admin Dashboard
-          </h1>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full mb-3">
+              <svg
+                className="w-3.5 h-3.5 text-blue-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span className="text-xs font-medium text-blue-700">
+                Admin Dashboard
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              System Metrics
+            </h1>
+          </div>
           <div className="flex gap-2">
             <button
               onClick={handleRefresh}
               disabled={isLoading}
-              className="bg-[#1a1a1a] hover:bg-[#222222] text-white text-sm font-medium py-2 px-4 rounded-lg transition-all border border-white/10 disabled:opacity-50"
+              className="bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium py-2 px-4 rounded-lg transition-all border border-gray-300 disabled:opacity-50 shadow-sm"
             >
               {isLoading ? 'Refreshing...' : 'Refresh'}
             </button>
             <button
               onClick={handleLogout}
-              className="bg-[#1a1a1a] hover:bg-red-500/20 text-white text-sm font-medium py-2 px-4 rounded-lg transition-all border border-white/10 hover:border-red-500/30"
+              className="bg-white hover:bg-red-50 text-gray-700 hover:text-red-600 text-sm font-medium py-2 px-4 rounded-lg transition-all border border-gray-300 hover:border-red-300 shadow-sm"
             >
               Logout
             </button>
@@ -163,7 +198,7 @@ export default function Admin() {
         </div>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+          <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
             {error}
           </div>
         )}
@@ -254,32 +289,40 @@ export default function Admin() {
             </div>
 
             {/* Job Status */}
-            <div className="bg-[#111111] rounded-xl p-5 border border-white/5">
-              <h2 className="text-lg font-semibold text-white mb-4">
+            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Job Statistics
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
-                  <div className="text-white/50 text-xs mb-1">Succeeded</div>
-                  <div className="text-white text-2xl font-semibold">
+                <div className="bg-green-50 rounded-lg p-3 border border-green-200">
+                  <div className="text-green-600 text-xs font-medium mb-1">
+                    Succeeded
+                  </div>
+                  <div className="text-gray-900 text-2xl font-semibold">
                     {metrics.jobs.succeeded.toLocaleString()}
                   </div>
                 </div>
-                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
-                  <div className="text-white/50 text-xs mb-1">Failed</div>
-                  <div className="text-white text-2xl font-semibold">
+                <div className="bg-red-50 rounded-lg p-3 border border-red-200">
+                  <div className="text-red-600 text-xs font-medium mb-1">
+                    Failed
+                  </div>
+                  <div className="text-gray-900 text-2xl font-semibold">
                     {metrics.jobs.failed.toLocaleString()}
                   </div>
                 </div>
-                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
-                  <div className="text-white/50 text-xs mb-1">Queued</div>
-                  <div className="text-white text-2xl font-semibold">
+                <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
+                  <div className="text-yellow-600 text-xs font-medium mb-1">
+                    Queued
+                  </div>
+                  <div className="text-gray-900 text-2xl font-semibold">
                     {metrics.jobs.queued.toLocaleString()}
                   </div>
                 </div>
-                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
-                  <div className="text-white/50 text-xs mb-1">Running</div>
-                  <div className="text-white text-2xl font-semibold">
+                <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                  <div className="text-blue-600 text-xs font-medium mb-1">
+                    Running
+                  </div>
+                  <div className="text-gray-900 text-2xl font-semibold">
                     {metrics.jobs.running.toLocaleString()}
                   </div>
                 </div>
@@ -287,22 +330,22 @@ export default function Admin() {
 
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <tbody className="text-white/90">
-                    <tr className="border-b border-white/5">
+                  <tbody className="text-gray-900">
+                    <tr className="border-b border-gray-100">
                       <td className="py-2.5 px-3 text-sm">Total Jobs</td>
                       <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.jobs.total.toLocaleString()}
                       </td>
                     </tr>
-                    <tr className="border-b border-white/5">
+                    <tr className="border-b border-gray-100">
                       <td className="py-2.5 px-3 text-sm">Queue Depth</td>
                       <td className="py-2.5 px-3 text-right font-mono text-sm">
                         {metrics.jobs.queueDepth.toLocaleString()}
                       </td>
                     </tr>
-                    <tr className="border-b border-white/5">
+                    <tr className="border-b border-gray-100">
                       <td className="py-2.5 px-3 text-sm">Success Rate</td>
-                      <td className="py-2.5 px-3 text-right font-mono text-sm">
+                      <td className="py-2.5 px-3 text-right font-mono text-sm text-green-600 font-medium">
                         {metrics.jobs.successRate}
                       </td>
                     </tr>
@@ -318,50 +361,55 @@ export default function Admin() {
             </div>
 
             {/* User Statistics */}
-            <div className="bg-[#111111] rounded-xl p-5 border border-white/5">
-              <h2 className="text-lg font-semibold text-white mb-4">
+            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 User Activity (Last 30 Days)
               </h2>
               <div className="grid grid-cols-2 gap-3 mb-5">
-                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
-                  <div className="text-white/50 text-xs mb-1">Active Users</div>
-                  <div className="text-white text-2xl font-semibold">
+                <div className="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                  <div className="text-purple-600 text-xs font-medium mb-1">
+                    Active Users
+                  </div>
+                  <div className="text-gray-900 text-2xl font-semibold">
                     {metrics.users.activeUsers30d.toLocaleString()}
                   </div>
                 </div>
-                <div className="bg-[#1a1a1a] rounded-lg p-3 border border-white/5">
-                  <div className="text-white/50 text-xs mb-1">
+                <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-200">
+                  <div className="text-indigo-600 text-xs font-medium mb-1">
                     Total Generations
                   </div>
-                  <div className="text-white text-2xl font-semibold">
+                  <div className="text-gray-900 text-2xl font-semibold">
                     {metrics.users.totalGenerations30d.toLocaleString()}
                   </div>
                 </div>
               </div>
 
-              <h3 className="text-sm font-medium text-white/70 mb-3">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">
                 Top Generators
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/5">
-                      <th className="text-left py-2.5 px-3 text-white/50 font-medium text-sm">
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-2.5 px-3 text-gray-600 font-medium text-sm">
                         Rank
                       </th>
-                      <th className="text-left py-2.5 px-3 text-white/50 font-medium text-sm">
+                      <th className="text-left py-2.5 px-3 text-gray-600 font-medium text-sm">
                         User ID
                       </th>
-                      <th className="text-right py-2.5 px-3 text-white/50 font-medium text-sm">
+                      <th className="text-right py-2.5 px-3 text-gray-600 font-medium text-sm">
                         Generations
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="text-white/90">
+                  <tbody className="text-gray-900">
                     {metrics.users.topGenerators.map((user, idx) => (
-                      <tr key={user.userId} className="border-b border-white/5">
+                      <tr
+                        key={user.userId}
+                        className="border-b border-gray-100"
+                      >
                         <td className="py-2.5 px-3">
-                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-[#1a1a1a] border border-white/10 font-medium text-xs">
+                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-gray-100 border border-gray-300 font-medium text-xs">
                             {idx + 1}
                           </span>
                         </td>
