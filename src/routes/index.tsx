@@ -8,6 +8,7 @@ import Docs from '../pages/Docs'
 import Gallery from '../pages/Gallery'
 import UserHistory from '../pages/UserHistory'
 import Contact from '../pages/Contact'
+import Admin from '../pages/Admin'
 import SignIn from '../pages/auth/SignIn'
 import SignUp from '../pages/auth/SignUp'
 import ForgotPassword from '../pages/auth/ForgotPassword'
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: 'contact',
         element: <Contact />,
+      },
+      {
+        path: 'admin',
+        element: <Admin />,
       },
       {
         path: 'signin',

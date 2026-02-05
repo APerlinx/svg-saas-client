@@ -32,7 +32,7 @@ export default function PromptGenerator() {
     prompt: '',
     style: 'minimal',
     isPrivate: false,
-    model: 'gpt-4o',
+    model: DEFAULT_MODEL,
   })
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
