@@ -8,10 +8,6 @@ import SvgQuickActionsMenu from '../components/ui/SvgQuickActionsMenu'
 
 type LoadState = 'idle' | 'loading' | 'error'
 
-function cn(...values: Array<string | false | null | undefined>) {
-  return values.filter(Boolean).join(' ')
-}
-
 export default function UserHistory() {
   const { user } = useAuth()
   const userId = user?.id
@@ -85,64 +81,74 @@ export default function UserHistory() {
   }
 
   return (
-    <div className="w-full max-w-none mx-auto py-10 sm:py-14 px-4">
-      <div className="rounded-3xl bg-linear-to-r from-wizard-blue/15 to-wizard-gold/10 backdrop-blur-sm border border-gray-200/50 p-6 sm:p-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+    <div className="w-full max-w-[1600px] mx-auto py-10 sm:py-14 px-4">
+      {/* Page Header */}
+      <div className="text-center mb-10">
+        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
           {title}
         </h1>
-        <p className="text-gray-700 mt-2 max-w-2xl">
-          Your personal gallery of generated SVGs.
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Your personal gallery of AI-generated SVG icons. View, download, and
+          manage all your creations.
         </p>
       </div>
 
       {!userId ? (
-        <div className="mt-6 rounded-3xl border border-gray-200/60 bg-white/60 p-8 sm:p-10 text-center shadow-sm">
-          <div className="text-lg sm:text-xl font-semibold text-gray-900">
+        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-12 text-center">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg
+              className="w-8 h-8 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
+          </div>
+          <div className="text-xl font-bold text-gray-900 mb-2">
             Sign in to view your history
           </div>
-          <div className="mt-2 text-sm text-gray-600 max-w-md mx-auto">
+          <div className="text-gray-600 max-w-md mx-auto">
             Your generated SVGs will show up here once you’re signed in.
           </div>
         </div>
       ) : null}
 
       {errorMessage ? (
-        <div className="mt-6 rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 mb-6">
           {errorMessage}
         </div>
       ) : null}
 
-      <div className="mt-6">
+      <div>
         {isLoading ? (
-          <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
+          <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(180px,1fr))]">
             {Array.from({ length: 18 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-gray-200/70 bg-white/60 overflow-hidden"
+                className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden"
                 aria-label="Loading your SVG preview"
               >
-                <div className="aspect-square bg-white/45 flex items-center justify-center">
-                  <div className="h-full w-full bg-gray-100 animate-pulse" />
+                <div className="aspect-square flex items-center justify-center p-6">
+                  <div className="h-full w-full rounded-xl bg-linear-to-br from-gray-100 to-gray-200 animate-pulse" />
                 </div>
-                <div className="p-4">
-                  <div className="h-4 w-4/5 rounded bg-gray-100 animate-pulse" />
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    <div className="h-3 rounded bg-gray-100 animate-pulse" />
-                    <div className="h-3 rounded bg-gray-100 animate-pulse" />
-                    <div className="h-3 rounded bg-gray-100 animate-pulse" />
-                    <div className="h-3 rounded bg-gray-100 animate-pulse" />
+                <div className="p-4 border-t border-gray-100">
+                  <div className="h-4 w-4/5 rounded bg-gray-100 animate-pulse mb-3" />
+                  <div className="space-y-2">
+                    <div className="h-3 w-full rounded bg-gray-100 animate-pulse" />
+                    <div className="h-3 w-3/4 rounded bg-gray-100 animate-pulse" />
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div
-            className={cn(
-              'grid gap-4',
-              'grid-cols-[repeat(auto-fill,minmax(220px,1fr))]',
-            )}
-          >
+          <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(180px,1fr))]">
             {items.map((item) => (
               <div
                 key={item.id}
@@ -160,7 +166,7 @@ export default function UserHistory() {
                     }),
                   )
                 }}
-                className="relative z-0 hover:z-30 focus-within:z-30 group rounded-2xl border border-gray-200/70 bg-white/60 transition-all"
+                className="relative z-0 hover:z-30 focus-within:z-30 group rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-300 hover:-translate-y-1 hover:scale-[1.02] overflow-hidden"
                 aria-label="Your SVG card"
               >
                 <SvgQuickActionsMenu
@@ -174,46 +180,52 @@ export default function UserHistory() {
                   }}
                 />
 
-                <div className="relative aspect-square bg-white/45 flex items-center justify-center overflow-hidden rounded-t-2xl">
+                <div className="relative aspect-square flex items-center justify-center p-6">
                   {item.svgUrl ? (
                     <img
                       src={item.svgUrl}
                       alt=""
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-contain p-5"
+                      className="w-full h-full object-contain"
                     />
                   ) : (
                     <div className="text-sm text-gray-500">No preview</div>
                   )}
                 </div>
 
-                <div className="p-4">
+                <div className="p-4 border-t border-gray-100">
                   <div
-                    className="text-sm font-semibold text-gray-900 truncate"
+                    className="text-sm font-bold text-gray-900 truncate mb-3"
                     title={item.prompt}
                   >
-                    {shortenPrompt(item.prompt)}
+                    {shortenPrompt(item.prompt, 60)}
                   </div>
 
-                  <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
-                    <div className="text-gray-500">Created</div>
-                    <div className="text-gray-700 font-medium text-right">
-                      {formatCreatedAt(item.createdAt)}
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">Created</span>
+                      <span className="text-gray-700 font-medium">
+                        {formatCreatedAt(item.createdAt)}
+                      </span>
                     </div>
-                    <div className="text-gray-500">Style</div>
-                    <div
-                      className="text-gray-700 font-medium text-right truncate"
-                      title={item.style}
-                    >
-                      {item.style}
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">Style</span>
+                      <span
+                        className="text-gray-700 font-medium truncate ml-2"
+                        title={item.style}
+                      >
+                        {item.style}
+                      </span>
                     </div>
-                    <div className="text-gray-500">Model</div>
-                    <div
-                      className="text-gray-700 font-medium text-right truncate"
-                      title={item.model}
-                    >
-                      {item.model}
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">Model</span>
+                      <span
+                        className="text-gray-700 font-medium truncate ml-2"
+                        title={item.model}
+                      >
+                        {item.model}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -223,12 +235,27 @@ export default function UserHistory() {
         )}
 
         {!isLoading && userId && items.length === 0 && !errorMessage ? (
-          <div className="mt-6 rounded-3xl border border-gray-200/60 bg-white/60 p-8 sm:p-10 text-center shadow-sm">
-            <div className="text-lg sm:text-xl font-semibold text-gray-900">
+          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-12 text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-8 h-8 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <div className="text-xl font-bold text-gray-900 mb-2">
               No SVGs to show yet
             </div>
-            <div className="mt-2 text-sm text-gray-600 max-w-md mx-auto">
-              Generate your first SVG on the dashboard.
+            <div className="text-gray-600 max-w-md mx-auto">
+              Generate your first SVG on the dashboard to see it here.
             </div>
           </div>
         ) : null}

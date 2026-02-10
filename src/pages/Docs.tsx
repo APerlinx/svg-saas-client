@@ -1,434 +1,504 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 
-const SECTIONS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'quickstart', label: 'Quick start' },
-  { id: 'how-it-works', label: 'How it works' },
-  { id: 'best-practices', label: 'Make the most of it' },
-  { id: 'collaboration', label: 'Collaboration' },
-  { id: 'faq', label: 'FAQ' },
-] as const
+function CodeBlock({ language, code }: { language: string; code: string }) {
+  const [copied, setCopied] = useState(false)
 
-type SectionId = (typeof SECTIONS)[number]['id']
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
-function AnchorLink({ id, children }: { id: SectionId; children: string }) {
   return (
-    <a
-      href={`#${id}`}
-      className="text-sm text-gray-600 hover:text-gray-900 hover:underline underline-offset-4"
-    >
-      {children}
-    </a>
-  )
-}
-
-function SectionCard({
-  title,
-  description,
-  children,
-  id,
-}: {
-  id: SectionId
-  title: string
-  description?: string
-  children: React.ReactNode
-}) {
-  return (
-    <section
-      id={id}
-      className="scroll-mt-24 bg-white/50 backdrop-blur-sm rounded-3xl p-6 sm:p-8 shadow-lg"
-    >
-      <div className="mb-5">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-          {title}
-        </h2>
-        {description ? (
-          <p className="text-gray-600 mt-2 max-w-3xl">{description}</p>
-        ) : null}
+    <div className="relative">
+      <div className="flex items-center justify-between bg-gray-900 rounded-t-xl px-4 py-2 border-b border-gray-700">
+        <span className="text-xs font-mono text-gray-400">{language}</span>
+        <button
+          onClick={handleCopy}
+          className="text-xs text-gray-400 hover:text-gray-200 transition-colors"
+        >
+          {copied ? '✓ Copied' : 'Copy'}
+        </button>
       </div>
-
-      {children}
-    </section>
-  )
-}
-
-function Bullet({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-3">
-      <span
-        className="mt-2 h-1.5 w-1.5 rounded-full bg-wizard-orange shrink-0"
-        aria-hidden="true"
-      />
-      <span className="text-gray-700">{children}</span>
-    </li>
+      <pre className="bg-gray-900 text-gray-100 rounded-b-xl p-4 text-sm overflow-x-auto">
+        <code>{code}</code>
+      </pre>
+    </div>
   )
 }
 
 export default function Docs() {
   return (
     <div className="w-full max-w-7xl mx-auto py-12 sm:py-16 px-4">
-      {/* Header */}
-      <div className="text-center mb-10 sm:mb-14">
-        <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-gray-200/60 rounded-full px-4 py-1.5 text-xs font-medium text-gray-700">
-          <span className="text-wizard-orange font-semibold">Docs</span>
-          <span className="text-gray-400">•</span>
-          <span>For developers & designers</span>
+      {/* Hero Section */}
+      <div className="text-center mb-16">
+        <div className="inline-flex items-center gap-2 bg-linear-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-full px-4 py-2 mb-6">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          </span>
+          <span className="text-sm font-semibold text-gray-900">
+            Coming Soon
+          </span>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mt-5">
-          Build better SVGs with ChatSVG
+        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+          ChatSVG API
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto mt-4">
-          Learn what ChatSVG does, how it works, and how to get consistently
-          useful, editable SVG output for product UI, marketing, and prototypes.
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-4">
+          Integrate AI-powered SVG generation directly into your applications.
+          Generate custom SVGs programmatically with a simple REST API.
+        </p>
+        <p className="text-sm text-gray-500 max-w-2xl mx-auto">
+          We're building a developer-first API that brings ChatSVG's generation
+          capabilities to your workflow. Get notified when we launch.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
           <Link
             to="/"
-            className="w-full sm:w-auto px-6 py-3 rounded-full font-semibold bg-linear-to-r from-wizard-orange to-wizard-orange/90 text-white hover:from-wizard-orange/90 hover:to-wizard-orange shadow-sm text-center"
+            className="w-full sm:w-auto px-8 py-3 rounded-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm text-center transition-colors"
           >
-            Open Generator
+            Try the Web App
           </Link>
-          <Link
-            to="/pricing"
-            className="w-full sm:w-auto px-6 py-3 rounded-full font-semibold bg-white/70 hover:bg-white border border-gray-200 text-gray-900 text-center"
+          <a
+            href="mailto:support@chatsvg.com?subject=API Beta Access"
+            className="w-full sm:w-auto px-8 py-3 rounded-lg font-semibold bg-white hover:bg-gray-50 border border-gray-300 text-gray-900 text-center transition-colors"
           >
-            Pricing
-          </Link>
+            Request Beta Access
+          </a>
         </div>
       </div>
 
-      {/* On this page */}
-      <div className="bg-white/40 backdrop-blur-sm border border-gray-200/60 rounded-3xl p-5 sm:p-6 mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <div className="text-sm font-semibold text-gray-900">
-              On this page
+      {/* Quick Overview */}
+      <div className="mb-12">
+        <h2 className="text-3xl font-bold text-gray-900 mb-3 text-center">
+          What You'll Be Able to Do
+        </h2>
+        <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+          Powerful features designed for developers who need programmatic SVG
+          generation at scale
+        </p>
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="group relative bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 to-blue-600 rounded-t-2xl"></div>
+            <div className="w-14 h-14 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg
+                className="w-7 h-7 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+              </svg>
             </div>
-            <div className="text-xs text-gray-600 mt-1">
-              Jump to a section (no fluff).
-            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">
+              Programmatic Generation
+            </h3>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Send a text prompt via REST API and receive production-ready SVG
+              code instantly. Perfect for automation and dynamic content.
+            </p>
           </div>
-          <div className="flex flex-wrap gap-x-5 gap-y-2">
-            {SECTIONS.map((s) => (
-              <AnchorLink key={s.id} id={s.id}>
-                {s.label}
-              </AnchorLink>
-            ))}
+          <div className="group relative bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-purple-500 to-purple-600 rounded-t-2xl"></div>
+            <div className="w-14 h-14 bg-linear-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg
+                className="w-7 h-7 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">
+              CDN-Hosted Assets
+            </h3>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Get instant CDN URLs for all generated SVGs. No storage
+              hassles—just fast, reliable URLs ready to use in your
+              applications.
+            </p>
+          </div>
+          <div className="group relative bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-green-500 to-green-600 rounded-t-2xl"></div>
+            <div className="w-14 h-14 bg-linear-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg
+                className="w-7 h-7 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">
+              Enterprise Ready
+            </h3>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Secure API keys, rate limiting, usage analytics, and
+              enterprise-grade infrastructure. Built to scale with your
+              business.
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="grid gap-8">
-        <SectionCard
-          id="overview"
-          title="Overview"
-          description="ChatSVG helps you turn a short prompt into editable SVG artwork you can ship. It’s built for quick iteration, consistent style, and clean output that’s easy to drop into real interfaces."
-        >
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="text-sm font-semibold text-gray-900">
-                What you get
-              </div>
-              <ul className="mt-3 space-y-2">
-                <Bullet>SVG you can edit (not just a raster image)</Bullet>
-                <Bullet>Style options for different product vibes</Bullet>
-                <Bullet>Output that works in web and design tools</Bullet>
-              </ul>
-            </div>
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="text-sm font-semibold text-gray-900">
-                What it’s good for
-              </div>
-              <ul className="mt-3 space-y-2">
-                <Bullet>Landing-page illustrations</Bullet>
-                <Bullet>App empty states and onboarding</Bullet>
-                <Bullet>Icons, badges, and diagrams</Bullet>
-              </ul>
-            </div>
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="text-sm font-semibold text-gray-900">
-                What to expect
-              </div>
-              <ul className="mt-3 space-y-2">
-                <Bullet>Iterate a few times to nail your style</Bullet>
-                <Bullet>Keep prompts specific for repeatability</Bullet>
-                <Bullet>Use design constraints to stay on-brand</Bullet>
-              </ul>
-            </div>
-          </div>
-        </SectionCard>
-
-        <SectionCard
-          id="quickstart"
-          title="Quick start"
-          description="Two fast paths: one for shipping to production, one for exploring in design."
-        >
-          <div className="grid md:grid-cols-2 gap-5">
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-6">
-              <div className="text-sm font-semibold text-gray-900">
-                For developers
-              </div>
-              <div className="text-gray-600 text-sm mt-1">
-                Generate → clean up → embed.
-              </div>
-
-              <ol className="mt-4 space-y-3">
-                <li className="text-gray-700">
-                  1) Generate an SVG that matches your UI (style + content).
-                </li>
-                <li className="text-gray-700">
-                  2) Prefer simple shapes and readable strokes for small sizes.
-                </li>
-                <li className="text-gray-700">
-                  3) Use the SVG inline for full control (CSS, aria labels).
-                </li>
-              </ol>
-
-              <div className="mt-5 bg-gray-900 text-gray-100 rounded-2xl p-4 text-xs overflow-x-auto">
-                <pre className="whitespace-pre">{`// React example
-export function LogoMark() {
-  return (
-    <svg aria-label="ChatSVG mark" role="img">{/* paste SVG here */}</svg>
-  )
-}`}</pre>
-              </div>
-            </div>
-
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-6">
-              <div className="text-sm font-semibold text-gray-900">
-                For designers
-              </div>
-              <div className="text-gray-600 text-sm mt-1">
-                Prompt → evaluate → refine.
-              </div>
-
-              <ol className="mt-4 space-y-3">
-                <li className="text-gray-700">
-                  1) Start with a clear subject + composition.
-                </li>
-                <li className="text-gray-700">
-                  2) Specify constraints (palette, stroke width, minimal
-                  detail).
-                </li>
-                <li className="text-gray-700">
-                  3) Iterate with small changes, not full rewrites.
-                </li>
-              </ol>
-
-              <div className="mt-5 bg-gray-900 text-gray-100 rounded-2xl p-4 text-xs overflow-x-auto">
-                <pre className="whitespace-pre">{`Prompt template
-"[subject], [style], [composition].
-Palette: [colors].
-Constraints: flat fills, 2px stroke, no text, no gradients."`}</pre>
-              </div>
-            </div>
-          </div>
-        </SectionCard>
-
-        <SectionCard
-          id="how-it-works"
-          title="How it works"
-          description="A simple mental model to help you iterate faster and get consistent results."
-        >
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="text-sm font-semibold text-gray-900">
-                1) Describe intent
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                State what the SVG should communicate, plus the vibe and
-                constraints.
-              </p>
-              <ul className="mt-4 space-y-2">
-                <Bullet>Subject + composition</Bullet>
-                <Bullet>Style + mood</Bullet>
-                <Bullet>Constraints (no background, no text)</Bullet>
-              </ul>
-            </div>
-
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="text-sm font-semibold text-gray-900">
-                2) Generate & check
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Look for small-size legibility and whether shapes are clean.
-              </p>
-              <ul className="mt-4 space-y-2">
-                <Bullet>Readable silhouette</Bullet>
-                <Bullet>Consistent stroke widths</Bullet>
-                <Bullet>Editable layers/groups</Bullet>
-              </ul>
-            </div>
-
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="text-sm font-semibold text-gray-900">
-                3) Refine in steps
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Make one change per iteration to keep control.
-              </p>
-              <ul className="mt-4 space-y-2">
-                <Bullet>“Make it simpler”</Bullet>
-                <Bullet>“Increase contrast”</Bullet>
-                <Bullet>“Remove background”</Bullet>
-              </ul>
-            </div>
-          </div>
-        </SectionCard>
-
-        <SectionCard
-          id="best-practices"
-          title="Make the most of it"
-          description="Small prompt and design decisions that make outputs easier to ship."
-        >
-          <div className="grid md:grid-cols-2 gap-5">
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-6">
-              <div className="text-sm font-semibold text-gray-900">
-                Prompting guidelines
-              </div>
-              <ul className="mt-4 space-y-2">
-                <Bullet>
-                  Prefer concrete nouns (“robot mascot holding a wrench”) over
-                  abstract (“techy vibe”).
-                </Bullet>
-                <Bullet>
-                  Add constraints: “no background”, “flat fills”, “2px stroke”.
-                </Bullet>
-                <Bullet>
-                  Specify layout: centered, left-aligned, badge, icon-only, etc.
-                </Bullet>
-                <Bullet>
-                  Keep a reusable “prompt recipe” for consistent output.
-                </Bullet>
-              </ul>
-            </div>
-
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-6">
-              <div className="text-sm font-semibold text-gray-900">
-                Shipping guidelines
-              </div>
-              <ul className="mt-4 space-y-2">
-                <Bullet>
-                  For icons: minimize detail, increase negative space, avoid
-                  tiny strokes.
-                </Bullet>
-                <Bullet>
-                  For accessibility: add a title/aria label when the SVG conveys
-                  meaning.
-                </Bullet>
-                <Bullet>
-                  For performance: prefer fewer paths; avoid unnecessary groups.
-                </Bullet>
-                <Bullet>
-                  For theming: use `currentColor` when possible and style via
-                  CSS.
-                </Bullet>
-              </ul>
-            </div>
-          </div>
-        </SectionCard>
-
-        <SectionCard
-          id="collaboration"
-          title="Collaboration"
-          description="A lightweight workflow for teams so designers and developers stay aligned."
-        >
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="text-sm font-semibold text-gray-900">
-                Share a recipe
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Keep a shared “prompt recipe” + style constraints in your design
-                system docs.
-              </p>
-            </div>
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="text-sm font-semibold text-gray-900">
-                Version your SVG
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Store the final SVG in Git so it can be reviewed like code.
-              </p>
-            </div>
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="text-sm font-semibold text-gray-900">
-                Agree on constraints
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Decide stroke widths, corner radius, and palette once and reuse
-                everywhere.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 bg-linear-to-r from-wizard-blue/10 to-wizard-purple/10 backdrop-blur-sm rounded-3xl p-6">
-            <div className="text-sm font-semibold text-gray-900">
-              Team checklist
-            </div>
-            <ul className="mt-3 space-y-2">
-              <Bullet>Define 2–3 approved styles for your brand</Bullet>
-              <Bullet>Keep a single source of truth for the final SVG</Bullet>
-              <Bullet>
-                Document icon sizes (16/20/24/32) and stroke rules
-              </Bullet>
-              <Bullet>Review small-size legibility before shipping</Bullet>
-            </ul>
-          </div>
-        </SectionCard>
-
-        <SectionCard
-          id="faq"
-          title="FAQ"
-          description="Answers to common questions (and what to do if something looks off)."
-        >
+      {/* API Preview */}
+      <div className="grid md:grid-cols-2 gap-8 mb-12">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Simple, Powerful API
+          </h2>
+          <p className="text-gray-600 mb-6">
+            The ChatSVG API will let you generate custom SVGs with a single HTTP
+            request. Perfect for automation, dynamic content generation, and
+            building SVG-powered features.
+          </p>
           <div className="space-y-4">
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="font-semibold text-gray-900">
-                Why does an SVG look different in the browser?
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Browsers apply default sizing and CSS differently than design
-                tools. Try embedding inline SVG, set a viewBox, and avoid
-                hard-coded fills if you want theming.
-              </p>
-            </div>
-
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="font-semibold text-gray-900">
-                How do I get cleaner icons?
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Ask for “icon-only, minimal detail, flat fills, consistent 2px
-                stroke, no background, centered in a square.”
-              </p>
-            </div>
-
-            <div className="bg-white/60 border border-gray-200/60 rounded-2xl p-5">
-              <div className="font-semibold text-gray-900">
-                Can I use the output commercially?
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                See the Pricing page for the latest licensing details and what’s
-                included.
-              </p>
-              <div className="mt-3">
-                <Link
-                  to="/pricing"
-                  className="text-sm font-semibold text-wizard-orange hover:text-wizard-orange/90"
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                <svg
+                  className="w-3.5 h-3.5 text-blue-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
                 >
-                  View pricing
-                </Link>
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-900">RESTful API</div>
+                <div className="text-sm text-gray-600">
+                  Simple HTTP endpoints with JSON responses
+                </div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                <svg
+                  className="w-3.5 h-3.5 text-blue-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-900">
+                  Multiple Output Formats
+                </div>
+                <div className="text-sm text-gray-600">
+                  Get SVG code, CDN URLs, or both
+                </div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                <svg
+                  className="w-3.5 h-3.5 text-blue-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-900">
+                  Comprehensive Metadata
+                </div>
+                <div className="text-sm text-gray-600">
+                  Dimensions, colors, generation details
+                </div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                <svg
+                  className="w-3.5 h-3.5 text-blue-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-900">
+                  Style Customization
+                </div>
+                <div className="text-sm text-gray-600">
+                  Control art style, colors, and complexity
+                </div>
               </div>
             </div>
           </div>
-        </SectionCard>
-
-        <div className="text-center text-sm text-gray-500">
-          Missing something you want documented? Tell me what section to add.
         </div>
+
+        <div>
+          <CodeBlock
+            language="bash"
+            code={`curl -X POST https://api.chatsvg.com/v1/generate \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "prompt": "Minimal line icon of a rocket ship",
+    "style": "line-art",
+    "model": "gpt-5.2-2025-12-11"
+  }'`}
+          />
+        </div>
+      </div>
+
+      {/* Response Example */}
+      <div className="mb-12">
+        <h3 className="text-2xl font-bold text-gray-900 mb-4">
+          What You'll Receive
+        </h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-semibold text-gray-900 mb-3">
+              Response Schema
+            </h4>
+            <CodeBlock
+              language="json"
+              code={`{
+  "id": "gen_abc123",
+  "svg_code": "<svg>...</svg>",
+  "cdn_url": "https://cdn.chatsvg.com/...",
+  "metadata": {
+    "width": 512,
+    "height": 512,
+    "dominant_colors": ["#FF6B35", "#004E89"],
+    "style": "line-art",
+    "model": "gpt-5.2-2025-12-11"
+  },
+  "created_at": "2026-02-10T12:00:00Z"
+}`}
+            />
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-900 mb-3">
+              Node.js Example
+            </h4>
+            <CodeBlock
+              language="javascript"
+              code={`const response = await fetch('https://api.chatsvg.com/v1/generate', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    prompt: 'Minimal line icon of a rocket ship',
+    style: 'line-art',
+    model: 'gpt-5.2-2025-12-11'
+  })
+});
+
+const svg = await response.json();
+console.log(svg.cdn_url);
+// Use svg.svg_code for inline embedding`}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Use Cases */}
+      <div className="mb-12">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+          Built for Developers
+        </h3>
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
+              </svg>
+            </div>
+            <h4 className="font-semibold text-gray-900 mb-2">
+              Dynamic Content Generation
+            </h4>
+            <p className="text-sm text-gray-600">
+              Generate custom illustrations for blog posts, social media, or
+              user profiles on the fly
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <div className="w-12 h-12 bg-linear-to-br from-green-500 to-teal-500 rounded-xl flex items-center justify-center mb-4">
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                />
+              </svg>
+            </div>
+            <h4 className="font-semibold text-gray-900 mb-2">
+              Automation & Workflows
+            </h4>
+            <p className="text-sm text-gray-600">
+              Integrate into CI/CD pipelines, design systems, or content
+              management platforms
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <div className="w-12 h-12 bg-linear-to-br from-orange-500 to-pink-500 rounded-xl flex items-center justify-center mb-4">
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <h4 className="font-semibold text-gray-900 mb-2">
+              Rapid Prototyping
+            </h4>
+            <p className="text-sm text-gray-600">
+              Generate placeholder graphics for mockups, demos, and MVPs without
+              waiting for designers
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing Preview */}
+      <div className="bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-8 mb-12 border border-blue-200">
+        <div className="max-w-3xl mx-auto text-center">
+          <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            Pricing Plans Coming Soon
+          </h3>
+          <p className="text-gray-600 mb-6">
+            We're designing flexible pricing that scales with your usage. Expect
+            free tiers for developers, pay-as-you-go options, and enterprise
+            plans with dedicated support.
+          </p>
+          <div className="inline-flex flex-wrap items-center justify-center gap-6 text-sm text-gray-700">
+            <div className="flex items-center gap-2">
+              <svg
+                className="w-5 h-5 text-green-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>Free tier included</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg
+                className="w-5 h-5 text-green-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>No hidden fees</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg
+                className="w-5 h-5 text-green-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>Volume discounts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Beta Access CTA */}
+      <div className="bg-gray-900 rounded-2xl p-10 text-center text-white">
+        <h3 className="text-3xl font-bold mb-4">Get Early Access</h3>
+        <p className="text-gray-300 max-w-2xl mx-auto mb-6">
+          We're opening up beta access to developers soon. Join the waitlist to
+          be notified when API keys become available and get exclusive early
+          access pricing.
+        </p>
+        <a
+          href="mailto:support@chatsvg.com?subject=API Beta Waitlist"
+          className="inline-block px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          Join the Waitlist
+        </a>
+        <p className="text-sm text-gray-400 mt-4">
+          Have questions?{' '}
+          <a
+            href="mailto:support@chatsvg.com"
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            Contact us
+          </a>
+        </p>
       </div>
     </div>
   )
