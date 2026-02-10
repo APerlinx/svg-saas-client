@@ -166,7 +166,7 @@ export default function UserHistory() {
                     }),
                   )
                 }}
-                className="relative z-0 hover:z-30 focus-within:z-30 group rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-300 hover:-translate-y-1 hover:scale-[1.02] overflow-hidden"
+                className="relative z-0 hover:z-30 focus-within:z-30 group rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-300 hover:-translate-y-1 hover:scale-[1.02]"
                 aria-label="Your SVG card"
               >
                 <SvgQuickActionsMenu
@@ -180,7 +180,7 @@ export default function UserHistory() {
                   }}
                 />
 
-                <div className="relative aspect-square flex items-center justify-center p-6">
+                <div className="relative aspect-square flex items-center justify-center p-6 rounded-t-2xl overflow-hidden">
                   {item.svgUrl ? (
                     <img
                       src={item.svgUrl}
@@ -194,7 +194,7 @@ export default function UserHistory() {
                   )}
                 </div>
 
-                <div className="p-4 border-t border-gray-100">
+                <div className="p-4 border-t border-gray-100 rounded-b-2xl overflow-hidden">
                   <div
                     className="text-sm font-bold text-gray-900 truncate mb-3"
                     title={item.prompt}
