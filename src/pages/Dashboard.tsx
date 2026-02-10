@@ -107,19 +107,20 @@ export default function Dashboard() {
                   <div className="absolute -inset-y-10 -left-1/2 w-1/3 rotate-12 bg-white/25 blur-sm motion-safe:translate-x-[-140%] motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out group-hover:motion-safe:translate-x-[520%]" />
                 </div>
                 <div className="flex items-start gap-4">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-linear-to-br from-wizard-orange/20 to-wizard-gold/10 border border-wizard-orange/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
+                  <span className="flex-shrink-0 inline-flex h-10 w-10 min-w-[2.5rem] items-center justify-center rounded-2xl bg-linear-to-br from-wizard-orange/20 to-wizard-gold/10 border border-wizard-orange/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
                     <CodeIcon size="18" className="text-gray-900" />
                   </span>
 
                   <div>
                     <div className="text-sm font-semibold text-gray-900">
-                      Prompt
+                      Web App
                     </div>
                     <div className="mt-1 text-lg font-bold text-gray-900">
-                      Generate an SVG
+                      Generate with AI
                     </div>
                     <div className="text-sm text-gray-600 mt-1">
-                      Describe what you want, pick a style, ship the SVG.
+                      Create custom SVGs instantly—describe what you want, pick
+                      a style, and download.
                     </div>
                   </div>
                 </div>
@@ -131,19 +132,20 @@ export default function Dashboard() {
                   <div className="absolute -inset-y-10 -left-1/2 w-1/3 rotate-12 bg-white/25 blur-sm motion-safe:translate-x-[-140%] motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out group-hover:motion-safe:translate-x-[520%]" />
                 </div>
                 <div className="flex items-start gap-4">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-linear-to-br from-wizard-blue/20 to-wizard-purple/10 border border-wizard-blue/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
+                  <span className="flex-shrink-0 inline-flex h-10 w-10 min-w-[2.5rem] items-center justify-center rounded-2xl bg-linear-to-br from-wizard-blue/20 to-wizard-purple/10 border border-wizard-blue/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
                     <DocsIcon size="18" className="text-gray-900" />
                   </span>
 
                   <div>
                     <div className="text-sm font-semibold text-gray-900">
-                      Docs
+                      API Service
                     </div>
                     <div className="mt-1 text-lg font-bold text-gray-900">
-                      Learn the workflow
+                      Integrate Anywhere
                     </div>
                     <div className="text-sm text-gray-600 mt-1">
-                      Prompt recipes, best practices, and collaboration tips.
+                      Coming soon: REST API for programmatic SVG generation in
+                      your apps.
                     </div>
                   </div>
                 </div>
@@ -155,19 +157,20 @@ export default function Dashboard() {
                   <div className="absolute -inset-y-10 -left-1/2 w-1/3 rotate-12 bg-white/25 blur-sm motion-safe:translate-x-[-140%] motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out group-hover:motion-safe:translate-x-[520%]" />
                 </div>
                 <div className="flex items-start gap-4">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-linear-to-br from-wizard-red/20 to-wizard-red/10 border border-wizard-red/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
+                  <span className="flex-shrink-0 inline-flex h-10 w-10 min-w-[2.5rem] items-center justify-center rounded-2xl bg-linear-to-br from-wizard-red/20 to-wizard-red/10 border border-wizard-red/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
                     <GalleryIcon size="18" className="text-gray-900" />
                   </span>
 
                   <div>
                     <div className="text-sm font-semibold text-gray-900">
-                      Gallery
+                      Icon Gallery
                     </div>
                     <div className="mt-1 text-lg font-bold text-gray-900">
-                      Browse styles
+                      Get Inspired
                     </div>
                     <div className="text-sm text-gray-600 mt-1">
-                      Explore public SVGs for inspiration and remix.
+                      Browse thousands of public SVG icons for inspiration and
+                      reference.
                     </div>
                   </div>
                 </div>
