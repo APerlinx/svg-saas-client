@@ -33,7 +33,7 @@ export default function Docs() {
     <div className="w-full max-w-7xl mx-auto py-12 sm:py-16 px-4">
       {/* Hero Section */}
       <div className="text-center mb-16">
-        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-full px-4 py-2 mb-6">
+        <div className="inline-flex items-center gap-2 bg-linear-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-full px-4 py-2 mb-6">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
@@ -82,8 +82,8 @@ export default function Docs() {
         </p>
         <div className="grid md:grid-cols-3 gap-6">
           <div className="group relative bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-t-2xl"></div>
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 to-blue-600 rounded-t-2xl"></div>
+            <div className="w-14 h-14 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
               <svg
                 className="w-7 h-7 text-white"
                 fill="none"
@@ -107,8 +107,8 @@ export default function Docs() {
             </p>
           </div>
           <div className="group relative bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-600 rounded-t-2xl"></div>
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-purple-500 to-purple-600 rounded-t-2xl"></div>
+            <div className="w-14 h-14 bg-linear-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
               <svg
                 className="w-7 h-7 text-white"
                 fill="none"
@@ -133,8 +133,8 @@ export default function Docs() {
             </p>
           </div>
           <div className="group relative bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600 rounded-t-2xl"></div>
-            <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-green-500 to-green-600 rounded-t-2xl"></div>
+            <div className="w-14 h-14 bg-linear-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
               <svg
                 className="w-7 h-7 text-white"
                 fill="none"
@@ -342,7 +342,7 @@ console.log(svg.cdn_url);
         </h3>
         <div className="grid md:grid-cols-3 gap-6">
           <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
               <svg
                 className="w-6 h-6 text-white"
                 fill="none"
@@ -367,7 +367,7 @@ console.log(svg.cdn_url);
           </div>
 
           <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-500 rounded-xl flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-linear-to-br from-green-500 to-teal-500 rounded-xl flex items-center justify-center mb-4">
               <svg
                 className="w-6 h-6 text-white"
                 fill="none"
@@ -392,7 +392,7 @@ console.log(svg.cdn_url);
           </div>
 
           <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-pink-500 rounded-xl flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-linear-to-br from-orange-500 to-pink-500 rounded-xl flex items-center justify-center mb-4">
               <svg
                 className="w-6 h-6 text-white"
                 fill="none"
@@ -419,7 +419,7 @@ console.log(svg.cdn_url);
       </div>
 
       {/* Pricing Preview */}
-      <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-8 mb-12 border border-blue-200">
+      <div className="bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-8 mb-12 border border-blue-200">
         <div className="max-w-3xl mx-auto text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-3">
             Pricing Plans Coming Soon

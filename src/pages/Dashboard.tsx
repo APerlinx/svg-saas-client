@@ -107,7 +107,7 @@ export default function Dashboard() {
                   <div className="absolute -inset-y-10 -left-1/2 w-1/3 rotate-12 bg-white/25 blur-sm motion-safe:translate-x-[-140%] motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out group-hover:motion-safe:translate-x-[520%]" />
                 </div>
                 <div className="flex items-start gap-4">
-                  <span className="flex-shrink-0 inline-flex h-10 w-10 min-w-[2.5rem] items-center justify-center rounded-2xl bg-linear-to-br from-wizard-orange/20 to-wizard-gold/10 border border-wizard-orange/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
+                  <span className="shrink-0 inline-flex h-10 w-10 min-w-10 items-center justify-center rounded-2xl bg-linear-to-br from-wizard-orange/20 to-wizard-gold/10 border border-wizard-orange/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
                     <CodeIcon size="18" className="text-gray-900" />
                   </span>
 
@@ -132,7 +132,7 @@ export default function Dashboard() {
                   <div className="absolute -inset-y-10 -left-1/2 w-1/3 rotate-12 bg-white/25 blur-sm motion-safe:translate-x-[-140%] motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out group-hover:motion-safe:translate-x-[520%]" />
                 </div>
                 <div className="flex items-start gap-4">
-                  <span className="flex-shrink-0 inline-flex h-10 w-10 min-w-[2.5rem] items-center justify-center rounded-2xl bg-linear-to-br from-wizard-blue/20 to-wizard-purple/10 border border-wizard-blue/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
+                  <span className="shrink-0 inline-flex h-10 w-10 min-w-10 items-center justify-center rounded-2xl bg-linear-to-br from-wizard-blue/20 to-wizard-purple/10 border border-wizard-blue/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
                     <DocsIcon size="18" className="text-gray-900" />
                   </span>
 
@@ -157,7 +157,7 @@ export default function Dashboard() {
                   <div className="absolute -inset-y-10 -left-1/2 w-1/3 rotate-12 bg-white/25 blur-sm motion-safe:translate-x-[-140%] motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out group-hover:motion-safe:translate-x-[520%]" />
                 </div>
                 <div className="flex items-start gap-4">
-                  <span className="flex-shrink-0 inline-flex h-10 w-10 min-w-[2.5rem] items-center justify-center rounded-2xl bg-linear-to-br from-wizard-red/20 to-wizard-red/10 border border-wizard-red/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
+                  <span className="shrink-0 inline-flex h-10 w-10 min-w-10 items-center justify-center rounded-2xl bg-linear-to-br from-wizard-red/20 to-wizard-red/10 border border-wizard-red/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
                     <GalleryIcon size="18" className="text-gray-900" />
                   </span>
 

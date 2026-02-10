@@ -173,7 +173,7 @@ export default function Gallery() {
                       'w-full text-left text-sm transition-all rounded-lg px-3 py-2',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
                       isActive
-                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold shadow-sm'
+                        ? 'bg-linear-to-r from-blue-500 to-blue-600 text-white font-semibold shadow-sm'
                         : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900',
                     )}
                     onClick={() => setStyleFilter(opt.value)}
@@ -211,7 +211,7 @@ export default function Gallery() {
                       isComingSoon
                         ? 'text-gray-400 cursor-not-allowed opacity-60'
                         : isActive
-                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold shadow-sm'
+                          ? 'bg-linear-to-r from-blue-500 to-blue-600 text-white font-semibold shadow-sm'
                           : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900',
                     )}
                     onClick={() => {
@@ -244,7 +244,7 @@ export default function Gallery() {
                   key={i}
                   className="aspect-square rounded-2xl border border-gray-200 bg-white shadow-sm p-6"
                 >
-                  <div className="h-full w-full rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse" />
+                  <div className="h-full w-full rounded-xl bg-linear-to-br from-gray-100 to-gray-200 animate-pulse" />
                 </div>
               ))}
             </div>
@@ -347,7 +347,7 @@ export default function Gallery() {
                     type="button"
                     onClick={() => void loadMore()}
                     disabled={isLoadingMore}
-                    className="rounded-xl px-8 py-3 font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-sm hover:shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="rounded-xl px-8 py-3 font-semibold text-white bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-sm hover:shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {isLoadingMore ? (
                       <span className="flex items-center gap-2">
@@ -395,7 +395,7 @@ export default function Gallery() {
             block: 'start',
           })
         }}
-        className="lg:hidden fixed bottom-6 right-6 z-40 rounded-xl px-5 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-blue-800 backdrop-blur-sm transition-all"
+        className="lg:hidden fixed bottom-6 right-6 z-40 rounded-xl px-5 py-3 text-sm font-semibold text-white bg-linear-to-r from-blue-600 to-blue-700 shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-blue-800 backdrop-blur-sm transition-all"
       >
         <span className="flex items-center gap-2">
           <svg

@@ -96,7 +96,7 @@ export default function Pricing() {
   return (
     <div className="w-full max-w-7xl mx-auto py-16 px-4">
       {/* Beta Banner */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 mb-12 text-center shadow-lg">
+      <div className="bg-linear-to-r from-blue-600 to-purple-600 rounded-2xl p-6 mb-12 text-center shadow-lg">
         <div className="flex items-center justify-center gap-3 mb-2">
           <span className="relative flex h-3 w-3">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
@@ -146,7 +146,7 @@ export default function Pricing() {
               }`}
             >
               {pack.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
                   Most Popular
                 </div>
               )}
@@ -194,7 +194,7 @@ export default function Pricing() {
                 disabled
                 className={`w-full py-3 px-6 rounded-xl font-semibold transition-all opacity-50 cursor-not-allowed ${
                   pack.popular
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                    ? 'bg-linear-to-r from-blue-600 to-purple-600 text-white'
                     : 'bg-gray-200 text-gray-900'
                 }`}
               >
@@ -213,7 +213,7 @@ export default function Pricing() {
       {/* API Subscriptions */}
       <div className="mb-20">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-full px-4 py-2 mb-4">
+          <div className="inline-flex items-center gap-2 bg-linear-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-full px-4 py-2 mb-4">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
@@ -241,7 +241,7 @@ export default function Pricing() {
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-purple-600 to-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
                   Best for Startups
                 </div>
               )}
@@ -290,7 +290,7 @@ export default function Pricing() {
                   plan.name === 'Enterprise'
                     ? 'bg-gray-900 text-white'
                     : plan.popular
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
+                      ? 'bg-linear-to-r from-purple-600 to-blue-600 text-white'
                       : 'bg-gray-200 text-gray-900'
                 }`}
               >
@@ -307,13 +307,13 @@ export default function Pricing() {
       </div>
 
       {/* FAQ / Info Section */}
-      <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-10 border border-gray-200">
+      <div className="bg-linear-to-br from-gray-50 to-blue-50 rounded-2xl p-10 border border-gray-200">
         <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
           Pricing Philosophy
         </h3>
         <div className="grid md:grid-cols-3 gap-8">
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-linear-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <svg
                 className="w-8 h-8 text-white"
                 fill="none"
@@ -337,7 +337,7 @@ export default function Pricing() {
             </div>
           </div>
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <svg
                 className="w-8 h-8 text-white"
                 fill="none"
@@ -359,7 +359,7 @@ export default function Pricing() {
             </div>
           </div>
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <svg
                 className="w-8 h-8 text-white"
                 fill="none"

@@ -135,7 +135,7 @@ export default function UserHistory() {
                 aria-label="Loading your SVG preview"
               >
                 <div className="aspect-square flex items-center justify-center p-6">
-                  <div className="h-full w-full rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse" />
+                  <div className="h-full w-full rounded-xl bg-linear-to-br from-gray-100 to-gray-200 animate-pulse" />
                 </div>
                 <div className="p-4 border-t border-gray-100">
                   <div className="h-4 w-4/5 rounded bg-gray-100 animate-pulse mb-3" />

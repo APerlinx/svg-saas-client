@@ -350,7 +350,7 @@ export default function Contact() {
                   'px-8 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm',
                   isSubmitting
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 hover:shadow-md',
+                    : 'bg-linear-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 hover:shadow-md',
                 )}
               >
                 {isSubmitting ? (
