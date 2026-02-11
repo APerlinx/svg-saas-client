@@ -219,9 +219,16 @@ export default function Gallery() {
                     }}
                     disabled={isComingSoon}
                   >
-                    <span className="inline-flex items-center gap-2">
-                      <ModelIcon icon={icon} />
-                      <span>{opt.label}</span>
+                    <span className="inline-flex items-center justify-between w-full">
+                      <span className="inline-flex items-center gap-2">
+                        <ModelIcon icon={icon} />
+                        <span>{opt.label}</span>
+                      </span>
+                      {isComingSoon && (
+                        <span className="text-[10px] bg-gray-300 text-gray-700 px-1.5 py-0.5 rounded-md font-medium">
+                          Soon
+                        </span>
+                      )}
                     </span>
                   </button>
                 )

@@ -9,6 +9,8 @@ import Gallery from '../pages/Gallery'
 import UserHistory from '../pages/UserHistory'
 import Contact from '../pages/Contact'
 import Admin from '../pages/Admin'
+import PrivacyPolicy from '../pages/PrivacyPolicy'
+import TermsOfService from '../pages/TermsOfService'
 import SignIn from '../pages/auth/SignIn'
 import SignUp from '../pages/auth/SignUp'
 import ForgotPassword from '../pages/auth/ForgotPassword'
@@ -44,6 +46,14 @@ export const router = createBrowserRouter([
       {
         path: 'contact',
         element: <Contact />,
+      },
+      {
+        path: 'privacy',
+        element: <PrivacyPolicy />,
+      },
+      {
+        path: 'terms',
+        element: <TermsOfService />,
       },
       {
         path: 'admin',
