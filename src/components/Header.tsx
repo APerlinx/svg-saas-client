@@ -126,7 +126,7 @@ export default function Header() {
             <span className="font-semibold text-base sm:text-lg tracking-tight text-gray-900 ">
               ChatSVG
             </span>
-            <span className="hidden lg:inline-block text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full ml-1">
+            <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full ml-1">
               Beta
             </span>
           </Link>
@@ -146,7 +146,7 @@ export default function Header() {
                   className="pill-snake-border__content text-white shrink-0"
                 />
                 <span className="pill-snake-border__content hidden md:inline">
-                  Buy now
+                  Free Beta
                 </span>
               </Link>
               <Link

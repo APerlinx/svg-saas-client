@@ -37,18 +37,27 @@ function BannerContent({
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <div className="text-sm font-semibold text-gray-900">
-        Want to generate more?
+      <div className="text-lg font-bold text-gray-900">
+        🎉 Free During Beta - No Credit Card Required
       </div>
-      <div className="text-xs sm:text-sm text-gray-700">
-        Buy credits once and use them anytime — no subscription.
+      <div className="text-sm text-gray-700">
+        Create unlimited SVGs completely free while we perfect the platform.
+        Sign up in seconds with email or Google OAuth.
       </div>
-      <Link
-        to="/pricing"
-        className="inline-flex items-center justify-center self-start sm:self-end rounded-xl bg-gray-900 px-3 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
-      >
-        Buy credits
-      </Link>
+      <div className="flex gap-2 mt-1">
+        <Link
+          to="/auth/signup"
+          className="inline-flex items-center justify-center rounded-xl bg-linear-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white hover:from-blue-700 hover:to-blue-800 transition-colors shadow-sm"
+        >
+          Get Started Free
+        </Link>
+        <Link
+          to="/auth/signin"
+          className="inline-flex items-center justify-center rounded-xl border-2 border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
+        >
+          Sign In
+        </Link>
+      </div>
     </div>
   )
 }

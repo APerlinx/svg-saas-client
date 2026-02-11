@@ -335,85 +335,328 @@ console.log(svg.cdn_url);
         </div>
       </div>
 
-      {/* Use Cases */}
+      {/* When to Use */}
       <div className="mb-12">
-        <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          Built for Developers
+        <h3 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+          When to Use ChatSVG API
         </h3>
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-            <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+        <p className="text-center text-gray-600 mb-8 max-w-3xl mx-auto">
+          ChatSVG API is designed for <strong>one-time generation</strong> and{' '}
+          <strong>dynamic user content</strong>. You generate once, save the
+          SVG, and reuse it—not render on every request.
+        </p>
+
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {/* When to Use */}
+          <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
+            <div className="flex items-center gap-2 mb-4">
               <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                className="w-6 h-6 text-green-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
               >
                 <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
                 />
               </svg>
+              <h4 className="text-lg font-bold text-green-900">
+                ✅ Perfect For
+              </h4>
             </div>
-            <h4 className="font-semibold text-gray-900 mb-2">
-              Dynamic Content Generation
-            </h4>
-            <p className="text-sm text-gray-600">
-              Generate custom illustrations for blog posts, social media, or
-              user profiles on the fly
-            </p>
+            <ul className="space-y-3 text-sm text-gray-700">
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold shrink-0">•</span>
+                <span>
+                  <strong>Build-time generation:</strong> Generate icons during
+                  CI/CD, save to your repo
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold shrink-0">•</span>
+                <span>
+                  <strong>User-generated content:</strong> Custom avatars,
+                  logos, profile graphics (saved once)
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold shrink-0">•</span>
+                <span>
+                  <strong>CMS/blog automation:</strong> Auto-generate hero
+                  images from article titles
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold shrink-0">•</span>
+                <span>
+                  <strong>Marketing campaigns:</strong> Generate unique graphics
+                  per campaign, reuse them
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold shrink-0">•</span>
+                <span>
+                  <strong>Documentation:</strong> Generate diagrams/icons for
+                  docs sites (static assets)
+                </span>
+              </li>
+            </ul>
           </div>
 
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-            <div className="w-12 h-12 bg-linear-to-br from-green-500 to-teal-500 rounded-xl flex items-center justify-center mb-4">
+          {/* When NOT to Use */}
+          <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200">
+            <div className="flex items-center gap-2 mb-4">
               <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                className="w-6 h-6 text-red-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
               >
                 <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
                 />
               </svg>
+              <h4 className="text-lg font-bold text-red-900">❌ NOT For</h4>
             </div>
-            <h4 className="font-semibold text-gray-900 mb-2">
-              Automation & Workflows
-            </h4>
-            <p className="text-sm text-gray-600">
-              Integrate into CI/CD pipelines, design systems, or content
-              management platforms
-            </p>
+            <ul className="space-y-3 text-sm text-gray-700">
+              <li className="flex items-start gap-2">
+                <span className="text-red-600 font-bold shrink-0">•</span>
+                <span>
+                  <strong>Runtime rendering:</strong> Don't call on every page
+                  load or component mount
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-600 font-bold shrink-0">•</span>
+                <span>
+                  <strong>Replacing static icon libraries:</strong> Use pre-made
+                  icons for common UI elements
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-600 font-bold shrink-0">•</span>
+                <span>
+                  <strong>Regenerating the same icon:</strong> Generate once,
+                  cache the SVG/URL forever
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-600 font-bold shrink-0">•</span>
+                <span>
+                  <strong>Chart/data visualization:</strong> Use dedicated
+                  charting libraries (D3, Chart.js)
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-600 font-bold shrink-0">•</span>
+                <span>
+                  <strong>High-frequency generation:</strong> You pay per
+                  generation—avoid wasteful calls
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+          <div className="flex items-start gap-3">
+            <svg
+              className="w-6 h-6 text-blue-600 shrink-0 mt-0.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <div>
+              <h5 className="font-bold text-blue-900 mb-2">
+                💡 Key Principle: Generate → Save → Reuse
+              </h5>
+              <p className="text-sm text-gray-700">
+                Think of ChatSVG API like hiring a designer on-demand. You
+                request an asset, receive it, and use that exact file forever.
+                You don't re-hire the designer every time someone views your
+                website. This keeps costs low and performance high.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Real-World Examples */}
+      <div className="mb-12">
+        <h3 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+          Real-World Examples
+        </h3>
+        <div className="space-y-6">
+          {/* Example 1: CLI Build Script */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+                <svg
+                  className="w-5 h-5 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900">
+                  Build-Time Icon Generation
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Generate icons during CI/CD and commit them to your repo
+                </p>
+              </div>
+            </div>
+            <CodeBlock
+              language="bash"
+              code={`# generate-icons.sh - Run this in your build pipeline
+curl -X POST https://api.chatsvg.com/v1/generate \\
+  -H "Authorization: Bearer $CHATSVG_API_KEY" \\
+  -d '{"prompt": "home icon", "style": "line-art"}' \\
+  | jq -r '.svg_code' > ./public/icons/home.svg
+
+curl -X POST https://api.chatsvg.com/v1/generate \\
+  -H "Authorization: Bearer $CHATSVG_API_KEY" \\
+  -d '{"prompt": "settings gear icon", "style": "line-art"}' \\
+  | jq -r '.svg_code' > ./public/icons/settings.svg
+
+# Now commit these files - they're static assets forever
+git add public/icons/*.svg`}
+            />
           </div>
 
+          {/* Example 2: User Avatar Generation */}
           <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-            <div className="w-12 h-12 bg-linear-to-br from-orange-500 to-pink-500 rounded-xl flex items-center justify-center mb-4">
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+                <svg
+                  className="w-5 h-5 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900">
+                  Custom User Avatar Generation
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Generate unique avatar when user signs up, save URL to
+                  database
+                </p>
+              </div>
             </div>
-            <h4 className="font-semibold text-gray-900 mb-2">
-              Rapid Prototyping
-            </h4>
-            <p className="text-sm text-gray-600">
-              Generate placeholder graphics for mockups, demos, and MVPs without
-              waiting for designers
-            </p>
+            <CodeBlock
+              language="javascript"
+              code={`// Server-side endpoint (Express, Next.js API route, etc.)
+app.post('/api/user/onboarding', async (req, res) => {
+  const { username } = req.body;
+  
+  // Generate avatar ONCE during signup
+  const response = await fetch('https://api.chatsvg.com/v1/generate', {
+    method: 'POST',
+    headers: {
+      'Authorization': \`Bearer \${process.env.CHATSVG_API_KEY}\`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      prompt: \`abstract geometric avatar for \${username}\`,
+      style: 'flat'
+    })
+  });
+  
+  const svg = await response.json();
+  
+  // Save the CDN URL to user profile (not the SVG code!)
+  await db.users.update(req.user.id, {
+    avatar_url: svg.cdn_url  // This URL never changes
+  });
+  
+  // User's avatar is now permanent - no more API calls needed
+  res.json({ avatar: svg.cdn_url });
+});`}
+            />
+          </div>
+
+          {/* Example 3: CMS Blog Post Hero */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
+                <svg
+                  className="w-5 h-5 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900">
+                  CMS Auto-Illustration
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Generate hero image when publishing article, store in CMS
+                </p>
+              </div>
+            </div>
+            <CodeBlock
+              language="javascript"
+              code={`// CMS hook when article is published
+async function onArticlePublish(article) {
+  if (!article.hero_image) {
+    // Generate illustration from article title/summary
+    const response = await fetch('https://api.chatsvg.com/v1/generate', {
+      method: 'POST',
+      headers: {
+        'Authorization': \`Bearer \${process.env.CHATSVG_API_KEY}\`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: \`abstract illustration for article: \${article.title}\`,
+        style: 'geometric'
+      })
+    });
+    
+    const svg = await response.json();
+    
+    // Save URL to article metadata (one-time generation!)
+    await cms.articles.update(article.id, {
+      hero_image: svg.cdn_url
+    });
+  }
+  
+  // Article now has permanent hero image - no regeneration needed
+}`}
+            />
           </div>
         </div>
       </div>
@@ -422,13 +665,39 @@ console.log(svg.cdn_url);
       <div className="bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-8 mb-12 border border-blue-200">
         <div className="max-w-3xl mx-auto text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-3">
-            Pricing Plans Coming Soon
+            Pay-Per-Generation Pricing
           </h3>
           <p className="text-gray-600 mb-6">
-            We're designing flexible pricing that scales with your usage. Expect
-            free tiers for developers, pay-as-you-go options, and enterprise
-            plans with dedicated support.
+            You only pay when you generate a new SVG. Once generated, the CDN
+            URL and SVG code are yours forever—no ongoing costs for storage or
+            bandwidth.
           </p>
+          <div className="grid md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <div className="text-2xl font-bold text-blue-600 mb-1">
+                Free Tier
+              </div>
+              <div className="text-sm text-gray-600">
+                Perfect for testing and small projects
+              </div>
+            </div>
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <div className="text-2xl font-bold text-purple-600 mb-1">
+                Pay-as-you-go
+              </div>
+              <div className="text-sm text-gray-600">
+                Scale as your needs grow
+              </div>
+            </div>
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <div className="text-2xl font-bold text-green-600 mb-1">
+                Enterprise
+              </div>
+              <div className="text-sm text-gray-600">
+                Custom plans with SLAs
+              </div>
+            </div>
+          </div>
           <div className="inline-flex flex-wrap items-center justify-center gap-6 text-sm text-gray-700">
             <div className="flex items-center gap-2">
               <svg
@@ -442,7 +711,7 @@ console.log(svg.cdn_url);
                   clipRule="evenodd"
                 />
               </svg>
-              <span>Free tier included</span>
+              <span>No monthly minimums</span>
             </div>
             <div className="flex items-center gap-2">
               <svg
@@ -456,7 +725,7 @@ console.log(svg.cdn_url);
                   clipRule="evenodd"
                 />
               </svg>
-              <span>No hidden fees</span>
+              <span>Free CDN hosting forever</span>
             </div>
             <div className="flex items-center gap-2">
               <svg
@@ -470,7 +739,7 @@ console.log(svg.cdn_url);
                   clipRule="evenodd"
                 />
               </svg>
-              <span>Volume discounts</span>
+              <span>Volume discounts available</span>
             </div>
           </div>
         </div>

@@ -48,41 +48,48 @@ export default function Pricing() {
 
   const apiPlans = [
     {
-      name: 'Developer',
-      price: '$29',
-      period: '/month',
-      description: 'For side projects and small apps',
+      name: 'API Starter',
+      price: '$50',
+      period: '',
+      credits: '1,000',
+      pricePerCredit: '$0.05',
+      description: 'Perfect for prototyping and testing',
       features: [
-        '1,000 API requests/month',
+        '1,000 API generations',
         'All generation styles',
-        'CDN-hosted assets',
+        'CDN-hosted assets forever',
         'API key management',
         'Email support',
       ],
       popular: false,
     },
     {
-      name: 'Startup',
-      price: '$99',
-      period: '/month',
-      description: 'Perfect for growing businesses',
+      name: 'API Pro',
+      price: '$200',
+      period: '',
+      credits: '5,000',
+      pricePerCredit: '$0.04',
+      description: 'Best for production applications',
       features: [
-        '5,000 API requests/month',
+        '5,000 API generations',
         'All generation styles',
-        'CDN-hosted assets',
+        'CDN-hosted assets forever',
         'Multiple API keys',
         'Priority support',
         'Usage analytics',
+        'Save 20%',
       ],
       popular: true,
     },
     {
-      name: 'Enterprise',
+      name: 'API Enterprise',
       price: 'Custom',
       period: '',
-      description: 'For large-scale operations',
+      credits: '',
+      pricePerCredit: '',
+      description: 'For high-volume operations',
       features: [
-        'Unlimited API requests',
+        'Custom generation volume',
         'Dedicated infrastructure',
         'Custom SLA',
         'Team management',
@@ -210,7 +217,7 @@ export default function Pricing() {
         </div>
       </div>
 
-      {/* API Subscriptions */}
+      {/* API Credits */}
       <div className="mb-20">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 bg-linear-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-full px-4 py-2 mb-4">
@@ -223,11 +230,12 @@ export default function Pricing() {
             </span>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-3">
-            🚀 API Subscriptions
+            🚀 API Credits
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Integrate ChatSVG into your applications with our REST API. Perfect
-            for developers and businesses.
+            Generate SVGs programmatically via REST API. Pay per
+            generation—credits never expire. Perfect for build pipelines,
+            user-generated content, and CMS automation.
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
@@ -242,7 +250,7 @@ export default function Pricing() {
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-purple-600 to-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
-                  Best for Startups
+                  Best Value
                 </div>
               )}
 
@@ -253,12 +261,17 @@ export default function Pricing() {
                 <div className="mb-2">
                   <div className="text-5xl font-bold text-gray-900">
                     {plan.price}
-                    {plan.period && (
-                      <span className="text-xl text-gray-600">
-                        {plan.period}
-                      </span>
-                    )}
                   </div>
+                  {plan.credits && (
+                    <>
+                      <div className="text-purple-600 font-semibold text-lg mt-1">
+                        {plan.credits} credits
+                      </div>
+                      <div className="text-gray-500 text-sm">
+                        {plan.pricePerCredit} per generation
+                      </div>
+                    </>
+                  )}
                 </div>
                 <p className="text-gray-600 text-sm mt-2">{plan.description}</p>
               </div>
@@ -287,14 +300,16 @@ export default function Pricing() {
               <button
                 disabled
                 className={`w-full py-3 px-6 rounded-xl font-semibold transition-all opacity-50 cursor-not-allowed ${
-                  plan.name === 'Enterprise'
+                  plan.name === 'API Enterprise'
                     ? 'bg-gray-900 text-white'
                     : plan.popular
                       ? 'bg-linear-to-r from-purple-600 to-blue-600 text-white'
                       : 'bg-gray-200 text-gray-900'
                 }`}
               >
-                {plan.name === 'Enterprise' ? 'Contact Sales' : 'Subscribe'}
+                {plan.name === 'API Enterprise'
+                  ? 'Contact Sales'
+                  : 'Buy Credits'}
               </button>
               <div className="mt-3 text-center bg-purple-50 border border-purple-200 rounded-lg py-2 px-3">
                 <span className="text-xs font-semibold text-purple-700">
@@ -332,8 +347,8 @@ export default function Pricing() {
               Pay for What You Use
             </div>
             <div className="text-sm text-gray-600">
-              Credits for the web app never expire. API subscriptions scale with
-              your needs.
+              Credits for web app and API never expire. Pay only for what you
+              generate—no recurring fees.
             </div>
           </div>
           <div className="text-center">
@@ -376,8 +391,8 @@ export default function Pricing() {
             </div>
             <div className="font-bold text-gray-900 mb-2">Flexible Options</div>
             <div className="text-sm text-gray-600">
-              Choose between pay-as-you-go credits or monthly API subscriptions
-              based on your needs.
+              Choose between pay-as-you-go credits for casual use or API credits
+              for programmatic access—both never expire.
             </div>
           </div>
         </div>
