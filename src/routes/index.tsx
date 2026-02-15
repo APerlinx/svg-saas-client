@@ -11,11 +11,13 @@ import Contact from '../pages/Contact'
 import Admin from '../pages/Admin'
 import PrivacyPolicy from '../pages/PrivacyPolicy'
 import TermsOfService from '../pages/TermsOfService'
+import Status from '../pages/Status'
 import SignIn from '../pages/auth/SignIn'
 import SignUp from '../pages/auth/SignUp'
 import ForgotPassword from '../pages/auth/ForgotPassword'
 import ResetPassword from '../pages/auth/ResetPssword'
 import OAuthCallback from '../pages/auth/OAuthCallback'
+import ApiKeys from '../pages/ApiKeys'
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +56,14 @@ export const router = createBrowserRouter([
       {
         path: 'terms',
         element: <TermsOfService />,
+      },
+      {
+        path: 'api-keys',
+        element: <ApiKeys />,
+      },
+      {
+        path: 'status',
+        element: <Status />,
       },
       {
         path: 'admin',

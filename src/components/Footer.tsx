@@ -16,6 +16,24 @@ export default function Footer() {
 
           <div className="flex items-center gap-1">
             <Link
+              to="/api-keys"
+              className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors inline-block"
+            >
+              API
+            </Link>
+            <Link
+              to="/docs"
+              className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors inline-block"
+            >
+              Docs
+            </Link>
+            <Link
+              to="/status"
+              className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors inline-block"
+            >
+              Status
+            </Link>
+            <Link
               to="/privacy"
               className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors inline-block"
             >
