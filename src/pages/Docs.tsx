@@ -121,7 +121,7 @@ export default function Docs() {
               <li key={item.id}>
                 <a
                   href={`#${item.id}`}
-                  className="block pl-4 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:border-l-2 hover:border-wizard-orange hover:pl-[14px] transition-all"
+                  className="block pl-4 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:border-l-2 hover:border-wizard-orange hover:pl-3.5 transition-all"
                 >
                   {item.label}
                 </a>
