@@ -1,19 +1,13 @@
 import AmbientWaves from '../assets/Dashboard-background/AmbientWaves'
 import PromptGenerator from '../components/PromptGenerator'
-import GalleryIcon from '../components/icons/GalleryIcon'
 import { CodeIcon } from '../components/icons/CodeIcon'
 import DocsIcon from '../components/icons/DocsIcon'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import {
-  getPublicSvgs,
-  type PublicGenerationItem,
-} from '../services/svgService'
 import { fetchGenerationHistory } from '../services/userService'
 import RecentHistorySection, {
   type RecentHistoryItem,
 } from '../components/dashboard/RecentHistorySection'
-import CommunityRemixSection from '../components/dashboard/CommunityRemixSection'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -22,10 +16,6 @@ export default function Dashboard() {
   const [historyItems, setHistoryItems] = useState<RecentHistoryItem[] | null>(
     null,
   )
-  const [communityItems, setCommunityItems] = useState<PublicGenerationItem[]>(
-    [],
-  )
-  const [isCommunityLoading, setIsCommunityLoading] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -55,25 +45,6 @@ export default function Dashboard() {
       cancelled = true
     }
   }, [userId])
-
-  useEffect(() => {
-    let cancelled = false
-
-    const run = async () => {
-      setIsCommunityLoading(true)
-      try {
-        const data = await getPublicSvgs(12)
-        if (!cancelled) setCommunityItems(data.publicGenerations)
-      } finally {
-        if (!cancelled) setIsCommunityLoading(false)
-      }
-    }
-
-    void run()
-    return () => {
-      cancelled = true
-    }
-  }, [])
 
   return (
     <>
@@ -144,8 +115,8 @@ export default function Dashboard() {
                       Integrate Anywhere
                     </div>
                     <div className="text-sm text-gray-600 mt-1">
-                      Coming soon: REST API for programmatic SVG generation in
-                      your apps.
+                      REST API for programmatic SVG generation. Generate
+                      on-demand in your apps.
                     </div>
                   </div>
                 </div>
@@ -153,24 +124,36 @@ export default function Dashboard() {
 
               <div className="group relative overflow-hidden rounded-3xl border border-gray-200/60 bg-white/60 p-6 shadow-sm transition-colors hover:bg-white/70 motion-safe:transition-[transform,box-shadow,background-color] motion-safe:duration-300 motion-safe:ease-out motion-safe:hover:-translate-y-1 motion-safe:hover:scale-[1.01] hover:shadow-md">
                 <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <div className="absolute inset-0 bg-linear-to-br from-wizard-red/8 to-wizard-red/3" />
+                  <div className="absolute inset-0 bg-linear-to-br from-purple-500/8 to-blue-500/4" />
                   <div className="absolute -inset-y-10 -left-1/2 w-1/3 rotate-12 bg-white/25 blur-sm motion-safe:translate-x-[-140%] motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out group-hover:motion-safe:translate-x-[520%]" />
                 </div>
                 <div className="flex items-start gap-4">
-                  <span className="shrink-0 inline-flex h-10 w-10 min-w-10 items-center justify-center rounded-2xl bg-linear-to-br from-wizard-red/20 to-wizard-red/10 border border-wizard-red/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
-                    <GalleryIcon size="18" className="text-gray-900" />
+                  <span className="shrink-0 inline-flex h-10 w-10 min-w-10 items-center justify-center rounded-2xl bg-linear-to-br from-purple-500/20 to-blue-500/10 border border-purple-500/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:motion-safe:scale-110">
+                    <svg
+                      className="w-[18px] h-[18px] text-gray-900"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
+                    </svg>
                   </span>
 
                   <div>
                     <div className="text-sm font-semibold text-gray-900">
-                      Icon Gallery
+                      MCP Server
                     </div>
                     <div className="mt-1 text-lg font-bold text-gray-900">
-                      Get Inspired
+                      Claude Integration
                     </div>
                     <div className="text-sm text-gray-600 mt-1">
-                      Browse thousands of public SVG icons for inspiration and
-                      reference.
+                      Coming soon: Generate SVGs directly from Claude Desktop,
+                      Cursor, and more.
                     </div>
                   </div>
                 </div>
@@ -179,7 +162,7 @@ export default function Dashboard() {
           </section>
         </div>
 
-        <div className="mt-10 sm:mt-12 space-y-10 sm:space-y-12">
+        <div className="mt-10 sm:mt-12">
           <RecentHistorySection
             items={user ? historyItems : null}
             onDeleted={(generationId) => {
@@ -187,11 +170,6 @@ export default function Dashboard() {
                 prev ? prev.filter((it) => it.id !== generationId) : prev,
               )
             }}
-          />
-
-          <CommunityRemixSection
-            items={communityItems}
-            isLoading={isCommunityLoading}
           />
         </div>
       </div>
