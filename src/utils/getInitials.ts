@@ -1,4 +1,4 @@
-const getInitials = (name: string) => {
+export const getInitials = (name: string) => {
   return name
     .split(' ')
     .map((n) => n[0])
@@ -6,5 +6,3 @@ const getInitials = (name: string) => {
     .toUpperCase()
     .slice(0, 2)
 }
-
-export default getInitials

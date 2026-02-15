@@ -12,7 +12,7 @@ export default function OAuthCallback() {
 
     const processOAuth = async () => {
       const params = new URLSearchParams(window.location.search)
-      const redirect = params.get('redirect') || '/'
+      const redirect = params.get('redirect') || '/app'
 
       try {
         await checkAuth()

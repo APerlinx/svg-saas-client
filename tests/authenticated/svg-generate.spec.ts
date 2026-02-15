@@ -13,6 +13,8 @@ test('logged-in user can generate an SVG', async ({ page }) => {
 
   await expect(page.getByText('TEST_USER')).toBeVisible()
 
+  await page.goto('/app')
+
   await page
     .getByLabel(/prompt/i)
     .fill('Minimal outline icon of a pencil drawing a line')

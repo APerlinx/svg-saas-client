@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test('unauthenticated user cannot generate SVG', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/app')
 
   const generateButton = page.getByRole('button', { name: /^Generate$/i })
 

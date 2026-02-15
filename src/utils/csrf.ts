@@ -9,6 +9,7 @@ export const getCsrfToken = (): string | null => {
 let csrfToken: string | null = null
 export const setCsrfToken = (t: string) => (csrfToken = t)
 export const getStoredCsrfToken = () => csrfToken
+export const clearCsrfToken = () => (csrfToken = null)
 
 /**
  * Wrapper for fetch that automatically includes CSRF token
@@ -16,7 +17,7 @@ export const getStoredCsrfToken = () => csrfToken
  */
 export const fetchWithCsrf = async (
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<Response> => {
   const csrfToken = getCsrfToken()
   const method = options.method?.toUpperCase() || 'GET'
