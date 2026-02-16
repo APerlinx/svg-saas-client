@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import getInitials from '../utils/getInitials'
+import { getInitials } from '../utils/getInitials'
 import Bell from './icons/BellIcon'
 import PricingIcon from './icons/PricingIcon'
 import LampIcon from './icons/LampIcon'

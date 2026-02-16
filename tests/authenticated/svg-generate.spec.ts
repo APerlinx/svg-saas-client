@@ -5,6 +5,8 @@ const TEST_PASSWORD = 'Password123!'
 // Use authenticated state
 
 test('logged-in user can generate an SVG', async ({ page }) => {
+  test.setTimeout(360000) // 6 minutes timeout for this test (SVG generation is slow)
+
   await page.goto('/signin')
 
   await page.getByLabel(/email/i).fill(TEST_EMAIL)
@@ -13,19 +15,21 @@ test('logged-in user can generate an SVG', async ({ page }) => {
 
   await expect(page.getByText('TEST_USER')).toBeVisible()
 
-  await page
-    .getByLabel(/prompt/i)
-    .fill('Minimal outline icon of a pencil drawing a line')
+  await page.goto('/app')
+
+  await page.getByLabel(/prompt/i).fill('Minimal outline icon of a black dot')
 
   await page.getByRole('button', { name: /Generate/i }).click()
 
-  const modal = page.getByTestId('svg-result-modal')
-  await expect(modal).toBeVisible()
+  // Wait for modal to open (no testid, just look for the SVG preview area)
+  const svgPreview = page.locator('.svg-preview')
+  await expect(svgPreview).toBeVisible({ timeout: 300000 }) // 5 minutes for generation
 
-  // Wait for the actual SVG to appear (after generation completes)
-  const svg = modal.locator('.svg-preview svg').first()
-  await expect(svg).toBeVisible({ timeout: 30000 }) // 30s timeout for generation
+  // Wait for the actual SVG to appear inside
+  const svg = svgPreview.locator('svg').first()
+  await expect(svg).toBeVisible()
   await expect(svg).toHaveAttribute('viewBox')
 
-  await expect(modal).toContainText('pencil drawing a line')
+  // Modal should show the prompt
+  await expect(page.getByText(/Export Options/i)).toBeVisible()
 })

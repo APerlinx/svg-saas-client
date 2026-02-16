@@ -29,7 +29,7 @@ export default function SignIn() {
       const { email, password, rememberMe } = formData
 
       await login(email, password, rememberMe)
-      navigate('/')
+      navigate('/app')
     } catch (error) {
       const { email } = formData
       logger.error('Sign in error', error, { email })

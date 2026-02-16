@@ -153,7 +153,7 @@ export default function Docs() {
                     <span>
                       Sign up at{' '}
                       <Link
-                        to="/"
+                        to="/signup"
                         className="text-blue-600 hover:underline font-medium"
                       >
                         chatsvg.com
@@ -174,7 +174,7 @@ export default function Docs() {
                   </div>
                 </div>
                 <Link
-                  to="/"
+                  to="/app"
                   className="mt-4 block text-center py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
                 >
                   Try Web App

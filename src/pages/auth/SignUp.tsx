@@ -68,7 +68,7 @@ export default function SignUp() {
     try {
       const { name, email, password } = formData
       await register(name, email, password, agreedToTerms)
-      navigate('/')
+      navigate('/app')
     } catch (error) {
       const { email } = formData
       logger.error('Sign up error', error, { email })

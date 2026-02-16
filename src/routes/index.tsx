@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import App from '../App'
+import Home from '../pages/Home'
 import Dashboard from '../pages/Dashboard'
 import ErrorBoundary from '../components/ErrorBoundary'
 import NotFound from '../components/NotFound'
@@ -22,11 +23,16 @@ import ApiKeys from '../pages/ApiKeys'
 export const router = createBrowserRouter([
   {
     path: '/',
+    element: <Home />,
+    errorElement: <ErrorBoundary />,
+  },
+  {
+    path: '/',
     element: <App />,
     errorElement: <ErrorBoundary />,
     children: [
       {
-        index: true,
+        path: 'app',
         element: <Dashboard />,
       },
       {
