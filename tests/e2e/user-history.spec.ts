@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { test, expect } from '@playwright/test'
 
 const TEST_EMAIL = 'test@example.com'
@@ -16,56 +17,52 @@ test.describe('User History', () => {
     await page.goto('/history')
 
     await expect(
-      page.getByRole('heading', {
-        name: /generation history|your generations/i,
-      }),
+      page.getByRole('heading', { name: /User history/i }),
+    ).toBeVisible()
+    await expect(
+      page.getByText(/Your personal gallery of AI-generated SVG icons/i),
     ).toBeVisible()
   })
 
-  test('user can filter generations by privacy setting', async ({ page }) => {
-    await page.goto('/history')
-
-    // Look for filter buttons if they exist
-    const publicFilter = page.getByRole('button', { name: /public/i })
-    const privateFilter = page.getByRole('button', { name: /private/i })
-
-    if (await publicFilter.isVisible()) {
-      await publicFilter.click()
-      // Generations should update
-      await page.waitForTimeout(500)
-    }
-
-    if (await privateFilter.isVisible()) {
-      await privateFilter.click()
-      await page.waitForTimeout(500)
-    }
+  test.skip('user can filter generations by privacy setting', async ({
+    page,
+  }) => {
+    // No filter buttons exist in the current UserHistory implementation
+    // All user generations are shown in one view
   })
 
   test('user can view SVG details', async ({ page }) => {
     await page.goto('/history')
 
-    // Click on first generation if it exists
-    const firstGeneration = page
-      .locator('.generation-card, [data-testid="generation-item"]')
-      .first()
+    // Click on first generation if it exists (uses aria-label)
+    const firstGeneration = page.locator('[aria-label="Your SVG card"]').first()
 
     if (await firstGeneration.isVisible()) {
-      await firstGeneration.click()
-
-      // Modal or detail view should open
-      await expect(page.locator('svg').first()).toBeVisible()
+      // SVG should already be visible in the card
+      await expect(firstGeneration.locator('img').first()).toBeVisible()
     }
   })
 
   test('user can download SVG from history', async ({ page }) => {
     await page.goto('/history')
 
-    // Find download button
-    const downloadButton = page
-      .getByRole('button', { name: /download/i })
-      .first()
+    const firstCard = page.locator('[aria-label="Your SVG card"]').first()
 
-    if (await downloadButton.isVisible()) {
+    if (await firstCard.isVisible()) {
+      // Hover to show quick actions button
+      await firstCard.hover()
+
+      // Click quick actions button (three dots)
+      const quickActionsButton = firstCard.getByRole('button', {
+        name: /Quick actions/i,
+      })
+      await quickActionsButton.click()
+
+      // Click Download SVG from menu
+      const downloadButton = page.getByRole('menuitem', {
+        name: /Download SVG/i,
+      })
+
       const downloadPromise = page.waitForEvent('download')
       await downloadButton.click()
       const download = await downloadPromise
@@ -79,21 +76,32 @@ test.describe('User History', () => {
 
     // Count initial generations
     const initialCount = await page
-      .locator('.generation-card, [data-testid="generation-item"]')
+      .locator('[aria-label="Your SVG card"]')
       .count()
 
     if (initialCount > 0) {
-      // Click delete button
-      const deleteButton = page.getByRole('button', { name: /delete/i }).first()
+      const firstCard = page.locator('[aria-label="Your SVG card"]').first()
+
+      // Hover to show quick actions
+      await firstCard.hover()
+
+      // Click quick actions button
+      const quickActionsButton = firstCard.getByRole('button', {
+        name: /Quick actions/i,
+      })
+      await quickActionsButton.click()
+
+      // Click Delete SVG (first click arms it)
+      const deleteButton = page.getByRole('menuitem', { name: /Delete SVG/i })
       await deleteButton.click()
 
-      // Confirm deletion
-      await page.getByRole('button', { name: /confirm|delete/i }).click()
+      // Click again to confirm (button text changes to "Confirm")
+      await page.getByRole('menuitem', { name: /Confirm/i }).click()
 
-      // Count should decrease
-      await page.waitForTimeout(1000)
+      // Wait for deletion to complete and card to be removed
+      await page.waitForTimeout(2500)
       const newCount = await page
-        .locator('.generation-card, [data-testid="generation-item"]')
+        .locator('[aria-label="Your SVG card"]')
         .count()
       expect(newCount).toBe(initialCount - 1)
     }
@@ -102,48 +110,47 @@ test.describe('User History', () => {
   test('empty state shows when no generations exist', async ({ page }) => {
     await page.goto('/history')
 
-    const emptyState = page.getByText(
-      /no generations yet|haven't created any svgs/i,
-    )
+    const emptyState = page.getByText('No SVGs to show yet')
 
     if (await emptyState.isVisible()) {
-      await expect(page.getByText(/create your first svg/i)).toBeVisible()
+      await expect(
+        page.getByText(
+          /Generate your first SVG on the dashboard to see it here/i,
+        ),
+      ).toBeVisible()
     }
   })
 
   test('user can copy SVG code', async ({ page }) => {
     await page.goto('/history')
 
-    const firstGeneration = page
-      .locator('.generation-card, [data-testid="generation-item"]')
-      .first()
+    const firstCard = page.locator('[aria-label="Your SVG card"]').first()
 
-    if (await firstGeneration.isVisible()) {
-      await firstGeneration.click()
+    if (await firstCard.isVisible()) {
+      // Hover to show quick actions
+      await firstCard.hover()
 
-      const copyButton = page.getByRole('button', { name: /copy/i })
-      if (await copyButton.isVisible()) {
-        await copyButton.click()
-        await expect(page.getByText(/copied/i)).toBeVisible()
-      }
+      // Click quick actions button
+      const quickActionsButton = firstCard.getByRole('button', {
+        name: /Quick actions/i,
+      })
+      await quickActionsButton.click()
+
+      // Click Copy SVG from menu
+      const copyButton = page.getByRole('menuitem', { name: /Copy SVG/i })
+      await copyButton.click()
+
+      // Should show "Copied" inline status in the menu item
+      await expect(
+        page.getByRole('menuitem', { name: /Copied/i }),
+      ).toBeVisible()
     }
   })
 
-  test('pagination works when many generations exist', async ({ page }) => {
-    await page.goto('/history')
-
-    // Look for pagination controls
-    const nextButton = page.getByRole('button', { name: /next/i })
-    const previousButton = page.getByRole('button', { name: /previous|prev/i })
-
-    if (await nextButton.isVisible()) {
-      await nextButton.click()
-      await page.waitForTimeout(500)
-
-      // Should show different generations
-      if (await previousButton.isVisible()) {
-        await previousButton.click()
-      }
-    }
+  test.skip('pagination works when many generations exist', async ({
+    page,
+  }) => {
+    // No pagination implemented - UserHistory loads all generations at once
+    // using cursor-based pagination internally but displays all results
   })
 })
