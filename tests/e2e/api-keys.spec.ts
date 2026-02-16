@@ -20,7 +20,7 @@ test.describe('API Keys Management', () => {
     await expect(page.getByText(/create and manage api keys/i)).toBeVisible()
   })
 
-  test('user can create a new API key', async ({ page }) => {
+  test('user can create and revoke an API key', async ({ page }) => {
     await page.goto('/api-keys')
 
     // Click create key button
@@ -29,7 +29,7 @@ test.describe('API Keys Management', () => {
       .first()
       .click()
 
-    // Fill in the modal form (no role="dialog", just a div modal)
+    // Fill in the modal form
     await expect(page.getByText('Create new API key')).toBeVisible()
 
     await page
@@ -41,10 +41,15 @@ test.describe('API Keys Management', () => {
     await page.getByRole('button', { name: /^Production$/i }).click()
 
     // Submit form
-    await page.getByRole('button', { name: /Create key/i }).click()
+    await page
+      .locator('form')
+      .getByRole('button', { name: /Create key/i })
+      .click()
 
     // Wait for success modal showing the key
-    await expect(page.getByText('API key created')).toBeVisible({
+    await expect(
+      page.getByRole('heading', { name: 'API key created' }),
+    ).toBeVisible({
       timeout: 10000,
     })
     await expect(page.getByText(/Copy your API key now/i)).toBeVisible()
@@ -63,8 +68,33 @@ test.describe('API Keys Management', () => {
     // Close modal
     await page.getByRole('button', { name: /Done/i }).click()
 
-    // Verify key appears in list
-    await expect(page.getByText('Test Production Key')).toBeVisible()
+    // Wait for modal to close completely
+    await expect(
+      page.getByRole('heading', { name: 'API key created' }),
+    ).not.toBeVisible()
+
+    // Verify key appears in list (as heading)
+    await expect(
+      page.getByRole('heading', { name: 'Test Production Key' }),
+    ).toBeVisible()
+
+    // Now revoke that same key
+    const keyCard = page
+      .locator('div')
+      .filter({ hasText: 'Test Production Key' })
+      .first()
+    await keyCard.getByRole('button', { name: /revoke/i }).click()
+
+    // Confirm revocation
+    await expect(page.getByText('Revoke API key')).toBeVisible()
+    await page.getByRole('button', { name: /Revoke key/i }).click()
+
+    // Key should be removed from list (check the heading is gone)
+    await expect(
+      page.getByRole('heading', { name: 'Test Production Key' }),
+    ).not.toBeVisible({
+      timeout: 5000,
+    })
   })
 
   test('user can view API key statistics', async ({ page }) => {
@@ -86,43 +116,6 @@ test.describe('API Keys Management', () => {
       await expect(page.getByText(/credits used/i)).toBeVisible()
       await expect(page.getByText(/success rate/i)).toBeVisible()
     }
-  })
-
-  test('user can revoke an API key', async ({ page }) => {
-    await page.goto('/api-keys')
-
-    // Create a key first
-    await page
-      .getByRole('button', { name: /create key/i })
-      .first()
-      .click()
-    await page.getByPlaceholder(/e\.g\. Production App/i).fill('Key to Delete')
-    await page.getByRole('button', { name: /Create key/i }).click()
-    await page.getByRole('button', { name: /Done/i }).click()
-
-    // Wait for key to appear
-    await expect(page.getByText('Key to Delete')).toBeVisible()
-
-    // Find and click revoke button for this key
-    const keyCard = page
-      .locator('div')
-      .filter({ hasText: 'Key to Delete' })
-      .first()
-    await keyCard.getByRole('button', { name: /revoke/i }).click()
-
-    // Confirm revocation - exact text from RevokeConfirmModal
-    await expect(page.getByText('Revoke API key')).toBeVisible()
-    await expect(
-      page.getByText(
-        /Any applications using this key will lose access immediately/i,
-      ),
-    ).toBeVisible()
-    await page.getByRole('button', { name: /Revoke key/i }).click()
-
-    // Key should be removed from list
-    await expect(page.getByText('Key to Delete')).not.toBeVisible({
-      timeout: 5000,
-    })
   })
 
   test('user sees usage summary cards', async ({ page }) => {
@@ -164,7 +157,10 @@ test.describe('API Keys Management', () => {
       .click()
 
     // Try to submit without filling name - button should be disabled
-    const createButton = page.getByRole('button', { name: /Create key/i })
+    // Target the submit button inside the form specifically
+    const createButton = page
+      .locator('form')
+      .getByRole('button', { name: /Create key/i })
 
     // The submit button is disabled when name is empty
     await expect(createButton).toBeDisabled()

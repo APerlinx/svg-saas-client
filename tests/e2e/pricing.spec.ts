@@ -9,16 +9,18 @@ test.describe('Pricing Page', () => {
     ).toBeVisible()
 
     // Check for 3 plans: FREE, PRO, ENTERPRISE
-    await expect(page.getByText('Free', { exact: true })).toBeVisible()
-    await expect(page.getByText('Pro', { exact: true })).toBeVisible()
-    await expect(page.getByText('Enterprise', { exact: true })).toBeVisible()
+    await expect(page.getByText('Free', { exact: true }).first()).toBeVisible()
+    await expect(page.getByText('Pro', { exact: true }).first()).toBeVisible()
+    await expect(
+      page.getByText('Enterprise', { exact: true }).first(),
+    ).toBeVisible()
   })
 
   test('shows correct pricing information', async ({ page }) => {
     await page.goto('/pricing')
 
     // Pro plan shows monthly price
-    await expect(page.getByText(/\/mo/)).toBeVisible()
+    await expect(page.getByText(/\/mo/).first()).toBeVisible()
 
     // Free during Beta badge visible
     await expect(page.getByText(/free during beta/i).first()).toBeVisible()
@@ -59,8 +61,8 @@ test.describe('Pricing Page', () => {
 
     await expect(page.getByText(/compare plans/i)).toBeVisible()
     await expect(page.getByText(/monthly price/i)).toBeVisible()
-    await expect(page.getByText(/credits \/ month/i)).toBeVisible()
-    await expect(page.getByText(/api access/i)).toBeVisible()
+    await expect(page.getByText(/credits \/ month/i).first()).toBeVisible()
+    await expect(page.getByText(/api access/i).first()).toBeVisible()
   })
 
   test('upgrade buttons are disabled during beta', async ({ page }) => {
@@ -99,8 +101,10 @@ test.describe('Pricing Page', () => {
     await page.goto('/pricing')
 
     // Should still show all plans (stacked vertically)
-    await expect(page.getByText('Free', { exact: true })).toBeVisible()
-    await expect(page.getByText('Pro', { exact: true })).toBeVisible()
-    await expect(page.getByText('Enterprise', { exact: true })).toBeVisible()
+    await expect(page.getByText('Free', { exact: true }).first()).toBeVisible()
+    await expect(page.getByText('Pro', { exact: true }).first()).toBeVisible()
+    await expect(
+      page.getByText('Enterprise', { exact: true }).first(),
+    ).toBeVisible()
   })
 })
