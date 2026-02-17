@@ -5,72 +5,67 @@ test.describe('Pricing Page', () => {
     await page.goto('/pricing')
 
     await expect(
-      page.getByRole('heading', { name: /simple, transparent pricing/i }),
+      page.getByRole('heading', {
+        name: /keep it sustainable, keep it useful/i,
+      }),
     ).toBeVisible()
 
-    // Check for 3 plans: FREE, PRO, ENTERPRISE
+    // Check for 2 plans: FREE, SUPPORTER
     await expect(page.getByText('Free', { exact: true }).first()).toBeVisible()
-    await expect(page.getByText('Pro', { exact: true }).first()).toBeVisible()
     await expect(
-      page.getByText('Enterprise', { exact: true }).first(),
+      page.getByText('Supporter', { exact: true }).first(),
     ).toBeVisible()
   })
 
   test('shows correct pricing information', async ({ page }) => {
     await page.goto('/pricing')
 
-    // Pro plan shows monthly price
+    // Supporter plan shows monthly price
     await expect(page.getByText(/\/mo/).first()).toBeVisible()
 
-    // Free during Beta badge visible
+    // Supporting-message copy visible
     await expect(page.getByText(/free during beta/i).first()).toBeVisible()
   })
 
-  test('displays unified credit system messaging', async ({ page }) => {
+  test('displays community-first pricing messaging', async ({ page }) => {
     await page.goto('/pricing')
 
-    await expect(
-      page.getByText(/one unified credit system for web app and api/i),
-    ).toBeVisible()
+    await expect(page.getByText(/community-first pricing/i)).toBeVisible()
   })
 
-  test('shows enterprise contact sales link', async ({ page }) => {
+  test('shows supporter call-to-action', async ({ page }) => {
     await page.goto('/pricing')
 
-    const contactSalesLink = page.getByRole('link', {
-      name: /contact sales/i,
+    const supporterButton = page.getByRole('button', {
+      name: /become a supporter|current plan/i,
     })
-    await expect(contactSalesLink).toBeVisible()
-    await expect(contactSalesLink).toHaveAttribute(
-      'href',
-      /mailto:sales@chatsvg\.com/,
-    )
+    await expect(supporterButton.first()).toBeVisible()
   })
 
-  test('displays "How It Works" section', async ({ page }) => {
+  test('displays pricing philosophy section', async ({ page }) => {
     await page.goto('/pricing')
 
-    await expect(page.getByText(/how it works/i)).toBeVisible()
-    await expect(page.getByText(/use anywhere/i)).toBeVisible()
-    await expect(page.getByText(/monthly refresh/i)).toBeVisible()
-    await expect(page.getByText(/scale up/i)).toBeVisible()
+    await expect(page.getByText(/why this pricing model/i)).toBeVisible()
+    await expect(page.getByText(/generous free tier/i)).toBeVisible()
+    await expect(page.getByText(/supporter tier/i)).toBeVisible()
+    await expect(page.getByText(/no growth hacks/i)).toBeVisible()
   })
 
   test('shows comparison table', async ({ page }) => {
     await page.goto('/pricing')
 
-    await expect(page.getByText(/compare plans/i)).toBeVisible()
+    await expect(page.getByText(/quick comparison/i)).toBeVisible()
     await expect(page.getByText(/monthly price/i)).toBeVisible()
-    await expect(page.getByText(/credits \/ month/i).first()).toBeVisible()
+    await expect(page.getByText(/initial credit allocation/i)).toBeVisible()
     await expect(page.getByText(/api access/i).first()).toBeVisible()
   })
 
-  test('upgrade buttons are disabled during beta', async ({ page }) => {
+  test('plan buttons are disabled', async ({ page }) => {
     await page.goto('/pricing')
 
-    // All upgrade/current plan buttons should be disabled
+    // Plan buttons are currently disabled
     const upgradeButtons = page.getByRole('button', {
-      name: /upgrade|current plan/i,
+      name: /become a supporter|current plan|default plan/i,
     })
     const count = await upgradeButtons.count()
 
@@ -91,8 +86,12 @@ test.describe('Pricing Page', () => {
     await page.goto('/pricing')
 
     // Check for common features mentioned
-    await expect(page.getByText(/credits \/ month/i).first()).toBeVisible()
-    await expect(page.getByText(/generations \/ month/i).first()).toBeVisible()
+    await expect(
+      page.getByText(/initial credits on plan activation/i).first(),
+    ).toBeVisible()
+    await expect(
+      page.getByText(/generations per monthly usage window/i).first(),
+    ).toBeVisible()
     await expect(page.getByText(/rate limit/i).first()).toBeVisible()
   })
 
@@ -102,9 +101,8 @@ test.describe('Pricing Page', () => {
 
     // Should still show all plans (stacked vertically)
     await expect(page.getByText('Free', { exact: true }).first()).toBeVisible()
-    await expect(page.getByText('Pro', { exact: true }).first()).toBeVisible()
     await expect(
-      page.getByText('Enterprise', { exact: true }).first(),
+      page.getByText('Supporter', { exact: true }).first(),
     ).toBeVisible()
   })
 })

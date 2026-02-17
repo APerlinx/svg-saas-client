@@ -26,11 +26,12 @@ function normalizeError(error: unknown): never {
 
 // ── Types ──────────────────────────────────────────────────────────────
 
-export type PlanType = 'FREE' | 'PRO' | 'ENTERPRISE'
+export type PlanType = 'FREE' | 'SUPPORTER'
 
 export interface PlanLimits {
-  creditsPerMonth: number
-  overagePrice?: number
+  startingCredits: number
+  creditRefillAmount: number
+  creditRefillDays: number
   generationsPerMonth: number
   apiAccess: boolean
   maxApiKeys: number
@@ -39,8 +40,8 @@ export interface PlanLimits {
     perHour: number
     perDay: number
   }
-  supportLevel: 'community' | 'email' | 'priority' | 'dedicated'
-  supportChannel?: 'email' | 'slack'
+  supportLevel: 'community' | 'email' | 'priority'
+  supportChannel?: 'email' | 'discord'
 }
 
 export interface Plan {

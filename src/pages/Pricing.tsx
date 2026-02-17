@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchPlans, type Plan, type PlanType } from '../services/planService'
 import { useAuth } from '../hooks/useAuth'
+import PricingCheckIcon from '../components/icons/PricingCheckIcon'
+import PricingCrossIcon from '../components/icons/PricingCrossIcon'
 
 type LoadState = 'idle' | 'loading' | 'error'
 
-const PLAN_ORDER: PlanType[] = ['FREE', 'PRO', 'ENTERPRISE']
+const PLAN_ORDER: PlanType[] = ['FREE', 'SUPPORTER']
 
 function formatNumber(n: number): string {
   if (!Number.isFinite(n)) return 'Unlimited'
@@ -16,8 +18,15 @@ function buildFeatures(plan: Plan): string[] {
   const l = plan.limits
   const features: string[] = []
 
-  features.push(`${formatNumber(l.creditsPerMonth)} credits / month`)
-  features.push(`${formatNumber(l.generationsPerMonth)} generations / month`)
+  features.push(
+    `${formatNumber(l.startingCredits)} initial credits on plan activation`,
+  )
+  features.push(
+    `${formatNumber(l.creditRefillAmount)} credits refilled every ${l.creditRefillDays} days`,
+  )
+  features.push(
+    `${formatNumber(l.generationsPerMonth)} generations per monthly usage window`,
+  )
 
   if (l.apiAccess) {
     features.push(`API access — up to ${l.maxApiKeys} keys`)
@@ -25,60 +34,21 @@ function buildFeatures(plan: Plan): string[] {
     features.push('Web app only')
   }
 
-  features.push(`Rate limit: ${formatNumber(l.rateLimits.perMinute)} req/min`)
+  features.push(
+    `Rate limit: up to ${formatNumber(l.rateLimits.perMinute)} req/min`,
+  )
 
   const supportLabels: Record<string, string> = {
     community: 'Community support',
     email: 'Email support',
     priority: 'Priority support',
-    dedicated: 'Dedicated support',
   }
   let support = supportLabels[l.supportLevel] ?? 'Support'
-  if (l.supportChannel === 'slack') support += ' (Slack)'
+  if (l.supportChannel === 'discord') support += ' (Discord)'
   else if (l.supportChannel === 'email') support += ' (email)'
   features.push(support)
 
-  if (l.overagePrice) {
-    features.push(`Overage: $${l.overagePrice.toFixed(2)} / credit`)
-  }
-
   return features
-}
-
-function CheckIcon() {
-  return (
-    <svg
-      className="w-5 h-5 text-green-600 shrink-0 mt-0.5"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M5 13l4 4L19 7"
-      />
-    </svg>
-  )
-}
-
-function CrossIcon() {
-  return (
-    <svg
-      className="w-5 h-5 text-gray-300 shrink-0 mt-0.5"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M6 18L18 6M6 6l12 12"
-      />
-    </svg>
-  )
 }
 
 function PlanCardSkeleton() {
@@ -130,22 +100,26 @@ export default function Pricing() {
   }, [])
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-16 px-4">
+    <div className="w-full max-w-5xl mx-auto py-12 px-4">
       {/* Header */}
-      <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Simple, Transparent Pricing
+      <div className="mb-10">
+        <div className="inline-flex items-center rounded-md border border-gray-300 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-700 mb-4">
+          Community-first pricing
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">
+          Keep it sustainable, keep it useful.
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          One unified credit system for web app and API. Pick a plan, use your
-          credits anywhere — no hidden fees.
+        <p className="text-base text-gray-600 max-w-3xl leading-relaxed">
+          This project is built for developers. The Free plan stays generous.
+          The Supporter plan is a simple “buy me a coffee” way to help cover AI
+          costs and keep development moving.
         </p>
       </div>
 
       {/* Error State */}
       {loadState === 'error' && (
-        <div className="text-center py-12 mb-12">
-          <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-6 py-4">
+        <div className="py-8 mb-8">
+          <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
             <svg
               className="w-5 h-5 text-red-500 shrink-0"
               fill="none"
@@ -167,66 +141,57 @@ export default function Pricing() {
       )}
 
       {/* Plan Cards */}
-      <div className="mb-20">
-        <div className="grid md:grid-cols-3 gap-8 items-start">
+      <div className="mb-14">
+        <div className="grid md:grid-cols-2 gap-8 items-start">
           {loadState === 'loading'
             ? PLAN_ORDER.map((key) => <PlanCardSkeleton key={key} />)
             : plans.map((plan) => {
-                const isPro = plan.plan === 'PRO'
-                const isEnterprise = plan.plan === 'ENTERPRISE'
+                const isSupporter = plan.plan === 'SUPPORTER'
                 const isCurrentPlan = plan.plan === currentPlan
                 const features = buildFeatures(plan)
 
                 return (
                   <div
                     key={plan.plan}
-                    className={`relative bg-white rounded-2xl p-8 shadow-lg border-2 transition-all ${
-                      isPro
-                        ? 'border-blue-500 scale-[1.03] shadow-xl'
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-xl'
+                    className={`bg-white rounded-xl p-6 border transition-colors ${
+                      isSupporter ? 'border-gray-900' : 'border-gray-200'
                     }`}
                   >
-                    {isPro && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
-                        Most Popular
-                      </div>
-                    )}
-
                     {/* Plan header */}
-                    <div className="text-center mb-6">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    <div className="mb-6">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
                         {plan.name}
                       </h3>
-                      <div className="mb-2">
-                        <div className="text-5xl font-bold text-gray-900">
+                      <div className="mb-3">
+                        <div className="text-4xl font-semibold text-gray-900 tracking-tight">
                           {plan.price === 0 ? (
                             'Free'
                           ) : (
                             <>
                               ${plan.price}
-                              <span className="text-lg font-medium text-gray-500">
+                              <span className="text-base font-normal text-gray-500">
                                 /mo
                               </span>
                             </>
                           )}
                         </div>
                       </div>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-gray-600 text-sm leading-relaxed">
                         {plan.description}
                       </p>
                     </div>
 
                     {/* Features list */}
-                    <ul className="space-y-3 mb-8">
+                    <ul className="space-y-2.5 mb-7">
                       {features.map((feature) => (
                         <li key={feature} className="flex items-start gap-3">
                           {feature === 'Web app only' ? (
-                            <CrossIcon />
+                            <PricingCrossIcon />
                           ) : (
-                            <CheckIcon />
+                            <PricingCheckIcon />
                           )}
                           <span
-                            className={`text-sm ${feature === 'Web app only' ? 'text-gray-400' : 'text-gray-700'}`}
+                            className={`text-sm leading-relaxed ${feature === 'Web app only' ? 'text-gray-400' : 'text-gray-700'}`}
                           >
                             {feature}
                           </span>
@@ -235,29 +200,26 @@ export default function Pricing() {
                     </ul>
 
                     {/* CTA */}
-                    {isEnterprise ? (
-                      <a
-                        href="mailto:sales@chatsvg.com?subject=Enterprise Plan Inquiry"
-                        className="block w-full text-center py-3 px-6 rounded-xl font-semibold bg-gray-900 text-white hover:bg-gray-800 transition-colors"
-                      >
-                        Contact Sales
-                      </a>
-                    ) : (
-                      <button
-                        disabled
-                        className={`w-full py-3 px-6 rounded-xl font-semibold transition-all opacity-50 cursor-not-allowed ${
-                          isPro
-                            ? 'bg-linear-to-r from-blue-600 to-purple-600 text-white'
-                            : 'bg-gray-200 text-gray-900'
-                        }`}
-                      >
-                        {isCurrentPlan ? 'Current Plan' : 'Upgrade'}
-                      </button>
-                    )}
+                    <button
+                      disabled
+                      className={`w-full py-2.5 px-4 rounded-lg font-medium transition-all opacity-60 cursor-not-allowed ${
+                        isSupporter
+                          ? 'bg-gray-900 text-white'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
+                      {isCurrentPlan
+                        ? 'Current plan'
+                        : isSupporter
+                          ? 'Become a supporter'
+                          : 'Default plan'}
+                    </button>
 
-                    <div className="mt-3 text-center bg-green-50 border border-green-200 rounded-lg py-2 px-3">
-                      <span className="text-xs font-semibold text-green-700">
-                        Free during Beta
+                    <div className="mt-3 text-xs text-gray-500">
+                      <span>
+                        {isSupporter
+                          ? 'Support helps cover model costs and keeps the roadmap moving.'
+                          : 'Free during beta. No credit card required.'}
                       </span>
                     </div>
                   </div>
@@ -268,20 +230,20 @@ export default function Pricing() {
 
       {/* Comparison Table */}
       {plans.length > 0 && (
-        <div className="mb-20 overflow-x-auto">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Compare Plans
+        <div className="mb-14 overflow-x-auto">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-5">
+            Quick comparison
           </h2>
-          <table className="w-full text-sm border-collapse">
+          <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
             <thead>
-              <tr className="border-b-2 border-gray-200">
-                <th className="text-left py-3 pr-4 font-semibold text-gray-700 w-48">
+              <tr className="border-b border-gray-200 bg-gray-50">
+                <th className="text-left py-3 px-4 font-medium text-gray-700 w-48">
                   Feature
                 </th>
                 {plans.map((p) => (
                   <th
                     key={p.plan}
-                    className="text-center py-3 px-4 font-semibold text-gray-900"
+                    className="text-center py-3 px-4 font-medium text-gray-900"
                   >
                     {p.name}
                   </th>
@@ -290,7 +252,7 @@ export default function Pricing() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               <tr>
-                <td className="py-3 pr-4 text-gray-600">Monthly price</td>
+                <td className="py-3 px-4 text-gray-600">Monthly price</td>
                 {plans.map((p) => (
                   <td
                     key={p.plan}
@@ -301,18 +263,32 @@ export default function Pricing() {
                 ))}
               </tr>
               <tr>
-                <td className="py-3 pr-4 text-gray-600">Credits / month</td>
+                <td className="py-3 px-4 text-gray-600">
+                  Initial credit allocation
+                </td>
                 {plans.map((p) => (
                   <td
                     key={p.plan}
                     className="py-3 px-4 text-center font-medium text-gray-900"
                   >
-                    {formatNumber(p.limits.creditsPerMonth)}
+                    {formatNumber(p.limits.startingCredits)}
                   </td>
                 ))}
               </tr>
               <tr>
-                <td className="py-3 pr-4 text-gray-600">Generations / month</td>
+                <td className="py-3 px-4 text-gray-600">Recurring refill</td>
+                {plans.map((p) => (
+                  <td
+                    key={p.plan}
+                    className="py-3 px-4 text-center font-medium text-gray-900"
+                  >
+                    {formatNumber(p.limits.creditRefillAmount)} every{' '}
+                    {p.limits.creditRefillDays} days
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td className="py-3 px-4 text-gray-600">Generations / month</td>
                 {plans.map((p) => (
                   <td
                     key={p.plan}
@@ -323,7 +299,7 @@ export default function Pricing() {
                 ))}
               </tr>
               <tr>
-                <td className="py-3 pr-4 text-gray-600">API access</td>
+                <td className="py-3 px-4 text-gray-600">API access</td>
                 {plans.map((p) => (
                   <td key={p.plan} className="py-3 px-4 text-center">
                     {p.limits.apiAccess ? (
@@ -335,7 +311,7 @@ export default function Pricing() {
                 ))}
               </tr>
               <tr>
-                <td className="py-3 pr-4 text-gray-600">API keys</td>
+                <td className="py-3 px-4 text-gray-600">API keys</td>
                 {plans.map((p) => (
                   <td
                     key={p.plan}
@@ -350,7 +326,7 @@ export default function Pricing() {
                 ))}
               </tr>
               <tr>
-                <td className="py-3 pr-4 text-gray-600">Rate limit</td>
+                <td className="py-3 px-4 text-gray-600">Rate limit</td>
                 {plans.map((p) => (
                   <td
                     key={p.plan}
@@ -361,7 +337,7 @@ export default function Pricing() {
                 ))}
               </tr>
               <tr>
-                <td className="py-3 pr-4 text-gray-600">Support</td>
+                <td className="py-3 px-4 text-gray-600">Support</td>
                 {plans.map((p) => (
                   <td
                     key={p.plan}
@@ -371,110 +347,42 @@ export default function Pricing() {
                   </td>
                 ))}
               </tr>
-              <tr>
-                <td className="py-3 pr-4 text-gray-600">Overage pricing</td>
-                {plans.map((p) => (
-                  <td
-                    key={p.plan}
-                    className="py-3 px-4 text-center text-gray-900"
-                  >
-                    {p.limits.overagePrice ? (
-                      `$${p.limits.overagePrice.toFixed(2)}/credit`
-                    ) : (
-                      <span className="text-gray-400">—</span>
-                    )}
-                  </td>
-                ))}
-              </tr>
             </tbody>
           </table>
         </div>
       )}
 
-      {/* How It Works */}
-      <div className="bg-linear-to-br from-gray-50 to-blue-50 rounded-2xl p-10 border border-gray-200">
-        <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-          How It Works
+      {/* Philosophy */}
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">
+          Why this pricing model
         </h3>
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
-              </svg>
-            </div>
-            <div className="font-bold text-gray-900 mb-2">Use Anywhere</div>
-            <div className="text-sm text-gray-600">
-              Credits work in the web app and via API — 1 credit = 1 SVG
-              generation, your choice.
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-linear-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <div className="font-bold text-gray-900 mb-2">Monthly Refresh</div>
-            <div className="text-sm text-gray-600">
-              Credits refresh every month. Upgrade or downgrade anytime — no
-              long-term commitments.
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                />
-              </svg>
-            </div>
-            <div className="font-bold text-gray-900 mb-2">Scale Up</div>
-            <div className="text-sm text-gray-600">
-              Start free, upgrade when you need more. Paid plans include API
-              access and higher limits.
-            </div>
-          </div>
-        </div>
+        <ul className="space-y-3 text-sm text-gray-700 leading-relaxed">
+          <li>
+            <span className="font-medium text-gray-900">
+              Generous free tier:
+            </span>{' '}
+            useful for learning, prototyping, and small projects.
+          </li>
+          <li>
+            <span className="font-medium text-gray-900">Supporter tier:</span> a
+            lightweight way to fund compute costs and steady improvements.
+          </li>
+          <li>
+            <span className="font-medium text-gray-900">No growth hacks:</span>{' '}
+            clear limits, simple language, and predictable usage.
+          </li>
+        </ul>
 
-        <div className="mt-10 pt-8 border-t border-gray-300 text-center">
-          <p className="text-gray-700 mb-4">
-            <span className="font-semibold">Questions about pricing?</span>{' '}
-            We're here to help!
+        <div className="mt-6 pt-5 border-t border-gray-200 text-sm">
+          <p className="text-gray-700 mb-3">
+            Questions or feedback about pricing?
           </p>
           <Link
             to="/contact"
-            className="inline-block px-6 py-3 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-900 hover:bg-white transition-colors"
           >
-            Contact Support
+            Contact support
           </Link>
         </div>
       </div>

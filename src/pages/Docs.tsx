@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { AI_MODELS, DEFAULT_MODEL } from '../constants/models'
+import { SVG_STYLES, DEFAULT_STYLE } from '../constants/svgStyles'
 
 function CodeBlock({ language, code }: { language: string; code: string }) {
   const [copied, setCopied] = useState(false)
@@ -23,6 +25,64 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
       </div>
       <pre className="bg-gray-900 text-gray-100 rounded-b-xl p-4 text-sm overflow-x-auto">
         <code>{code}</code>
+      </pre>
+    </div>
+  )
+}
+
+function TabbedCodeBlock({
+  tabs,
+}: {
+  tabs: Array<{ id: string; label: string; language: string; code: string }>
+}) {
+  const [activeTabId, setActiveTabId] = useState(tabs[0]?.id ?? '')
+  const [copied, setCopied] = useState(false)
+
+  const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0]
+
+  if (!activeTab) return null
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(activeTab.code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-gray-800">
+      <div className="flex items-center justify-between bg-gray-900 px-3 py-2 border-b border-gray-700">
+        <div className="flex items-center gap-1">
+          {tabs.map((tab) => {
+            const isActive = tab.id === activeTab.id
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTabId(tab.id)}
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                  isActive
+                    ? 'bg-gray-700 text-gray-100'
+                    : 'text-gray-400 hover:text-gray-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
+        <button
+          onClick={handleCopy}
+          className="text-xs text-gray-400 hover:text-gray-200 transition-colors"
+        >
+          {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+      <div className="bg-gray-900 px-4 pt-2 pb-1 border-b border-gray-800">
+        <span className="text-[11px] font-mono text-gray-500">
+          {activeTab.language}
+        </span>
+      </div>
+      <pre className="bg-gray-900 text-gray-100 p-4 text-sm overflow-x-auto">
+        <code>{activeTab.code}</code>
       </pre>
     </div>
   )
@@ -62,11 +122,144 @@ const NAV_ITEMS = [
   { id: 'api-keys', label: 'Getting API Keys' },
   { id: 'authentication', label: 'API Authentication' },
   { id: 'generate', label: 'Generate Endpoint' },
+  { id: 'options', label: 'Model & Style options' },
   { id: 'job-status', label: 'Job Status' },
   { id: 'examples', label: 'Code Examples' },
   { id: 'pricing', label: 'Credits & Pricing' },
   { id: 'mcp', label: 'MCP Server' },
 ]
+
+const AVAILABLE_MODELS = AI_MODELS.filter((m) => m.section !== 'coming-soon')
+const COMING_SOON_MODELS = AI_MODELS.filter((m) => m.section === 'coming-soon')
+
+const NODE_BASH_EXAMPLE = `# Node.js quick start
+mkdir chatsvg-node && cd chatsvg-node
+npm init -y
+npm install node-fetch@3
+
+export CHATSVG_API_KEY="sk_live_your_key_here"
+
+# generate.mjs should call /v1/svg/generate then poll /v1/svg/job/:id
+node generate.mjs`
+
+const PYTHON_BASH_EXAMPLE = `# Python quick start
+mkdir chatsvg-python && cd chatsvg-python
+python -m venv .venv
+source .venv/bin/activate
+pip install requests
+
+export CHATSVG_API_KEY="sk_live_your_key_here"
+
+# generate.py should call /v1/svg/generate then poll /v1/svg/job/:id
+python generate.py`
+
+const NODE_CODE_EXAMPLE = `/**
+ * Node.js example (Node 18+)
+ * Run: CHATSVG_API_KEY=sk_live_xxx node generate.mjs
+ */
+
+const API_KEY = process.env.CHATSVG_API_KEY
+const BASE_URL = 'https://api.chatsvg.com'
+
+async function generateSvg({ prompt, style = 'line-art' }) {
+  const payload = {
+    prompt,
+    style,
+    // model: 'your-preferred-model', // optional
+    // idempotencyKey: 'your-unique-key', // optional
+  }
+
+  const submitRes = await fetch(\`\${BASE_URL}/v1/svg/generate\`, {
+    method: 'POST',
+    headers: {
+      'X-API-Key': API_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+
+  if (!submitRes.ok) {
+    const errText = await submitRes.text()
+    throw new Error(\`Generate request failed: \${submitRes.status} \${errText}\`)
+  }
+
+  const { jobId } = await submitRes.json()
+  if (!jobId) {
+    throw new Error('Missing jobId in generate response')
+  }
+
+  // Implement polling using GET /v1/svg/job/:jobId
+  // Example:
+  // const jobRes = await fetch(\`\${BASE_URL}/v1/svg/job/\${jobId}\`, {
+  //   headers: { 'X-API-Key': API_KEY },
+  // })
+
+  return { jobId }
+}
+
+const result = await generateSvg({
+  prompt: 'Minimal line icon of a rocket ship',
+  style: 'line-art',
+})
+
+console.log('Job ID:', result.jobId)
+// After implementing polling, you'll also have result.url / result.svg`
+
+const PYTHON_CODE_EXAMPLE = `"""
+Python example
+Run: CHATSVG_API_KEY=sk_live_xxx python generate.py
+"""
+
+import os
+import time
+import requests
+
+API_KEY = os.environ.get("CHATSVG_API_KEY")
+BASE_URL = "https://api.chatsvg.com"
+
+
+def generate_svg(prompt: str, style: str = "line-art") -> dict:
+  payload = {
+    "prompt": prompt,
+    "style": style,
+    # "model": "your-preferred-model",  # optional
+    # "idempotencyKey": "your-unique-key",  # optional
+  }
+
+    submit_res = requests.post(
+        f"{BASE_URL}/v1/svg/generate",
+        headers={
+            "X-API-Key": API_KEY,
+            "Content-Type": "application/json",
+        },
+    json=payload,
+        timeout=30,
+    )
+    submit_res.raise_for_status()
+
+    body = submit_res.json()
+    job_id = body.get("jobId")
+    if not job_id:
+        raise RuntimeError("Missing jobId in generate response")
+
+    # Implement polling using GET /v1/svg/job/:jobId
+    # Example:
+    # job_res = requests.get(
+    #     f"{BASE_URL}/v1/svg/job/{job_id}",
+    #     headers={"X-API-Key": API_KEY},
+    #     timeout=30,
+    # )
+
+    return {"job_id": job_id}
+
+
+result = generate_svg(
+    prompt="Minimal line icon of a rocket ship",
+    style="line-art",
+)
+
+print("Job ID:", result["job_id"])
+# After implementing polling, you'll also have result["url"] / result["svg"]`
 
 export default function Docs() {
   return (
@@ -77,8 +270,9 @@ export default function Docs() {
           ChatSVG API
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-4">
-          AI-powered SVG generation for developers. Generate custom SVGs with a
-          simple REST API.
+          Generate SVG assets through a straightforward HTTP API. This guide
+          focuses on what endpoints exist, how to call them, and how credits are
+          applied.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8 mb-12">
@@ -86,13 +280,13 @@ export default function Docs() {
             to="/api-keys"
             className="w-full sm:w-auto px-8 py-3 rounded-lg font-semibold bg-linear-to-r from-wizard-orange to-wizard-orange/90 text-white shadow-sm text-center transition-all hover:from-wizard-orange/90 hover:to-wizard-orange"
           >
-            Get Your API Key
+            Create API Key
           </Link>
           <Link
             to="/pricing"
             className="w-full sm:w-auto px-8 py-3 rounded-lg font-semibold bg-white hover:bg-gray-50 border border-gray-300 text-gray-900 text-center transition-colors"
           >
-            View Pricing
+            Plans & Credits
           </Link>
         </div>
 
@@ -100,14 +294,23 @@ export default function Docs() {
         <div className="max-w-2xl mx-auto">
           <div className="text-left">
             <div className="text-sm font-semibold text-gray-700 mb-3">
-              Generate an SVG in seconds:
+              Terminal quickstart:
             </div>
-            <CodeBlock
-              language="bash"
-              code={`curl -X POST https://api.chatsvg.com/v1/svg/generate \\
-  -H "X-API-Key: sk_live_your_key_here" \\
-  -H "Content-Type: application/json" \\
-  -d '{"prompt": "minimalist rocket icon", "style": "line-art"}'`}
+            <TabbedCodeBlock
+              tabs={[
+                {
+                  id: 'node',
+                  label: 'Node',
+                  language: 'bash',
+                  code: NODE_BASH_EXAMPLE,
+                },
+                {
+                  id: 'python',
+                  label: 'Python',
+                  language: 'bash',
+                  code: PYTHON_BASH_EXAMPLE,
+                },
+              ]}
             />
           </div>
         </div>
@@ -136,8 +339,8 @@ export default function Docs() {
           <section>
             <SectionHeading id="quickstart">Quick Start</SectionHeading>
             <p className="text-gray-600 mb-6">
-              ChatSVG offers two ways to generate SVGs: use our web app for
-              quick creation, or integrate the API into your applications.
+              There are two entry points: the web app for manual generation and
+              the API for backend automation.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -225,9 +428,8 @@ export default function Docs() {
           <section>
             <SectionHeading id="web-app">Using the Web App</SectionHeading>
             <p className="text-gray-600 mb-6">
-              The easiest way to generate SVGs is through our web interface.
-              Perfect for designers, marketers, and anyone who needs quick
-              custom graphics.
+              Use the web app when you want to iterate quickly on prompts,
+              styles, and outputs before integrating the same workflow in code.
             </p>
 
             <div className="space-y-4">
@@ -480,7 +682,11 @@ export default function Docs() {
                       <td className="py-2 pr-4">string</td>
                       <td className="py-2 pr-4">No</td>
                       <td className="py-2">
-                        AI model to use (default: "gpt-4o")
+                        AI model to use (default:{' '}
+                        <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs">
+                          {DEFAULT_MODEL}
+                        </code>
+                        )
                       </td>
                     </tr>
                     <tr>
@@ -559,6 +765,100 @@ export default function Docs() {
             </div>
           </section>
 
+          {/* Model & Style Options */}
+          <section>
+            <SectionHeading id="options">Model & Style options</SectionHeading>
+
+            <p className="text-gray-600 mb-6">
+              Use these exact allow-list values for request body fields{' '}
+              <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs">
+                model
+              </code>{' '}
+              and{' '}
+              <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs">
+                style
+              </code>
+              . Both fields are optional.
+            </p>
+
+            <div className="grid lg:grid-cols-2 gap-6 mb-4">
+              <div>
+                <div className="rounded-xl border border-gray-200 bg-white p-5">
+                  <h4 className="font-semibold text-gray-900 mb-3">Models</h4>
+                  <div className="text-xs text-gray-600 mb-3">
+                    Default model:{' '}
+                    <code className="bg-gray-100 text-gray-900 px-2 py-0.5 rounded font-mono">
+                      {DEFAULT_MODEL}
+                    </code>
+                  </div>
+                  <div className="space-y-2">
+                    {AVAILABLE_MODELS.map((model) => (
+                      <div
+                        key={model.value}
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 rounded-lg border border-gray-100 px-3 py-2"
+                      >
+                        <span className="text-sm text-gray-800">
+                          {model.label}
+                        </span>
+                        <code className="text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                          {model.value}
+                        </code>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {COMING_SOON_MODELS.length > 0 && (
+                  <div className="rounded-xl border border-gray-200 bg-gray-50 p-5 mt-4">
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      Model variants coming soon
+                    </h4>
+                    <div className="space-y-2">
+                      {COMING_SOON_MODELS.map((model) => (
+                        <div
+                          key={model.value}
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 rounded-lg border border-gray-200 px-3 py-2"
+                        >
+                          <span className="text-sm text-gray-700">
+                            {model.label}
+                          </span>
+                          <code className="text-xs font-mono text-gray-500 bg-white px-2 py-1 rounded">
+                            {model.value}
+                          </code>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="rounded-xl border border-gray-200 bg-white p-5">
+                <h4 className="font-semibold text-gray-900 mb-3">Styles</h4>
+                <div className="text-xs text-gray-600 mb-3">
+                  Default style:{' '}
+                  <code className="bg-gray-100 text-gray-900 px-2 py-0.5 rounded font-mono">
+                    {DEFAULT_STYLE}
+                  </code>
+                </div>
+                <div className="space-y-2">
+                  {SVG_STYLES.map((style) => (
+                    <div
+                      key={style.value}
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 rounded-lg border border-gray-100 px-3 py-2"
+                    >
+                      <span className="text-sm text-gray-800">
+                        {style.label}
+                      </span>
+                      <code className="text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                        {style.value}
+                      </code>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Job Status */}
           <section>
             <SectionHeading id="job-status">Job Status</SectionHeading>
@@ -623,7 +923,7 @@ export default function Docs() {
     "status": "SUCCEEDED",
     "prompt": "Minimal line icon of a rocket ship",
     "style": "line-art",
-    "model": "gpt-4o",
+    "model": "${DEFAULT_MODEL}",
     "svg": "<svg xmlns=\\"http://www.w3.org/2000/svg\\" ...>...</svg>",
     "url": "https://cdn.chatsvg.com/assets/gen_abc123.svg",
     "createdAt": "2026-02-15T10:30:00Z",
@@ -638,100 +938,35 @@ export default function Docs() {
           <section>
             <SectionHeading id="examples">Code Examples</SectionHeading>
 
-            <div className="space-y-6">
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-3">Node.js</h4>
-                <CodeBlock
-                  language="javascript"
-                  code={`const API_KEY = process.env.CHATSVG_API_KEY;
-const BASE_URL = 'https://api.chatsvg.com';
+            <p className="text-gray-600 mb-6">
+              Both examples follow the same flow: submit a generation request,
+              then poll until the job reaches{' '}
+              <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs">
+                SUCCEEDED
+              </code>{' '}
+              or{' '}
+              <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs">
+                FAILED
+              </code>
+              .
+            </p>
 
-async function generateSvg(prompt, style = 'outline') {
-  // 1. Submit generation request
-  const res = await fetch(\`\${BASE_URL}/v1/svg/generate\`, {
-    method: 'POST',
-    headers: {
-      'X-API-Key': API_KEY,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ prompt, style }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.error || 'Generation failed');
-  }
-
-  const { jobId } = await res.json();
-
-  // 2. Poll for result
-  while (true) {
-    const jobRes = await fetch(\`\${BASE_URL}/v1/svg/job/\${jobId}\`, {
-      headers: { 'X-API-Key': API_KEY },
-    });
-    const { job } = await jobRes.json();
-
-    if (job.status === 'SUCCEEDED') {
-      return { svg: job.svg, url: job.url };
-    }
-    if (job.status === 'FAILED') {
-      throw new Error(job.errorMessage || 'Generation failed');
-    }
-
-    // Wait 3 seconds before polling again
-    await new Promise(r => setTimeout(r, 3000));
-  }
-}
-
-const result = await generateSvg('A rocket ship icon', 'line-art');
-console.log(result.url);`}
-                />
-              </div>
-
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-3">Python</h4>
-                <CodeBlock
-                  language="python"
-                  code={`import requests
-import time
-import os
-
-API_KEY = os.environ["CHATSVG_API_KEY"]
-BASE_URL = "https://api.chatsvg.com"
-
-def generate_svg(prompt: str, style: str = "outline") -> dict:
-    # 1. Submit generation request
-    res = requests.post(
-        f"{BASE_URL}/v1/svg/generate",
-        headers={
-            "X-API-Key": API_KEY,
-            "Content-Type": "application/json",
-        },
-        json={"prompt": prompt, "style": style},
-    )
-    res.raise_for_status()
-    job_id = res.json()["jobId"]
-
-    # 2. Poll for result
-    while True:
-        job_res = requests.get(
-            f"{BASE_URL}/v1/svg/job/{job_id}",
-            headers={"X-API-Key": API_KEY},
-        )
-        job = job_res.json()["job"]
-
-        if job["status"] == "SUCCEEDED":
-            return {"svg": job["svg"], "url": job["url"]}
-        if job["status"] == "FAILED":
-            raise Exception(job.get("errorMessage", "Generation failed"))
-
-        time.sleep(3)
-
-result = generate_svg("A rocket ship icon", "line-art")
-print(result["url"])`}
-                />
-              </div>
-            </div>
+            <TabbedCodeBlock
+              tabs={[
+                {
+                  id: 'node-example',
+                  label: 'Node',
+                  language: 'javascript',
+                  code: NODE_CODE_EXAMPLE,
+                },
+                {
+                  id: 'python-example',
+                  label: 'Python',
+                  language: 'python',
+                  code: PYTHON_CODE_EXAMPLE,
+                },
+              ]}
+            />
           </section>
 
           {/* Usage Guide */}
@@ -765,15 +1000,15 @@ print(result["url"])`}
                   <li className="flex items-start gap-2">
                     <span className="text-green-600 font-bold shrink-0">+</span>
                     <span>
-                      <strong>CMS automation:</strong> Auto-generate hero images
-                      from article titles
+                      <strong>Content pipelines:</strong> Generate SVG assets as
+                      part of publishing or build automation
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-600 font-bold shrink-0">+</span>
                     <span>
-                      <strong>Marketing campaigns:</strong> Unique graphics per
-                      campaign, reused forever
+                      <strong>Internal tools:</strong> Produce custom visuals
+                      for dashboards, docs, and operations flows
                     </span>
                   </li>
                 </ul>
@@ -836,10 +1071,9 @@ print(result["url"])`}
                     Key principle: Generate, Save, Reuse
                   </h5>
                   <p className="text-sm text-gray-700">
-                    Think of ChatSVG like hiring a designer on-demand. You
-                    request an asset, receive it, and use that exact file
-                    forever. You don't re-hire the designer every time someone
-                    views your website.
+                    Treat generated SVGs as build artifacts. Generate once,
+                    store them in your own storage/CDN, and serve them without
+                    regenerating on every request.
                   </p>
                 </div>
               </div>
@@ -850,118 +1084,45 @@ print(result["url"])`}
           <section>
             <SectionHeading id="pricing">Credits & Pricing</SectionHeading>
             <p className="text-gray-600 mb-6">
-              ChatSVG uses a unified credit system — buy credits once, use them
-              for web app or API. No subscriptions, no monthly fees. Credits
-              never expire.
+              Credits are shared across the web app and API. Plan limits define
+              your initial credit allocation, recurring refill, generation
+              limits, and API limits.
             </p>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                    <svg
-                      className="w-5 h-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="text-lg font-bold text-gray-900">
-                    How Credits Work
-                  </h4>
-                </div>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 font-bold">•</span>
-                    <span>1 credit = 1 SVG generation (web or API)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 font-bold">•</span>
-                    <span>Credits never expire</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 font-bold">•</span>
-                    <span>Use anywhere: web app or API</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 font-bold">•</span>
-                    <span>Buy more anytime at volume discounts</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-linear-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-                    <svg
-                      className="w-5 h-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="text-lg font-bold text-gray-900">
-                    Example Pricing
-                  </h4>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-700">50 credits</span>
-                    <span className="font-semibold text-gray-900">
-                      $5{' '}
-                      <span className="text-xs text-gray-500">
-                        ($0.10 each)
-                      </span>
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-700">200 credits</span>
-                    <span className="font-semibold text-gray-900">
-                      $15{' '}
-                      <span className="text-xs text-gray-500">
-                        ($0.075 each)
-                      </span>
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center py-2">
-                    <span className="text-gray-700">500 credits</span>
-                    <span className="font-semibold text-gray-900">
-                      $30{' '}
-                      <span className="text-xs text-gray-500">
-                        ($0.06 each)
-                      </span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-linear-to-br from-green-50 to-blue-50 rounded-xl border-2 border-green-200 p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-2xl">🎉</span>
-                <h4 className="text-lg font-bold text-gray-900">
-                  Currently in Beta — Everything FREE!
-                </h4>
-              </div>
-              <p className="text-sm text-gray-700">
-                We're in beta and offering unlimited free generations for both
-                web and API. No credit card required. Paid plans will launch
-                after beta ends.
-              </p>
+            <div className="rounded-xl border border-gray-200 bg-white p-6 mb-8">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                Credit model at a glance
+              </h4>
+              <ul className="space-y-3 text-sm text-gray-700">
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-900 font-bold">•</span>
+                  <span>
+                    <strong>Initial allocation:</strong> credits granted when a
+                    plan becomes active.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-900 font-bold">•</span>
+                  <span>
+                    <strong>Recurring refill:</strong> credits added on the
+                    plan's refill cadence.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-900 font-bold">•</span>
+                  <span>
+                    <strong>Unified usage:</strong> web app and API consume the
+                    same credit pool.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-900 font-bold">•</span>
+                  <span>
+                    <strong>Rate limits and key limits:</strong> enforced per
+                    active plan.
+                  </span>
+                </li>
+              </ul>
             </div>
 
             <p className="text-sm text-gray-500 mt-6 text-center">

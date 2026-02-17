@@ -54,7 +54,7 @@ export default function Home() {
               to="/pricing"
               className="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-gray-400 hover:bg-white/60 transition-colors text-base"
             >
-              View Pricing
+              Plans & Credits
             </Link>
           </div>
 

@@ -4,7 +4,7 @@ export interface User {
   email: string
   avatar?: string | null
   credits?: number
-  plan?: 'FREE' | 'PRO' | 'ENTERPRISE'
+  plan?: 'FREE' | 'SUPPORTER'
 }
 
 // Interface for registration response
