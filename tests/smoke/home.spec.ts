@@ -14,7 +14,9 @@ test('homepage loads', async ({ page }) => {
   await expect(
     page.getByRole('link', { name: /API Documentation/i }),
   ).toBeVisible()
-  await expect(page.getByRole('link', { name: /View Pricing/i })).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: /Plans & Credits/i }),
+  ).toBeVisible()
 })
 
 test('dashboard page loads', async ({ page }) => {

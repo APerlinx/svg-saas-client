@@ -10,10 +10,7 @@ test.describe('Navigation', () => {
     await expect(page).toHaveURL('/docs')
 
     // Navigate to Pricing
-    await page
-      .getByRole('link', { name: /pricing|free beta/i })
-      .first()
-      .click()
+    await page.locator('a[href="/pricing"]').first().click()
     await expect(page).toHaveURL('/pricing')
 
     // Navigate to API
