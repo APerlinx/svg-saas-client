@@ -62,7 +62,7 @@ describe('Header', () => {
     expect(screen.getByText('ChatSVG')).toBeInTheDocument()
     expect(screen.getByText('API')).toBeInTheDocument()
     expect(screen.getByText('Docs')).toBeInTheDocument()
-    expect(screen.getByText('Free Beta')).toBeInTheDocument()
+    expect(screen.getByText('Support')).toBeInTheDocument()
   })
 
   it('should show sign in button when not authenticated', () => {

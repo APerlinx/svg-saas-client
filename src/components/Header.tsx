@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { getInitials } from '../utils/getInitials'
 import Bell from './icons/BellIcon'
-import PricingIcon from './icons/PricingIcon'
 import LampIcon from './icons/LampIcon'
 import BugIcon from './icons/BugIcon'
 import SuggestionIcon from './icons/SuggestionIcon'
@@ -134,59 +133,26 @@ export default function Header() {
             {/* Navigation - Always Visible */}
             <nav className="flex items-center gap-0.5">
               <Link
-                to="/pricing"
-                className=" bg-wizard-orange/10 flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-full transition-colors "
-                title="Pricing"
-              >
-                <PricingIcon size="20" className=" text-white shrink-0" />
-                <span className=" hidden md:inline">Free Beta</span>
-              </Link>
-              <Link
-                to="/api-keys"
-                className="flex items-center gap-1.5 px-2 py-1.5 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
-                title="API"
-              >
-                <svg
-                  className="w-5 h-5 text-current shrink-0"
-                  viewBox="0 0 48 48"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M18 23.9372V10C18 6.68629 20.6863 4 24 4C27.3137 4 30 6.68629 30 10V12.0057"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                  ></path>
-                  <path
-                    d="M30 24.0035V38C30 41.3137 27.3137 44 24 44C20.6863 44 18 41.3137 18 38V35.97"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                  ></path>
-                  <path
-                    d="M24 30H9.98415C6.67919 30 4 27.3137 4 24C4 20.6863 6.67919 18 9.98415 18H11.9886"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                  ></path>
-                  <path
-                    d="M24 18H37.9888C41.3087 18 44 20.6863 44 24C44 27.3137 41.3087 30 37.9888 30H36.0663"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                  ></path>
-                </svg>
-                <span className="hidden md:inline">API</span>
-              </Link>
-
-              <Link
                 to="/docs"
                 className="flex items-center gap-1.5 px-2 py-1.5 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
                 title="Docs"
               >
                 <DocsIcon size="20" className="text-current shrink-0" />
                 <span className="hidden md:inline">Docs</span>
+              </Link>
+              <Link
+                to="/pricing"
+                className="flex items-center gap-1.5 px-2 py-1.5 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
+                title="Pricing"
+              >
+                <span className=" hidden md:inline">Plans</span>
+              </Link>
+              <Link
+                to="/api-keys"
+                className="flex items-center gap-1.5 px-2 py-1.5 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100/60 rounded-lg transition-colors"
+                title="API"
+              >
+                <span className="hidden md:inline">API</span>
               </Link>
             </nav>
 
@@ -202,7 +168,7 @@ export default function Header() {
                   aria-haspopup="menu"
                   aria-expanded={isIdeaMenuOpen}
                 >
-                  <SuggestionIcon size="20" className="text-gray-700" />
+                  <SuggestionIcon size="20" className="shrink-0" />
                 </button>
 
                 {isIdeaMenuOpen && (

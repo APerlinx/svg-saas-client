@@ -1,30 +1,46 @@
-type CrownProps = {
+type CoffeeProps = {
   size?: string
   className?: string
 }
 
-const Crown = ({ size, className = 'text-gray-700' }: CrownProps) => (
+const PricingIcon = ({ size = '20', className = 'shrink-0' }: CoffeeProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
     height={size}
     viewBox="0 0 24 24"
     className={className}
+    aria-hidden="true"
+    fill="none"
   >
     <defs>
-      <linearGradient id="crownGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style={{ stopColor: '#c55a30', stopOpacity: 1 }} />
-        <stop offset="50%" style={{ stopColor: '#d57835', stopOpacity: 1 }} />
-        <stop offset="100%" style={{ stopColor: '#5887b4', stopOpacity: 1 }} />
+      <linearGradient
+        id="supportCoffeeGradient"
+        x1="0%"
+        y1="0%"
+        x2="100%"
+        y2="100%"
+      >
+        <stop offset="0%" stopColor="#c55a30" />
+        <stop offset="55%" stopColor="#d57835" />
+        <stop offset="100%" stopColor="#5887b4" />
       </linearGradient>
     </defs>
-    <path
-      fill="url(#crownGradient)"
-      fillRule="evenodd"
-      d="M10.193 9.556L12 6.665l1.807 2.891a.85.85 0 0 0 1.221.237l3.88-2.822l-1.49 7.826a.25.25 0 0 1-.245.203H6.828a.25.25 0 0 1-.246-.203L5.092 6.97l3.88 2.822a.85.85 0 0 0 1.22-.237m2.528-4.568a.85.85 0 0 0-1.442 0L9.29 8.17L4.646 4.792c-.623-.453-1.48.09-1.335.846l1.797 9.44a1.75 1.75 0 0 0 1.72 1.422h10.345a1.75 1.75 0 0 0 1.719-1.423l1.797-9.439c.145-.756-.711-1.3-1.334-.846L14.71 8.17zM6 18a.75.75 0 0 0 0 1.5h12a.75.75 0 1 0 0-1.5z"
-      clipRule="evenodd"
-    />
+
+    <g
+      stroke="url(#supportCoffeeGradient)"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7 10h8.5a1 1 0 0 1 1 1v2a4.5 4.5 0 0 1-4.5 4.5h-1A4.5 4.5 0 0 1 6.5 13v-2a1 1 0 0 1 1-1Z" />
+      <path d="M16.5 11h1.2a2.4 2.4 0 0 1 0 4.8h-1.2" />
+      <path d="M9 6.3c0 .9-.8 1.3-.8 2.2" />
+      <path d="M12 5.8c0 1-.9 1.4-.9 2.4" />
+      <path d="M15 6.3c0 .9-.8 1.3-.8 2.2" />
+      <path d="M6 20h13" />
+    </g>
   </svg>
 )
 
-export default Crown
+export default PricingIcon

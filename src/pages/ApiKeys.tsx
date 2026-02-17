@@ -245,83 +245,119 @@ export default function ApiKeys() {
 
       {/* Keys list */}
       {!isLoading && keys.length > 0 ? (
-        <div className="space-y-3">
-          {keys.map((key) => (
-            <div
-              key={key.id}
-              className="rounded-2xl border border-gray-200 bg-white shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:border-gray-300"
-            >
-              {/* Top row */}
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <h3 className="text-base font-bold text-gray-900">
-                  {key.name}
-                </h3>
-                <code className="text-sm font-mono text-gray-500 bg-gray-50 px-2 py-0.5 rounded">
-                  {key.keyPrefix}
-                </code>
-                <span
-                  className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${
-                    key.environment === 'production'
-                      ? 'bg-green-50 text-green-700 border border-green-200'
-                      : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
-                  }`}
+        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-x-auto">
+          <table className="w-full min-w-[900px] text-sm">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Name
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Key prefix
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Environment
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Scopes
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Usage
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Last used
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Created
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {keys.map((key) => (
+                <tr
+                  key={key.id}
+                  className="hover:bg-gray-50/60 transition-colors"
                 >
-                  {key.environment}
-                </span>
-              </div>
-
-              {/* Description */}
-              {key.description ? (
-                <p className="text-sm text-gray-500 mt-1">{key.description}</p>
-              ) : null}
-
-              {/* Meta row */}
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-3 text-xs text-gray-500">
-                <span>Created {formatDate(key.createdAt)}</span>
-                <span>
-                  Last used{' '}
-                  {key.lastUsedAt ? formatDate(key.lastUsedAt) : 'Never'}
-                </span>
-                <span>
-                  {key.usageCount.toLocaleString()}{' '}
-                  {key.usageCount === 1 ? 'request' : 'requests'}
-                </span>
-                {key.expiresAt ? (
-                  <span>Expires {formatDate(key.expiresAt)}</span>
-                ) : null}
-              </div>
-
-              {/* Scopes */}
-              {key.scopes.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {key.scopes.map((scope) => (
+                  <td className="px-4 py-3 align-top">
+                    <div className="font-semibold text-gray-900">
+                      {key.name}
+                    </div>
+                    {key.description ? (
+                      <div className="text-xs text-gray-500 mt-0.5">
+                        {key.description}
+                      </div>
+                    ) : null}
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    <code className="text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                      {key.keyPrefix}
+                    </code>
+                  </td>
+                  <td className="px-4 py-3 align-top">
                     <span
-                      key={scope}
-                      className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full"
+                      className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${
+                        key.environment === 'production'
+                          ? 'bg-green-50 text-green-700 border border-green-200'
+                          : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+                      }`}
                     >
-                      {scope}
+                      {key.environment}
                     </span>
-                  ))}
-                </div>
-              ) : null}
-
-              {/* Actions */}
-              <div className="flex gap-2 mt-4">
-                <button
-                  onClick={() => setStatsKeyId(key.id)}
-                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  View stats
-                </button>
-                <button
-                  onClick={() => setRevokeTarget(key)}
-                  className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
-                >
-                  Revoke
-                </button>
-              </div>
-            </div>
-          ))}
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    {key.scopes.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {key.scopes.map((scope) => (
+                          <span
+                            key={scope}
+                            className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full"
+                          >
+                            {scope}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray-400">—</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 align-top text-gray-600">
+                    {key.usageCount.toLocaleString()}{' '}
+                    {key.usageCount === 1 ? 'request' : 'requests'}
+                  </td>
+                  <td className="px-4 py-3 align-top text-gray-600">
+                    {key.lastUsedAt ? formatDate(key.lastUsedAt) : 'Never'}
+                  </td>
+                  <td className="px-4 py-3 align-top text-gray-600">
+                    {formatDate(key.createdAt)}
+                    {key.expiresAt ? (
+                      <div className="text-xs text-gray-400 mt-0.5">
+                        Expires {formatDate(key.expiresAt)}
+                      </div>
+                    ) : null}
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    <div className="flex justify-start gap-2">
+                      <button
+                        onClick={() => setStatsKeyId(key.id)}
+                        className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        View stats
+                      </button>
+                      <button
+                        onClick={() => setRevokeTarget(key)}
+                        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        Revoke
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : null}
 
