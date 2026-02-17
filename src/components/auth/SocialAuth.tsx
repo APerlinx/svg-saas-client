@@ -3,10 +3,29 @@ import Button from '../ui/Button'
 import GoogleLogoIcon from '../icons/GoogleLogoIcon'
 import GitHubLogoIcon from '../icons/GitHubLogoIcon'
 
+type OAuthProvider = 'google' | 'github'
+
+interface SocialAuthProps {
+  providers?: OAuthProvider[]
+  agreementAction?: 'signin' | 'signup'
+}
+
 const VITE_API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'
 
-export default function SocialAuth() {
+export default function SocialAuth({
+  providers = ['google', 'github'],
+  agreementAction = 'signup',
+}: SocialAuthProps) {
+  const showGoogle = providers.includes('google')
+  const showGitHub = providers.includes('github')
+  const agreementVerb =
+    agreementAction === 'signin' ? 'signing in' : 'signing up'
+  const googleButtonLabel =
+    agreementAction === 'signup' ? 'Google' : 'Continue with Google'
+  const githubButtonLabel =
+    agreementAction === 'signup' ? 'GitHub' : 'Continue with GitHub'
+
   const handleGoogleSignIn = () => {
     const currentPath = window.location.pathname.toLowerCase()
 
@@ -42,22 +61,32 @@ export default function SocialAuth() {
 
   return (
     <div className="space-y-3">
-      <Button variant="outline" type="button" onClick={handleGoogleSignIn}>
-        <span className="flex items-center justify-center gap-2">
-          <GoogleLogoIcon className="w-5 h-5" />
-          Continue with Google
-        </span>
-      </Button>
+      {showGoogle && (
+        <Button variant="outline" type="button" onClick={handleGoogleSignIn}>
+          <span className="flex items-center justify-center gap-2">
+            <GoogleLogoIcon className="w-5 h-5" />
+            {googleButtonLabel}
+          </span>
+        </Button>
+      )}
 
-      <Button variant="outline" type="button" onClick={handleGitHubSignIn}>
-        <span className="flex items-center justify-center gap-2">
-          <GitHubLogoIcon className="w-5 h-5" />
-          Continue with GitHub
-        </span>
-      </Button>
+      {showGitHub && (
+        <Button variant="outline" type="button" onClick={handleGitHubSignIn}>
+          <span className="flex items-center justify-center gap-2">
+            <GitHubLogoIcon className="w-5 h-5" />
+            {githubButtonLabel}
+          </span>
+        </Button>
+      )}
+
+      {!showGoogle && !showGitHub && (
+        <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
+          OAuth sign-in is currently unavailable.
+        </p>
+      )}
 
       <p className="text-xs text-center text-gray-500 mt-3">
-        By signing up with Google or GitHub, you agree to our{' '}
+        By {agreementVerb} with Google or GitHub, you agree to our{' '}
         <Link
           to="/terms"
           className="text-wizard-orange hover:text-wizard-orange/80"

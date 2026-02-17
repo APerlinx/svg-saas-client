@@ -7,10 +7,31 @@ import SignUp from './SignUp'
 // --- Mocks ---
 
 const registerMock = vi.hoisted(() => vi.fn())
+const forceDisableEmailAuthMock = vi.hoisted(() => vi.fn())
+const showToastMock = vi.hoisted(() => vi.fn())
 
 vi.mock('../../hooks/useAuth', () => ({
   useAuth: () => ({
     register: registerMock,
+  }),
+}))
+
+vi.mock('../../hooks/useAuthCapabilities', () => ({
+  useAuthCapabilities: () => ({
+    capabilities: {
+      emailAuthEnabled: true,
+      oauthProviders: ['google', 'github'],
+    },
+    isLoading: false,
+    error: null,
+    forceDisableEmailAuth: forceDisableEmailAuthMock,
+    refreshCapabilities: vi.fn(),
+  }),
+}))
+
+vi.mock('../../hooks/useToast', () => ({
+  useToast: () => ({
+    showToast: showToastMock,
   }),
 }))
 
@@ -183,7 +204,7 @@ describe('SignUp', () => {
         'Password123!',
         true,
       )
-      expect(mockNavigate).toHaveBeenCalledWith('/')
+      expect(mockNavigate).toHaveBeenCalledWith('/app')
     })
   })
 

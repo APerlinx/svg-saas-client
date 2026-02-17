@@ -7,11 +7,20 @@ import Button from '../../components/ui/Button'
 import SocialAuth from '../../components/auth/SocialAuth'
 import AuthDivider from '../../components/auth/AuthDivider'
 import { useAuth } from '../../hooks/useAuth'
+import { useAuthCapabilities } from '../../hooks/useAuthCapabilities'
+import { useToast } from '../../hooks/useToast'
+import { AuthApiError } from '../../services/authService'
 import { logger } from '../../services/logger'
 
 export default function SignUp() {
   const navigate = useNavigate()
   const { register } = useAuth()
+  const {
+    capabilities,
+    isLoading: isCapabilitiesLoading,
+    forceDisableEmailAuth,
+  } = useAuthCapabilities()
+  const { showToast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -72,14 +81,61 @@ export default function SignUp() {
     } catch (error) {
       const { email } = formData
       logger.error('Sign up error', error, { email })
+
+      if (
+        error instanceof AuthApiError &&
+        error.status === 403 &&
+        error.errorCode === 'EMAIL_AUTH_DISABLED'
+      ) {
+        const message = 'Continue with Google or GitHub to create your account.'
+        setError(message)
+        forceDisableEmailAuth()
+        showToast(message, 'info')
+        return
+      }
+
       setError(
         error instanceof Error
           ? error.message
-          : 'Failed to create account. Please try again.'
+          : 'Failed to create account. Please try again.',
       )
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (isCapabilitiesLoading) {
+    return (
+      <AuthLayout
+        title="Create an account"
+        subtitle="Start creating amazing SVGs today"
+      >
+        <p className="text-sm text-gray-500">Loading sign-up options...</p>
+      </AuthLayout>
+    )
+  }
+
+  const emailAuthEnabled = capabilities.emailAuthEnabled
+
+  if (!emailAuthEnabled) {
+    return (
+      <AuthLayout
+        title="Create an account"
+        subtitle="Start creating amazing SVGs today"
+      >
+        <SocialAuth providers={capabilities.oauthProviders} />
+
+        <p className="text-center text-sm text-gray-600 mt-6">
+          Already have an account?{' '}
+          <Link
+            to="/signin"
+            className="text-wizard-orange hover:text-wizard-orange/80 font-medium"
+          >
+            Sign in
+          </Link>
+        </p>
+      </AuthLayout>
+    )
   }
 
   return (
@@ -224,8 +280,8 @@ export default function SignUp() {
                         passwordStrength.label === 'Strong'
                           ? 'bg-green-500'
                           : passwordStrength.label === 'Medium'
-                          ? 'bg-yellow-500'
-                          : 'bg-red-500'
+                            ? 'bg-yellow-500'
+                            : 'bg-red-500'
                       }`}
                       style={{ width: `${passwordStrength.strength}%` }}
                     />
@@ -439,7 +495,7 @@ export default function SignUp() {
             <div className="text-center mb-6">
               <p className="text-sm text-gray-500">or continue with</p>
             </div>
-            <SocialAuth />
+            <SocialAuth providers={capabilities.oauthProviders} />
             <div className="mt-8 pt-6 border-t border-gray-200">
               <p className="text-center text-sm text-gray-600">
                 Already have an account?{' '}
@@ -457,7 +513,7 @@ export default function SignUp() {
         {/* Mobile view - Social auth below form */}
         <div className="lg:hidden mt-6">
           <AuthDivider />
-          <SocialAuth />
+          <SocialAuth providers={capabilities.oauthProviders} />
         </div>
       </div>
     </AuthLayout>
