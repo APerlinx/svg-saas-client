@@ -17,10 +17,10 @@ export default function SocialAuth() {
       '/reset-password',
     ]
 
-    const redirectUri = authPages.includes(currentPath) ? '/' : currentPath
+    const redirectUrl = authPages.includes(currentPath) ? '/app' : currentPath
 
-    window.location.href = `${VITE_API_BASE_URL}/auth/google?redirectUri=${encodeURIComponent(
-      redirectUri
+    window.location.href = `${VITE_API_BASE_URL}/auth/google?redirectUrl=${encodeURIComponent(
+      redirectUrl,
     )}`
   }
 
@@ -33,10 +33,10 @@ export default function SocialAuth() {
       '/forgot-password',
       '/reset-password',
     ]
-    const redirectUri = authPages.includes(currentPath) ? '/' : currentPath
+    const redirectUrl = authPages.includes(currentPath) ? '/app' : currentPath
 
-    window.location.href = `${VITE_API_BASE_URL}/auth/github?redirectUri=${encodeURIComponent(
-      redirectUri
+    window.location.href = `${VITE_API_BASE_URL}/auth/github?redirectUrl=${encodeURIComponent(
+      redirectUrl,
     )}`
   }
 

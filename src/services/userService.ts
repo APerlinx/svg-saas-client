@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { attachCsrfInterceptor } from '../services/csrfInterceptor'
+import { attachAuthRefreshInterceptor } from './authRefreshInterceptor'
 import { logger } from './logger'
 
 const api = axios.create({
@@ -8,6 +9,7 @@ const api = axios.create({
 })
 
 attachCsrfInterceptor(api)
+attachAuthRefreshInterceptor(api)
 
 interface ApiError {
   message?: string

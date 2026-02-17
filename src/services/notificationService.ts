@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { attachCsrfInterceptor } from '../services/csrfInterceptor'
+import { attachAuthRefreshInterceptor } from './authRefreshInterceptor'
 import { logger } from './logger'
 
 const api = axios.create({
@@ -8,6 +9,7 @@ const api = axios.create({
 })
 
 attachCsrfInterceptor(api)
+attachAuthRefreshInterceptor(api)
 
 interface ApiError {
   message?: string
@@ -68,14 +70,14 @@ interface NotificationPayload {
 
 export async function fetchNotifications(
   cursor: string | null,
-  limit: number
+  limit: number,
 ): Promise<NotificationPayload> {
   try {
     const response = await api.get<NotificationPayload>(
       '/notification/latest',
       {
         params: { cursor, limit },
-      }
+      },
     )
     return response.data
   } catch (error) {
@@ -96,7 +98,7 @@ export async function markNotificationsAsSeen(): Promise<void> {
 export async function fetchNotificationBadgeCount(): Promise<number> {
   try {
     const response = await api.get<{ unreadCount: number }>(
-      '/notification/badge'
+      '/notification/badge',
     )
     return response.data.unreadCount
   } catch (error) {

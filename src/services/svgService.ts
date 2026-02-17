@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { attachCsrfInterceptor } from '../services/csrfInterceptor'
+import { attachAuthRefreshInterceptor } from './authRefreshInterceptor'
 import { logger } from './logger'
 import { connectSocket, waitForSocketConnected } from '../lib/socket'
 
@@ -8,6 +9,7 @@ const api = axios.create({
   withCredentials: true,
 })
 attachCsrfInterceptor(api)
+attachAuthRefreshInterceptor(api)
 
 export interface Job {
   id: string

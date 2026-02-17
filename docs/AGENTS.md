@@ -1,6 +1,6 @@
 # ChatSVG Frontend - AI Agent Documentation
 
-**Last Updated:** February 15, 2026  
+**Last Updated:** February 17, 2026  
 **Version:** 0.2.0
 
 ---
@@ -63,6 +63,7 @@ ChatSVG is a React-based single-page application (SPA) for AI-powered SVG genera
 - **Axios:** 1.13.2 for API requests
 - Configured with base URL, credentials, and interceptors
 - CSRF token handling via request interceptors
+- 401 response handling via auth refresh interceptor (refresh + single retry)
 
 ### Real-time Communication
 
@@ -197,7 +198,7 @@ client/
 │   │   ├── Dashboard.tsx          # Home page with prompt generator
 │   │   ├── Docs.tsx               # API documentation
 │   │   ├── Gallery.tsx            # Public SVG gallery
-│   │   ├── Pricing.tsx            # Credit packs and pricing
+│   │   ├── Pricing.tsx            # Plan + credits overview (FREE/SUPPORTER)
 │   │   ├── PrivacyPolicy.tsx      # Privacy policy (legal)
 │   │   ├── Status.tsx             # System status page
 │   │   ├── TermsOfService.tsx     # Terms of service (legal)
@@ -210,6 +211,7 @@ client/
 │   │   ├── adminService.ts        # Admin operations (moderation, stats)
 │   │   ├── apiKeyService.ts       # API key CRUD operations
 │   │   ├── authService.ts         # Authentication API calls
+│   │   ├── authRefreshInterceptor.ts # 401 refresh + retry interceptor
 │   │   ├── csrfInterceptor.ts     # CSRF token injection
 │   │   ├── csrfService.ts         # CSRF token fetching
 │   │   ├── logger.ts              # Sentry integration
@@ -263,25 +265,26 @@ All routes are defined in `src/routes/index.tsx` using React Router's `createBro
 
 ### Route Table
 
-| Path               | Component        | Purpose                         | Auth Required |
-| ------------------ | ---------------- | ------------------------------- | ------------- |
-| `/`                | `Dashboard`      | Home page with prompt generator | No            |
-| `/gallery`         | `Gallery`        | Public SVG gallery              | No            |
-| `/history`         | `UserHistory`    | User's generation history       | Yes           |
-| `/pricing`         | `Pricing`        | Credit packs and pricing plans  | No            |
-| `/docs`            | `Docs`           | API documentation               | No            |
-| `/contact`         | `Contact`        | Contact/support form            | No            |
-| `/privacy`         | `PrivacyPolicy`  | Privacy policy (legal)          | No            |
-| `/terms`           | `TermsOfService` | Terms of service (legal)        | No            |
-| `/api-keys`        | `ApiKeys`        | API key management dashboard    | Yes           |
-| `/status`          | `Status`         | System status page (mock)       | No            |
-| `/admin`           | `Admin`          | Admin dashboard (moderation)    | Yes (Admin)   |
-| `/signin`          | `SignIn`         | Sign in page                    | No            |
-| `/signup`          | `SignUp`         | Sign up page                    | No            |
-| `/forgot-password` | `ForgotPassword` | Password reset request          | No            |
-| `/reset-password`  | `ResetPassword`  | Password reset with token       | No            |
-| `/auth/callback`   | `OAuthCallback`  | OAuth redirect handler (Google) | No            |
-| `*`                | `NotFound`       | 404 page                        | No            |
+| Path               | Component        | Purpose                      | Auth Required |
+| ------------------ | ---------------- | ---------------------------- | ------------- |
+| `/`                | `Home`           | Landing page                 | No            |
+| `/app`             | `Dashboard`      | SVG generation workspace     | No            |
+| `/gallery`         | `Gallery`        | Public SVG gallery           | No            |
+| `/history`         | `UserHistory`    | User's generation history    | Yes           |
+| `/pricing`         | `Pricing`        | Plans and credits            | No            |
+| `/docs`            | `Docs`           | API documentation            | No            |
+| `/contact`         | `Contact`        | Contact/support form         | No            |
+| `/privacy`         | `PrivacyPolicy`  | Privacy policy (legal)       | No            |
+| `/terms`           | `TermsOfService` | Terms of service (legal)     | No            |
+| `/api-keys`        | `ApiKeys`        | API key management dashboard | Yes           |
+| `/status`          | `Status`         | System status page (mock)    | No            |
+| `/admin`           | `Admin`          | Admin dashboard (moderation) | Yes (Admin)   |
+| `/signin`          | `SignIn`         | Sign in page                 | No            |
+| `/signup`          | `SignUp`         | Sign up page                 | No            |
+| `/forgot-password` | `ForgotPassword` | Password reset request       | No            |
+| `/reset-password`  | `ResetPassword`  | Password reset with token    | No            |
+| `/auth/callback`   | `OAuthCallback`  | OAuth completion handler     | No            |
+| `*`                | `NotFound`       | 404 page                     | No            |
 
 ### Layout Structure
 
@@ -298,7 +301,7 @@ App (root layout)
 - **Unauthenticated users:** Can access all pages except `/history`, `/api-keys`, `/admin`
 - **Authenticated users:** Full access based on role (admin gets `/admin`)
 - **Protected routes:** Redirect to `/signin` when accessed without auth
-- **OAuth flow:** User clicks Google button → redirects to backend OAuth → backend redirects to `/auth/callback?token=...` → frontend stores token and redirects to dashboard
+- **OAuth flow:** User clicks Google/GitHub button → frontend calls backend `/auth/{provider}?redirectUrl=...` → backend authenticates + sets cookies → backend redirects to frontend target route (for auth pages default is `/app`)
 
 ---
 
@@ -326,7 +329,7 @@ login(email, password, rememberMe): Promise<void>
 register(name, email, password, agreedToTerms): Promise<void>
 logout(): Promise<void>
 updateUserCredits(creditsUsed): void
-refreshAccessToken(): Promise<void>
+refreshToken(): Promise<boolean>
 checkAuth(): Promise<void>
 ```
 
@@ -488,7 +491,7 @@ ChatSVG uses **cookie-based authentication** with JWT tokens stored in HTTP-only
 ┌─────────────────────────────────────────────────────────────┐
 │ 4. Token Refresh (when access token expires)                 │
 │    - Backend responds with 401 Unauthorized                  │
-│    - Frontend calls authService.refreshAccessToken()         │
+│    - Frontend response interceptor triggers refresh flow      │
 │    - Backend validates refresh token cookie                  │
 │    - Backend issues new access token cookie                  │
 │    - Original request retried automatically                  │
@@ -539,18 +542,18 @@ function ProtectedPage() {
 />
 ```
 
-### OAuth Flow (Google)
+### OAuth Flow (Google/GitHub)
 
 1. User clicks "Sign in with Google" button
-2. Frontend redirects to `{API_URL}/auth/google` (backend endpoint)
+2. Frontend redirects to `{API_URL}/auth/google?redirectUrl=...` (backend endpoint)
 3. Backend redirects to Google OAuth consent screen
 4. User authorizes app
 5. Google redirects to backend callback: `{API_URL}/auth/google/callback?code=...`
 6. Backend exchanges code for tokens, creates/updates user
 7. Backend sets HTTP-only cookies (access + refresh tokens)
-8. Backend redirects to frontend: `{FRONTEND_URL}/auth/callback?success=true`
-9. Frontend `OAuthCallback` component detects success, calls `getCurrentUser()`
-10. Frontend redirects to dashboard
+8. Backend restores `redirectUrl` from OAuth state (with validation and max age)
+9. Backend redirects to frontend route (default fallback `/` if state invalid/expired)
+10. Frontend session is cookie-based (access + refresh cookies)
 
 ### CSRF Protection
 
@@ -558,7 +561,7 @@ function ProtectedPage() {
 
 **Implementation:**
 
-1. On app load, `bootstrapCsrf()` fetches token from `/api/csrf-token`
+1. On app load, `bootstrapCsrf()` fetches token from `/api/csrf`
 2. Token stored in memory via `csrf.ts` utility
 3. `csrfInterceptor` automatically adds `X-CSRF-Token` header to mutating requests (POST, PUT, DELETE, PATCH)
 4. Backend validates token on each mutating request
@@ -608,15 +611,15 @@ VITE_API_BASE_URL=https://api.chatsvg.dev/api
 Each domain has its own service file in `src/services/`:
 
 ```
-authService.ts         → /auth/* endpoints (login, register, logout, session)
-svgService.ts          → /svg/* endpoints (generate, history, delete, public gallery)
-userService.ts         → /users/* endpoints (profile, credits, settings)
-apiKeyService.ts       → /api-keys/* endpoints (CRUD operations)
-planService.ts         → /plans/* endpoints (purchase credits, Stripe checkout)
-notificationService.ts → /notifications/* endpoints (fetch, mark read, delete)
+authService.ts         → /auth/* endpoints (login, register, logout, refresh, current-user)
+svgService.ts          → /svg/* endpoints (generate, jobs, source, public)
+userService.ts         → /user/generations endpoints (history + delete)
+apiKeyService.ts       → /keys/* endpoints (list/create/revoke/stats/usage)
+planService.ts         → /plans endpoint (public plan metadata)
+notificationService.ts → /notification/* endpoints (latest, seen, badge)
 adminService.ts        → /admin/* endpoints (moderation, stats, users)
-supportService.ts      → /support/* endpoints (contact form)
-csrfService.ts         → /csrf-token endpoint (fetch CSRF token)
+supportService.ts      → /support/contact endpoint
+csrfService.ts         → /csrf endpoint (fetch CSRF token)
 ```
 
 ### Error Handling Pattern
@@ -664,11 +667,12 @@ try {
 - Adds `X-CSRF-Token` header
 - Bootstraps CSRF token if not present
 
-**Potential Future Interceptor** (not implemented yet):
+**Auth Refresh Interceptor** (`authRefreshInterceptor.ts`):
 
-- Response interceptor for 401 errors
-- Auto-refresh access token
-- Retry original request
+- Intercepts `401` responses on authenticated axios clients
+- Skips auth endpoints (`/auth/login`, `/auth/register`, `/auth/logout`, `/auth/refresh`, ...)
+- Uses single-flight refresh Promise to avoid parallel refresh storms
+- Retries the original request once via `_retry` guard
 
 ---
 
@@ -679,7 +683,7 @@ try {
 #### `Header.tsx`
 
 - Site-wide navigation bar
-- Logo, links (API, Docs, Pricing, Status)
+- Logo, links (API, Docs, Plans, Status)
 - User menu (dropdown with profile, history, API keys, logout)
 - Notifications bell icon with badge count
 - Mobile-responsive hamburger menu
@@ -818,7 +822,7 @@ export function IconName({ className }: { className?: string }) {
   register: (name, email, password, agreedToTerms) => Promise<void>
   logout: () => Promise<void>
   updateUserCredits: (creditsUsed) => void
-  refreshAccessToken: () => Promise<void>
+  refreshToken: () => Promise<boolean>
   checkAuth: () => Promise<void>
 }
 ```
@@ -1256,7 +1260,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   setSubmitting(true)
   try {
     await login(formData.email, formData.password, formData.rememberMe)
-    navigate('/dashboard')
+    navigate('/app')
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Login failed'
     showToast(message, 'error')
@@ -2209,16 +2213,16 @@ import { useNavigate, Link } from 'react-router-dom'
 
 // Programmatic navigation
 const navigate = useNavigate()
-navigate('/dashboard')
+navigate('/app')
 navigate(-1) // Go back
 
 // Link component
 <Link to="/pricing" className="text-blue-600">
-  View Pricing
+  Plans & Credits
 </Link>
 
 // With state
-navigate('/profile', { state: { from: 'dashboard' } })
+navigate('/history', { state: { from: 'app' } })
 ```
 
 ### Conditional Rendering
