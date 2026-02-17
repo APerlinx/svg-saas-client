@@ -14,6 +14,26 @@ import type { AuthResponse } from '../types/user'
 interface ApiError {
   message?: string
   error?: string
+  errorCode?: string
+}
+
+export type OAuthProvider = 'google' | 'github'
+
+export interface AuthOptionsResponse {
+  emailAuthEnabled: boolean
+  oauthProviders: OAuthProvider[]
+}
+
+export class AuthApiError extends Error {
+  status?: number
+  errorCode?: string
+
+  constructor(message: string, opts?: { status?: number; errorCode?: string }) {
+    super(message)
+    this.name = 'AuthApiError'
+    this.status = opts?.status
+    this.errorCode = opts?.errorCode
+  }
 }
 
 // Helper to normalize and throw errors
@@ -25,9 +45,36 @@ function normalizeError(error: unknown): never {
       err.response?.data?.message ||
       err.response?.statusText ||
       'Unexpected server error'
-    throw new Error(msg)
+    throw new AuthApiError(msg, {
+      status: err.response?.status,
+      errorCode: err.response?.data?.errorCode,
+    })
   }
   throw error as Error
+}
+
+export async function getAuthOptions(): Promise<AuthOptionsResponse> {
+  try {
+    const response = await api.get<{
+      emailAuthEnabled: boolean
+      oauthProviders: string[]
+    }>('/auth/options')
+
+    const providers = (response.data.oauthProviders || [])
+      .map((provider) => provider.toLowerCase())
+      .filter(
+        (provider): provider is OAuthProvider =>
+          provider === 'google' || provider === 'github',
+      )
+
+    return {
+      emailAuthEnabled: !!response.data.emailAuthEnabled,
+      oauthProviders: providers,
+    }
+  } catch (error) {
+    logger.error('Error fetching auth options', error)
+    normalizeError(error)
+  }
 }
 
 // Auth service functions
@@ -110,7 +157,7 @@ export async function forgotPassword({
   try {
     const response = await api.post<{ message: string }>(
       '/auth/forgot-password',
-      { email }
+      { email },
     )
     return response.data
   } catch (error) {
@@ -129,7 +176,7 @@ export async function resetPassword({
   try {
     const response = await api.post<{ message: string }>(
       '/auth/reset-password',
-      { token, newPassword }
+      { token, newPassword },
     )
     return response.data
   } catch (error) {

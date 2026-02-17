@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router-dom'
 import './index.css'
 import { router } from './routes'
 import { AuthProvider } from './context/AuthProvider'
+import { AuthCapabilitiesProvider } from './context/AuthCapabilitiesContext'
 import { ToastProvider } from './context/ToastProvider'
 import { NotificationsProvider } from './context/NotificationsProvider'
 import { initSentry } from './services/logger'
@@ -16,12 +17,14 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppErrorBoundary>
       <AuthProvider>
-        <NotificationsProvider>
-          <ToastProvider>
-            <RouterProvider router={router} />
-          </ToastProvider>
-        </NotificationsProvider>
+        <AuthCapabilitiesProvider>
+          <NotificationsProvider>
+            <ToastProvider>
+              <RouterProvider router={router} />
+            </ToastProvider>
+          </NotificationsProvider>
+        </AuthCapabilitiesProvider>
       </AuthProvider>
     </AppErrorBoundary>
-  </StrictMode>
+  </StrictMode>,
 )
