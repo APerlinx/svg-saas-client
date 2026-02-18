@@ -34,3 +34,6 @@ tests/.auth-state.json
 
 coverage/
 .nyc_output/
+
+# Claude Code local settings (machine-specific)
+.claude/
