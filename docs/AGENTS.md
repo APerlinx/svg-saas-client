@@ -1,7 +1,7 @@
 # ChatSVG Frontend - AI Agent Documentation
 
-**Last Updated:** February 17, 2026  
-**Version:** 0.2.0
+**Last Updated:** February 18, 2026
+**Version:** 1.0.0
 
 ---
 
@@ -47,6 +47,7 @@ ChatSVG is a React-based single-page application (SPA) for AI-powered SVG genera
 - **Context API:** Built-in React Context for global state
 - **Contexts:**
   - `AuthContext` - User authentication and session
+  - `AuthCapabilitiesContext` - OAuth provider availability
   - `ToastContext` - Toast notifications
   - `NotificationsContext` - User notifications and badge count
 - **Local State:** `useState` and `useReducer` for component state
@@ -101,10 +102,8 @@ ChatSVG is a React-based single-page application (SPA) for AI-powered SVG genera
 client/
 ├── docs/                          # Documentation
 │   ├── AGENTS.md                  # This file - AI agent guide
-│   ├── BETA_CHECKLIST.md          # Pre-release checklist
 │   ├── FRONTEND_ARCHITECTURE.md   # Architecture decisions
 │   ├── NOTIFICATIONS.md           # Notification system docs
-│   ├── RELEASE_PROCESS.md         # Release workflow
 │   ├── SENTRY_IMPLEMENTATION.md   # Error tracking setup
 │   └── SENTRY_SETUP.md            # Sentry configuration
 │
@@ -154,6 +153,7 @@ client/
 │   │   │   ├── PrivacySwitch.tsx
 │   │   │   └── ...
 │   │   │
+│   │   ├── PayPalSubscribeButton.tsx # PayPal subscription button
 │   │   ├── AppErrorBoundary.tsx   # Sentry-integrated error boundary
 │   │   ├── ErrorBoundary.tsx      # React Router error boundary
 │   │   ├── Header.tsx             # Site header/navigation
@@ -198,6 +198,7 @@ client/
 │   │   ├── Dashboard.tsx          # Home page with prompt generator
 │   │   ├── Docs.tsx               # API documentation
 │   │   ├── Gallery.tsx            # Public SVG gallery
+│   │   ├── PayPalReturn.tsx        # PayPal checkout success/cancel landing
 │   │   ├── Pricing.tsx            # Plan + credits overview (FREE/SUPPORTER)
 │   │   ├── PrivacyPolicy.tsx      # Privacy policy (legal)
 │   │   ├── Status.tsx             # System status page
@@ -216,7 +217,8 @@ client/
 │   │   ├── csrfService.ts         # CSRF token fetching
 │   │   ├── logger.ts              # Sentry integration
 │   │   ├── notificationService.ts # Notification fetching
-│   │   ├── planService.ts         # Credit purchase operations
+│   │   ├── paypalService.ts        # PayPal subscription API calls
+│   │   ├── planService.ts         # Plan metadata fetching
 │   │   ├── supportService.ts      # Contact form submission
 │   │   ├── svgService.ts          # SVG generation and retrieval
 │   │   └── userService.ts         # User profile operations
@@ -284,6 +286,8 @@ All routes are defined in `src/routes/index.tsx` using React Router's `createBro
 | `/forgot-password` | `ForgotPassword` | Password reset request       | No            |
 | `/reset-password`  | `ResetPassword`  | Password reset with token    | No            |
 | `/auth/callback`   | `OAuthCallback`  | OAuth completion handler     | No            |
+| `/billing/paypal/success` | `PayPalReturn` | PayPal checkout success  | No            |
+| `/billing/paypal/cancel`  | `PayPalReturn` | PayPal checkout cancel   | No            |
 | `*`                | `NotFound`       | 404 page                     | No            |
 
 ### Layout Structure
@@ -555,6 +559,29 @@ function ProtectedPage() {
 9. Backend redirects to frontend route (default fallback `/` if state invalid/expired)
 10. Frontend session is cookie-based (access + refresh cookies)
 
+### PayPal Subscription Flow
+
+ChatSVG uses PayPal for SUPPORTER plan subscriptions. The SDK is loaded at app root via `PayPalScriptProvider` in `main.tsx`.
+
+**Flow:**
+
+1. Authenticated FREE user clicks "Subscribe" on the Pricing page
+2. `PayPalSubscribeButton` calls `POST /paypal/create-subscription` (relative to `VITE_API_BASE_URL`) → backend creates PayPal subscription → returns `subscriptionId`
+3. PayPal SDK opens approval window using the returned `subscriptionId`
+4. User approves on PayPal → `onApprove` callback fires → toast shown → `checkAuth()` polls after 3s
+5. PayPal sends `BILLING.SUBSCRIPTION.ACTIVATED` webhook to backend → backend upgrades user plan
+6. For return-URL flows, user lands on `/billing/paypal/success` or `/billing/paypal/cancel` (`PayPalReturn` page)
+
+**Cancellation:** SUPPORTER users can cancel from the Pricing page → `POST /paypal/subscription/cancel` (relative to `VITE_API_BASE_URL`) → backend cancels on PayPal → webhook downgrades plan.
+
+**Key files:**
+
+- `src/services/paypalService.ts` - API calls (`createSubscription`, `cancelSubscription`, `getPayPalStatus`)
+- `src/components/PayPalSubscribeButton.tsx` - PayPal Buttons component wrapper
+- `src/pages/Pricing.tsx` - Subscribe/cancel UI (4 CTA states based on auth + plan)
+- `src/pages/PayPalReturn.tsx` - Success/cancel landing page
+- `src/main.tsx` - `PayPalScriptProvider` configuration (vault mode, subscription intent)
+
 ### CSRF Protection
 
 **Why:** Prevent cross-site request forgery attacks.
@@ -616,6 +643,7 @@ svgService.ts          → /svg/* endpoints (generate, jobs, source, public)
 userService.ts         → /user/generations endpoints (history + delete)
 apiKeyService.ts       → /keys/* endpoints (list/create/revoke/stats/usage)
 planService.ts         → /plans endpoint (public plan metadata)
+paypalService.ts       → /paypal/* endpoints (create-subscription, cancel, status)
 notificationService.ts → /notification/* endpoints (latest, seen, badge)
 adminService.ts        → /admin/* endpoints (moderation, stats, users)
 supportService.ts      → /support/contact endpoint
@@ -1545,13 +1573,13 @@ esbuild: {
 
 ```bash
 VITE_API_BASE_URL=https://api.chatsvg.dev/api
+VITE_PAYPAL_CLIENT_ID=your-paypal-client-id
 ```
 
 **Optional:**
 
 ```bash
 VITE_SENTRY_DSN=https://...@sentry.io/...
-VITE_ENABLE_ANALYTICS=true
 ```
 
 ### Usage in Code
@@ -1581,6 +1609,7 @@ VITE_API_BASE_URL=https://api.chatsvg.dev/api
 Set in Vercel dashboard under Project Settings → Environment Variables:
 
 - `VITE_API_BASE_URL` (Production, Preview, Development)
+- `VITE_PAYPAL_CLIENT_ID` (Production: live client ID, Preview/Development: sandbox client ID)
 - `VITE_SENTRY_DSN` (Production only)
 
 ---

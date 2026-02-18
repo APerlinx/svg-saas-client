@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **PayPal Subscription Payments**: Full PayPal integration for Supporter plan upgrades
+  - PayPal SDK provider wrapping the app (`@paypal/react-paypal-js`)
+  - `PayPalSubscribeButton` component with subscription flow
+  - `paypalService.ts` for create/cancel subscription and status APIs
+  - Pricing page with live PayPal subscribe button for authenticated FREE users
+  - Cancel subscription option for active supporters
+  - PayPal return pages (`/billing/paypal/success` and `/billing/paypal/cancel`)
+  - Webhook-driven plan upgrades (backend source of truth)
+
 ### Changed
 
 - **SVG Generation Updates**: Progress is now driven by WebSocket (Socket.IO) events instead of polling

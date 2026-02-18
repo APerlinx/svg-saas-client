@@ -18,14 +18,11 @@
 - **Secure Downloads**: Completed SVGs can be downloaded via short-lived signed URLs
 - **Privacy Controls**: Public/private generation options
 - **Session Management**: Persistent draft prompts and secure authentication
+- **PayPal Subscription Payments**: Upgrade to Supporter plan via PayPal with webhook-driven plan management
 - **Notifications (v1)**: Bell dropdown with unread indicator for job + credit events
 - **Responsive Design**: Mobile-first UI with Tailwind CSS
 - **Error Tracking**: Production-ready Sentry integration
 - **Type Safety**: Full TypeScript coverage with strict checks
-
-Docs:
-
-- `docs/NOTIFICATIONS.md`
 
 ## 🛠️ Tech Stack
 
@@ -96,6 +93,9 @@ Configure your `.env`:
 # Backend API URL
 VITE_API_BASE_URL="http://localhost:4000/api"
 
+# PayPal client ID (sandbox for dev, live for production)
+VITE_PAYPAL_CLIENT_ID="your-paypal-client-id"
+
 # Sentry error tracking (optional - production only)
 # VITE_SENTRY_DSN="your-sentry-dsn-here"
 ```
@@ -149,6 +149,9 @@ client/
 │   └── workflows/
 │       └── playwright.yml      # CI/CD pipeline
 ├── docs/
+│   ├── AGENTS.md              # AI agent reference guide
+│   ├── FRONTEND_ARCHITECTURE.md # Architecture and flows
+│   ├── NOTIFICATIONS.md       # Notifications feature docs
 │   ├── SENTRY_SETUP.md        # Error tracking guide
 │   └── SENTRY_IMPLEMENTATION.md
 ├── public/                     # Static assets
@@ -177,6 +180,7 @@ client/
 │   ├── services/             # API services
 │   │   ├── authService.ts
 │   │   ├── svgService.ts
+│   │   ├── paypalService.ts  # PayPal subscription API
 │   │   ├── csrfInterceptor.ts
 │   │   └── logger.ts        # Sentry integration
 │   ├── types/                # TypeScript types
@@ -228,7 +232,7 @@ client/
 - Instant updates from terminal job result (no refresh needed)
 - Credits deducted only on successful generation
 - Low credit warnings with banner
-- Pricing page with purchase options
+- Pricing page with PayPal subscription checkout
 
 ### Export Options
 
@@ -384,10 +388,11 @@ Notes:
 - Socket.IO uses the same origin as `VITE_API_BASE_URL` (the client derives the socket origin from it).
 - Ensure your backend exposes Socket.IO on that origin and supports authenticated `withCredentials` cookies.
 
-| Variable            | Description               | Required | Default                     |
-| ------------------- | ------------------------- | -------- | --------------------------- |
-| `VITE_API_BASE_URL` | Backend API URL           | Yes      | `http://localhost:4000/api` |
-| `VITE_SENTRY_DSN`   | Sentry error tracking DSN | No       | -                           |
+| Variable               | Description               | Required | Default                     |
+| ---------------------- | ------------------------- | -------- | --------------------------- |
+| `VITE_API_BASE_URL`    | Backend API URL           | Yes      | `http://localhost:4000/api` |
+| `VITE_SENTRY_DSN`      | Sentry error tracking DSN | No       | -                           |
+| `VITE_PAYPAL_CLIENT_ID`| PayPal client ID          | Yes      | -                           |
 
 ## 🐛 Common Issues
 
