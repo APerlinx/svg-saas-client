@@ -193,7 +193,7 @@ sequenceDiagram
 
 ### Cancellation
 
-SUPPORTER users see a "Cancel subscription" button on the Pricing page. It calls `POST /api/paypal/subscription/cancel`, shows a toast, and refreshes auth state.
+SUPPORTER users see a "Cancel subscription" button on the Pricing page. It calls `POST /paypal/subscription/cancel` (relative to `VITE_API_BASE_URL`), shows a toast, and refreshes auth state.
 
 ## Error Handling & Observability
 
