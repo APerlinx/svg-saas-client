@@ -2,8 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchPlans, type Plan, type PlanType } from '../services/planService'
 import { useAuth } from '../hooks/useAuth'
+import { useToast } from '../hooks/useToast'
+import { cancelSubscription } from '../services/paypalService'
 import PricingCheckIcon from '../components/icons/PricingCheckIcon'
 import PricingCrossIcon from '../components/icons/PricingCrossIcon'
+import PayPalSubscribeButton from '../components/PayPalSubscribeButton'
 
 type LoadState = 'idle' | 'loading' | 'error'
 
@@ -74,10 +77,12 @@ function PlanCardSkeleton() {
 }
 
 export default function Pricing() {
-  const { user } = useAuth()
+  const { user, isAuthenticated, checkAuth } = useAuth()
+  const { showToast } = useToast()
   const [plans, setPlans] = useState<Plan[]>([])
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [error, setError] = useState('')
+  const [cancellingSubscription, setCancellingSubscription] = useState(false)
   const requestIdRef = useRef(0)
 
   const currentPlan = user?.plan || 'FREE'
@@ -200,20 +205,79 @@ export default function Pricing() {
                     </ul>
 
                     {/* CTA */}
-                    <button
-                      disabled
-                      className={`w-full py-2.5 px-4 rounded-lg font-medium transition-all opacity-60 cursor-not-allowed ${
-                        isSupporter
-                          ? 'bg-gray-900 text-white'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {isCurrentPlan
-                        ? 'Current plan'
-                        : isSupporter
-                          ? 'Become a supporter'
-                          : 'Default plan'}
-                    </button>
+                    {isSupporter && !isCurrentPlan && isAuthenticated ? (
+                      // Show PayPal subscribe button for logged-in FREE users
+                      <div className="mt-1">
+                        <PayPalSubscribeButton
+                          onSuccess={() => {
+                            showToast(
+                              'Subscription started! Your plan will upgrade shortly.',
+                              'success',
+                            )
+                            // Refresh user data so the UI reflects the new plan
+                            // The webhook finalizes the upgrade, but we poll briefly
+                            setTimeout(() => void checkAuth(), 3000)
+                          }}
+                          onError={(message) => {
+                            showToast(message, 'error')
+                          }}
+                        />
+                      </div>
+                    ) : isSupporter && isCurrentPlan ? (
+                      // Already a supporter — show current plan + cancel option
+                      <div>
+                        <button
+                          disabled
+                          className="w-full py-2.5 px-4 rounded-lg font-medium bg-gray-900 text-white opacity-60 cursor-not-allowed"
+                        >
+                          Current plan
+                        </button>
+                        <button
+                          disabled={cancellingSubscription}
+                          onClick={async () => {
+                            setCancellingSubscription(true)
+                            try {
+                              await cancelSubscription()
+                              showToast(
+                                'Subscription cancelled. You will keep your plan until the end of the billing period.',
+                                'info',
+                              )
+                              await checkAuth()
+                            } catch (err) {
+                              showToast(
+                                err instanceof Error
+                                  ? err.message
+                                  : 'Failed to cancel subscription',
+                                'error',
+                              )
+                            } finally {
+                              setCancellingSubscription(false)
+                            }
+                          }}
+                          className="w-full mt-2 py-2 px-4 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 border border-red-200 transition-colors disabled:opacity-50"
+                        >
+                          {cancellingSubscription
+                            ? 'Cancelling...'
+                            : 'Cancel subscription'}
+                        </button>
+                      </div>
+                    ) : !isAuthenticated && isSupporter ? (
+                      // Guest viewing supporter plan — prompt sign in
+                      <Link
+                        to="/signin"
+                        className="block w-full py-2.5 px-4 rounded-lg font-medium text-center bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+                      >
+                        Sign in to subscribe
+                      </Link>
+                    ) : (
+                      // FREE plan card
+                      <button
+                        disabled
+                        className="w-full py-2.5 px-4 rounded-lg font-medium bg-gray-100 text-gray-800 opacity-60 cursor-not-allowed"
+                      >
+                        {isCurrentPlan ? 'Current plan' : 'Default plan'}
+                      </button>
+                    )}
 
                     <div className="mt-3 text-xs text-gray-500">
                       <span>

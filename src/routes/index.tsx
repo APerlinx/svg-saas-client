@@ -19,6 +19,7 @@ import ForgotPassword from '../pages/auth/ForgotPassword'
 import ResetPassword from '../pages/auth/ResetPssword'
 import OAuthCallback from '../pages/auth/OAuthCallback'
 import ApiKeys from '../pages/ApiKeys'
+import PayPalReturn from '../pages/PayPalReturn'
 
 export const router = createBrowserRouter([
   {
@@ -94,6 +95,14 @@ export const router = createBrowserRouter([
       {
         path: 'auth/callback',
         element: <OAuthCallback />,
+      },
+      {
+        path: 'billing/paypal/success',
+        element: <PayPalReturn />,
+      },
+      {
+        path: 'billing/paypal/cancel',
+        element: <PayPalReturn />,
       },
       {
         path: '*',

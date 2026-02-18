@@ -18,6 +18,8 @@
     "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
+    "@paypal/paypal-js": "^9.2.0",
+    "@paypal/react-paypal-js": "^8.9.2",
     "@sentry/react": "^10.31.0",
     "axios": "^1.13.2",
     "react": "^19.2.0",

@@ -46,13 +46,13 @@ function BannerContent({
       </div>
       <div className="flex gap-2 mt-1">
         <Link
-          to="/auth/signup"
+          to="/signup"
           className="inline-flex items-center justify-center rounded-xl bg-linear-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white hover:from-blue-700 hover:to-blue-800 transition-colors shadow-sm"
         >
           Get Started Free
         </Link>
         <Link
-          to="/auth/signin"
+          to="/signin"
           className="inline-flex items-center justify-center rounded-xl border-2 border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
         >
           Sign In
