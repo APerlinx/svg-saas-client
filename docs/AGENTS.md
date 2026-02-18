@@ -566,13 +566,13 @@ ChatSVG uses PayPal for SUPPORTER plan subscriptions. The SDK is loaded at app r
 **Flow:**
 
 1. Authenticated FREE user clicks "Subscribe" on the Pricing page
-2. `PayPalSubscribeButton` calls `POST /api/paypal/create-subscription` → backend creates PayPal subscription → returns `subscriptionId`
+2. `PayPalSubscribeButton` calls `POST /paypal/create-subscription` (relative to `VITE_API_BASE_URL`) → backend creates PayPal subscription → returns `subscriptionId`
 3. PayPal SDK opens approval window using the returned `subscriptionId`
 4. User approves on PayPal → `onApprove` callback fires → toast shown → `checkAuth()` polls after 3s
 5. PayPal sends `BILLING.SUBSCRIPTION.ACTIVATED` webhook to backend → backend upgrades user plan
 6. For return-URL flows, user lands on `/billing/paypal/success` or `/billing/paypal/cancel` (`PayPalReturn` page)
 
-**Cancellation:** SUPPORTER users can cancel from the Pricing page → `POST /api/paypal/subscription/cancel` → backend cancels on PayPal → webhook downgrades plan.
+**Cancellation:** SUPPORTER users can cancel from the Pricing page → `POST /paypal/subscription/cancel` (relative to `VITE_API_BASE_URL`) → backend cancels on PayPal → webhook downgrades plan.
 
 **Key files:**
 
