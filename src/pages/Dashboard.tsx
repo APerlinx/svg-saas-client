@@ -152,8 +152,8 @@ export default function Dashboard() {
                       Claude Integration
                     </div>
                     <div className="text-sm text-gray-600 mt-1">
-                      Coming soon: Generate SVGs directly from Claude Desktop,
-                      Cursor, and more.
+                      Live now: Generate SVGs directly from Claude Desktop,
+                      Cursor, and other MCP-compatible clients.
                     </div>
                   </div>
                 </div>

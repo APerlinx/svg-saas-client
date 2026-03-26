@@ -59,7 +59,7 @@ export default function Home() {
           </div>
 
           {/* Quick highlights */}
-          <div className="mt-16 grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+          <div className="mt-16 grid sm:grid-cols-3 gap-6 max-w-6xl mx-auto">
             <div className="rounded-2xl border border-gray-200/60 bg-white/60 backdrop-blur-sm p-5 text-left">
               <div className="text-sm font-semibold text-gray-900 mb-1">
                 REST API
@@ -83,8 +83,8 @@ export default function Home() {
                 MCP Server
               </div>
               <div className="text-sm text-gray-600">
-                Coming soon — generate SVGs from Claude Desktop, Cursor, and
-                more.
+                Live now - generate SVGs from Claude Desktop, Cursor, and other
+                MCP-compatible clients.
               </div>
             </div>
           </div>
