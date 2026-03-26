@@ -117,8 +117,15 @@ function SubHeading({
 }
 
 const NAV_ITEMS = [
-  { id: 'quickstart', label: 'Quick Start' },
-  { id: 'web-app', label: 'Using Web App' },
+  { id: 'mcp', label: 'MCP Server' },
+  { id: 'mcp-quick-connect', label: 'Quick Connect' },
+  { id: 'mcp-claude', label: 'Claude Setup' },
+  { id: 'mcp-vscode', label: 'VS Code / Copilot Setup' },
+  { id: 'mcp-tools', label: 'Use The Tools' },
+  { id: 'mcp-errors', label: 'Troubleshooting' },
+  { id: 'mcp-local-note', label: 'Local Dev (Optional)' },
+  { id: 'mcp-last-updated', label: 'Last Updated' },
+  { id: 'quickstart', label: 'API Quick Start' },
   { id: 'api-keys', label: 'Getting API Keys' },
   { id: 'authentication', label: 'API Authentication' },
   { id: 'generate', label: 'Generate Endpoint' },
@@ -126,32 +133,32 @@ const NAV_ITEMS = [
   { id: 'job-status', label: 'Job Status' },
   { id: 'examples', label: 'Code Examples' },
   { id: 'pricing', label: 'Credits & Pricing' },
-  { id: 'mcp', label: 'MCP Server' },
+  { id: 'web-app', label: 'Using Web App' },
 ]
 
 const AVAILABLE_MODELS = AI_MODELS.filter((m) => m.section !== 'coming-soon')
 const COMING_SOON_MODELS = AI_MODELS.filter((m) => m.section === 'coming-soon')
 
-const NODE_BASH_EXAMPLE = `# Node.js quick start
-mkdir chatsvg-node && cd chatsvg-node
-npm init -y
-npm install node-fetch@3
+const MCP_CLAUDE_CONFIG_EXAMPLE = `{
+  "mcpServers": {
+    "chatsvg-mcp": {
+      "type": "http",
+      "url": "https://api.chatsvg.dev/mcp"
+    }
+  }
+}`
 
-export CHATSVG_API_KEY="sk_live_your_key_here"
+const MCP_VSCODE_CONFIG_EXAMPLE = `{
+  "mcpServers": {
+    "chatsvg-mcp": {
+      "type": "http",
+      "url": "https://api.chatsvg.dev/mcp"
+    }
+  }
+}
 
-# generate.mjs should call /v1/svg/generate then poll /v1/svg/job/:id
-node generate.mjs`
-
-const PYTHON_BASH_EXAMPLE = `# Python quick start
-mkdir chatsvg-python && cd chatsvg-python
-python -m venv .venv
-source .venv/bin/activate
-pip install requests
-
-export CHATSVG_API_KEY="sk_live_your_key_here"
-
-# generate.py should call /v1/svg/generate then poll /v1/svg/job/:id
-python generate.py`
+Save as .mcp.json in your workspace root,
+then authenticate in MCP Servers.`
 
 const NODE_CODE_EXAMPLE = `/**
  * Node.js example (Node 18+)
@@ -267,12 +274,11 @@ export default function Docs() {
       {/* Hero */}
       <div className="text-center mb-12">
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-          ChatSVG API
+          ChatSVG MCP + API Docs
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-4">
-          Generate SVG assets through a straightforward HTTP API. This guide
-          focuses on what endpoints exist, how to call them, and how credits are
-          applied.
+          Connect ChatSVG MCP Server to Claude or VS Code in minutes, then use
+          API and web app docs for deeper integration.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8 mb-12">
@@ -294,21 +300,21 @@ export default function Docs() {
         <div className="max-w-2xl mx-auto">
           <div className="text-left">
             <div className="text-sm font-semibold text-gray-700 mb-3">
-              Terminal quickstart:
+              MCP quick connect:
             </div>
             <TabbedCodeBlock
               tabs={[
                 {
-                  id: 'node',
-                  label: 'Node',
-                  language: 'bash',
-                  code: NODE_BASH_EXAMPLE,
+                  id: 'claude',
+                  label: 'Claude',
+                  language: 'json',
+                  code: MCP_CLAUDE_CONFIG_EXAMPLE,
                 },
                 {
-                  id: 'python',
-                  label: 'Python',
-                  language: 'bash',
-                  code: PYTHON_BASH_EXAMPLE,
+                  id: 'vscode',
+                  label: 'VS Code',
+                  language: 'json',
+                  code: MCP_VSCODE_CONFIG_EXAMPLE,
                 },
               ]}
             />
@@ -317,189 +323,239 @@ export default function Docs() {
       </div>
 
       <div className="flex gap-12">
-        {/* Sidebar nav */}
-        <nav className="hidden lg:block w-48 shrink-0 sticky top-20 self-start">
-          <ul className="space-y-1 border-l border-gray-200">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.id}>
-                <a
-                  href={`#${item.id}`}
-                  className="block pl-4 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:border-l-2 hover:border-wizard-orange hover:pl-3.5 transition-all"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
         {/* Content */}
         <div className="min-w-0 flex-1 space-y-16">
-          {/* Quick Start */}
+          {/* MCP Server */}
           <section>
-            <SectionHeading id="quickstart">Quick Start</SectionHeading>
+            <SectionHeading id="mcp">MCP Server</SectionHeading>
             <p className="text-gray-600 mb-6">
-              There are two entry points: the web app for manual generation and
-              the API for backend automation.
+              Use ChatSVG MCP Server to generate SVGs directly from Claude, VS
+              Code, and other MCP-compatible clients using OAuth Bearer
+              authentication.
             </p>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-linear-to-br from-blue-50 to-purple-50 rounded-xl p-6 border-2 border-blue-200">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">
-                  🎨 Web App
-                </h3>
-                <div className="space-y-3 text-sm text-gray-700">
-                  <div className="flex items-start gap-3">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
-                      1
-                    </span>
-                    <span>
-                      Sign up at{' '}
-                      <Link
-                        to="/signup"
-                        className="text-blue-600 hover:underline font-medium"
-                      >
-                        chatsvg.com
-                      </Link>
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
-                      2
-                    </span>
-                    <span>Enter your prompt and choose a style</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
-                      3
-                    </span>
-                    <span>Download your SVG instantly</span>
-                  </div>
-                </div>
-                <Link
-                  to="/app"
-                  className="mt-4 block text-center py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-                >
-                  Try Web App
-                </Link>
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 mb-6">
+              <div className="text-sm text-amber-900">
+                <strong>Important:</strong> MCP uses
+                <strong> OAuth Bearer token</strong> with
+                <code className="bg-amber-100 px-1.5 py-0.5 rounded font-mono text-xs mx-1">
+                  Authorization: Bearer &lt;access_token&gt;
+                </code>
+                . Do not use
+                <code className="bg-amber-100 px-1.5 py-0.5 rounded font-mono text-xs mx-1">
+                  X-API-Key
+                </code>
+                on
+                <code className="bg-amber-100 px-1.5 py-0.5 rounded font-mono text-xs mx-1">
+                  /mcp
+                </code>
+                .
               </div>
+            </div>
 
-              <div className="bg-linear-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-300">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">⚡ API</h3>
-                <div className="space-y-3 text-sm text-gray-700">
-                  <div className="flex items-start gap-3">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold">
-                      1
-                    </span>
-                    <span>
-                      Create an API key in your{' '}
-                      <Link
-                        to="/api-keys"
-                        className="text-wizard-orange hover:underline font-medium"
-                      >
-                        dashboard
-                      </Link>
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold">
-                      2
-                    </span>
-                    <span>POST to /v1/svg/generate with your prompt</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold">
-                      3
-                    </span>
-                    <span>Poll /v1/svg/job/:id until ready</span>
-                  </div>
-                </div>
-                <a
-                  href="#api-keys"
-                  className="mt-4 block text-center py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-                >
-                  View API Docs
-                </a>
+            <SubHeading id="mcp-quick-connect">
+              Quick connect in 2 minutes
+            </SubHeading>
+            <div className="rounded-xl border border-gray-200 bg-white p-5 mb-6">
+              <ol className="space-y-3 text-sm text-gray-700">
+                <li>
+                  1. Add ChatSVG MCP server URL in your client config:
+                  <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs ml-1">
+                    https://api.chatsvg.dev/mcp
+                  </code>
+                </li>
+                <li>
+                  2. Reload the client and click Authenticate for the MCP
+                  server.
+                </li>
+                <li>3. Complete OAuth in the browser.</li>
+                <li>
+                  4. Call tools:
+                  <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs mx-1">
+                    list_styles
+                  </code>
+                  <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs mr-1">
+                    generate_svg
+                  </code>
+                  <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs">
+                    get_job_status
+                  </code>
+                  .
+                </li>
+              </ol>
+            </div>
+
+            <SubHeading id="mcp-claude">Claude setup</SubHeading>
+            <p className="text-gray-600 mb-3 text-sm">
+              Add ChatSVG as an HTTP MCP server in Claude settings, then
+              authenticate.
+            </p>
+            <CodeBlock
+              language="json"
+              code={`{
+  "mcpServers": {
+    "chatsvg-mcp": {
+      "type": "http",
+      "url": "https://api.chatsvg.dev/mcp"
+    }
+  }
+}`}
+            />
+
+            <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 mt-4 mb-8">
+              <div className="text-sm text-blue-900">
+                <strong>Tip:</strong> After saving config, reopen Claude MCP
+                Servers, click Authenticate, finish browser OAuth, and return to
+                Claude to start generating.
               </div>
+            </div>
+
+            <SubHeading id="mcp-vscode">VS Code / Copilot setup</SubHeading>
+            <p className="text-gray-600 mb-3 text-sm">
+              In your workspace root, add a
+              <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs mx-1">
+                .mcp.json
+              </code>
+              file:
+            </p>
+            <CodeBlock
+              language="json"
+              code={`{
+  "mcpServers": {
+    "chatsvg-mcp": {
+      "type": "http",
+      "url": "https://api.chatsvg.dev/mcp"
+    }
+  }
+}`}
+            />
+
+            <div className="rounded-xl border border-gray-200 bg-white p-5 mt-4 mb-8">
+              <ol className="space-y-2 text-sm text-gray-700">
+                <li>1. Save .mcp.json in workspace root.</li>
+                <li>2. Reload VS Code if needed.</li>
+                <li>3. Open MCP Servers in VS Code/Copilot.</li>
+                <li>4. Click Authenticate for chatsvg-mcp.</li>
+                <li>
+                  5. Finish browser OAuth and start calling ChatSVG tools.
+                </li>
+              </ol>
+            </div>
+
+            <SubHeading id="mcp-tools">Use the tools</SubHeading>
+            <div className="rounded-xl border border-gray-200 bg-white p-5 mb-6">
+              <ol className="space-y-2 text-sm text-gray-700">
+                <li>
+                  1. Call
+                  <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs mx-1">
+                    list_styles
+                  </code>
+                  to get available styles.
+                </li>
+                <li>
+                  2. Call
+                  <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs mx-1">
+                    generate_svg
+                  </code>
+                  with prompt and style.
+                </li>
+                <li>
+                  3. Poll
+                  <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-xs mx-1">
+                    get_job_status
+                  </code>
+                  until completed.
+                </li>
+              </ol>
+            </div>
+
+            <CodeBlock
+              language="http"
+              code={`POST /mcp
+Authorization: Bearer <access_token>
+Content-Type: application/json
+MCP-Session-Id: <session_id>`}
+            />
+
+            <SubHeading id="mcp-errors">Troubleshooting</SubHeading>
+            <div className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 my-4">
+              <div className="text-sm text-orange-900">
+                <strong>Troubleshooting:</strong> most setup issues are token
+                scope/expiry, missing
+                <code className="bg-orange-100 px-1.5 py-0.5 rounded font-mono text-xs mx-1">
+                  MCP-Session-Id
+                </code>
+                , or rate limits.
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-gray-200 bg-white p-5 mb-8">
+              <ul className="space-y-3 text-sm text-gray-700">
+                <li>
+                  <strong>401 invalid/missing token:</strong> re-authenticate
+                  and ensure Authorization Bearer header is present.
+                </li>
+                <li>
+                  <strong>404 session not found:</strong> missing/expired
+                  MCP-Session-Id.
+                </li>
+                <li>
+                  <strong>429 rate limit:</strong> retry with backoff.
+                </li>
+                <li>
+                  <strong>Insufficient credits:</strong> generation tool calls
+                  fail until credits are available.
+                </li>
+              </ul>
+            </div>
+
+            <SubHeading id="mcp-local-note">Local dev (optional)</SubHeading>
+            <p className="text-sm text-gray-600 mb-3">
+              Most users should use the hosted MCP URL above. Local backend run
+              is mainly for ChatSVG backend development.
+            </p>
+            <CodeBlock
+              language="text"
+              code={`Local MCP URL: http://localhost:3001/mcp
+Health: GET /mcp/health
+
+For local generation to complete, run all 3 processes:
+- API server
+- worker
+- MCP server`}
+            />
+
+            <div
+              id="mcp-last-updated"
+              className="text-sm text-gray-500 border-t border-gray-200 pt-4 mt-8"
+            >
+              Last updated: March 27, 2026
             </div>
           </section>
 
-          {/* Web App Guide */}
+          {/* Quick Start */}
           <section>
-            <SectionHeading id="web-app">Using the Web App</SectionHeading>
+            <SectionHeading id="quickstart">API Quick Start</SectionHeading>
             <p className="text-gray-600 mb-6">
-              Use the web app when you want to iterate quickly on prompts,
-              styles, and outputs before integrating the same workflow in code.
+              Use REST API when you want to call ChatSVG from your own backend
+              or product workflow.
             </p>
 
-            <div className="space-y-4">
-              <div className="bg-white rounded-xl border border-gray-200 p-5">
-                <h4 className="font-semibold text-gray-900 mb-3">
-                  How it works
-                </h4>
-                <ol className="space-y-3 text-gray-700">
-                  <li className="flex items-start gap-3">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center text-sm font-bold">
-                      1
-                    </span>
-                    <div>
-                      <strong>Describe what you want:</strong> Type a
-                      description like "minimalist rocket icon" or "abstract
-                      geometric pattern"
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center text-sm font-bold">
-                      2
-                    </span>
-                    <div>
-                      <strong>Choose a style:</strong> Select from flat,
-                      outline, duotone, line-art, and more
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center text-sm font-bold">
-                      3
-                    </span>
-                    <div>
-                      <strong>Generate:</strong> AI creates your SVG in 30-60
-                      seconds
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center text-sm font-bold">
-                      4
-                    </span>
-                    <div>
-                      <strong>Download & use:</strong> Get SVG, PNG, or copy the
-                      code directly
-                    </div>
-                  </li>
-                </ol>
-              </div>
-
-              <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
-                <div className="flex items-start gap-3">
-                  <svg
-                    className="w-6 h-6 text-blue-600 shrink-0 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+            <div className="rounded-xl border border-gray-200 bg-white p-5">
+              <ol className="space-y-3 text-sm text-gray-700">
+                <li>
+                  1. Create an API key in your{' '}
+                  <Link
+                    to="/api-keys"
+                    className="text-wizard-orange hover:underline font-medium"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <div className="text-sm text-gray-700">
-                    <strong className="text-gray-900">Credits:</strong> Each
-                    generation costs 1 credit. Credits work for both web and API
-                    access.
-                  </div>
-                </div>
-              </div>
+                    dashboard
+                  </Link>
+                  .
+                </li>
+                <li>2. POST to /v1/svg/generate with prompt and style.</li>
+                <li>3. Poll /v1/svg/job/:jobId until SUCCEEDED or FAILED.</li>
+              </ol>
             </div>
           </section>
 
@@ -1137,160 +1193,55 @@ export default function Docs() {
             </p>
           </section>
 
-          {/* MCP Server / Claude Plugin - Coming Soon */}
+          {/* Web App Guide */}
           <section>
-            <SectionHeading id="mcp">MCP Server (Coming Soon)</SectionHeading>
+            <SectionHeading id="web-app">Using the Web App</SectionHeading>
+            <p className="text-gray-600 mb-6">
+              Use the web app when you want to iterate quickly on prompts,
+              styles, and outputs before integrating in code.
+            </p>
 
-            <div className="rounded-2xl border-2 border-dashed border-purple-300 bg-linear-to-br from-purple-50 to-blue-50 p-8">
-              <div className="flex items-start gap-4 mb-6">
-                <div className="shrink-0 w-12 h-12 rounded-xl bg-linear-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                    />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h4 className="text-xl font-bold text-gray-900">
-                      ChatSVG MCP Server
-                    </h4>
-                    <span className="inline-flex items-center gap-1.5 bg-purple-100 border border-purple-200 rounded-full px-3 py-0.5 text-xs font-semibold text-purple-700">
-                      <span className="relative flex h-1.5 w-1.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-purple-500"></span>
-                      </span>
-                      In Development
+            <div className="space-y-4">
+              <div className="bg-white rounded-xl border border-gray-200 p-5">
+                <h4 className="font-semibold text-gray-900 mb-3">
+                  How it works
+                </h4>
+                <ol className="space-y-3 text-gray-700">
+                  <li className="flex items-start gap-3">
+                    <span className="shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center text-sm font-bold">
+                      1
                     </span>
-                  </div>
-                  <p className="text-gray-700 text-sm mb-4">
-                    Generate SVGs directly from Claude Desktop, Cursor,
-                    Windsurf, and other MCP-compatible AI tools. No manual API
-                    calls needed — just ask in natural language.
-                  </p>
-                </div>
+                    <div>
+                      <strong>Describe what you want:</strong> enter your SVG
+                      prompt.
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center text-sm font-bold">
+                      2
+                    </span>
+                    <div>
+                      <strong>Choose a style:</strong> pick flat, outline,
+                      duotone, line-art, and more.
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center text-sm font-bold">
+                      3
+                    </span>
+                    <div>
+                      <strong>Generate and download:</strong> export SVG or PNG.
+                    </div>
+                  </li>
+                </ol>
               </div>
 
-              <div className="bg-white/80 backdrop-blur rounded-xl p-5 border border-gray-200/60 mb-6">
-                <h5 className="font-bold text-gray-900 mb-3">What is MCP?</h5>
-                <p className="text-sm text-gray-700 mb-2">
-                  <strong>Model Context Protocol (MCP)</strong> is Anthropic's
-                  open standard that allows Claude and other AI assistants to
-                  securely connect to external tools and data sources.
-                </p>
-                <p className="text-sm text-gray-600">
-                  Instead of copying API code snippets, you'll be able to simply
-                  say "generate a rocket icon" and Claude will use ChatSVG's MCP
-                  server to handle it automatically.
-                </p>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-4 mb-6">
-                <div className="bg-white/70 rounded-lg p-4 border border-gray-200/60">
-                  <h5 className="font-semibold text-gray-900 text-sm mb-3 flex items-center gap-2">
-                    <span className="text-purple-500">→</span>
-                    How it will work
-                  </h5>
-                  <ol className="space-y-2 text-sm text-gray-700">
-                    <li className="flex items-start gap-2">
-                      <span className="shrink-0 font-bold text-purple-500">
-                        1.
-                      </span>
-                      <span>Install ChatSVG MCP server via npm/config</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="shrink-0 font-bold text-purple-500">
-                        2.
-                      </span>
-                      <span>Add your ChatSVG API key to MCP config</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="shrink-0 font-bold text-purple-500">
-                        3.
-                      </span>
-                      <span>Ask Claude to generate SVGs naturally</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="shrink-0 font-bold text-purple-500">
-                        4.
-                      </span>
-                      <span>Claude handles API calls and returns SVG</span>
-                    </li>
-                  </ol>
+              <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
+                <div className="text-sm text-gray-700">
+                  <strong className="text-gray-900">Credits:</strong> Each
+                  generation costs 1 credit. Credits are shared across web app,
+                  API, and MCP usage.
                 </div>
-                <div className="bg-white/70 rounded-lg p-4 border border-gray-200/60">
-                  <h5 className="font-semibold text-gray-900 text-sm mb-3 flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    Why it's better
-                  </h5>
-                  <ul className="space-y-2 text-sm text-gray-700">
-                    <li className="flex items-start gap-2">
-                      <span className="text-green-500 font-bold shrink-0">
-                        +
-                      </span>
-                      <span>No need to write API integration code</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-green-500 font-bold shrink-0">
-                        +
-                      </span>
-                      <span>API keys stay local and secure</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-green-500 font-bold shrink-0">
-                        +
-                      </span>
-                      <span>Works seamlessly in your dev workflow</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-green-500 font-bold shrink-0">
-                        +
-                      </span>
-                      <span>Generate SVGs while coding in Cursor</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="bg-gray-900 rounded-lg p-4 mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-mono text-gray-400">
-                    example
-                  </span>
-                </div>
-                <code className="text-sm text-gray-100 block">
-                  <span className="text-gray-400">
-                    // In Claude Desktop or Cursor:
-                  </span>
-                  <br />
-                  <span className="text-blue-400">
-                    "Generate a minimalist rocket icon in flat style"
-                  </span>
-                  <br />
-                  <span className="text-gray-400">
-                    // Claude uses MCP → calls ChatSVG API → returns SVG
-                  </span>
-                </code>
-              </div>
-
-              <div className="text-center">
-                <a
-                  href="mailto:support@chatsvg.com?subject=MCP Server Early Access"
-                  className="inline-block px-6 py-2.5 rounded-lg bg-linear-to-r from-purple-600 to-blue-600 text-sm font-medium text-white shadow-sm hover:from-purple-700 hover:to-blue-700 transition-all"
-                >
-                  Request early access
-                </a>
-                <p className="mt-3 text-xs text-gray-600">
-                  We'll notify you when the MCP server is ready for testing
-                </p>
               </div>
             </div>
           </section>
@@ -1310,6 +1261,25 @@ export default function Docs() {
             </Link>
           </section>
         </div>
+
+        {/* Right-side table of contents */}
+        <nav className="hidden xl:block w-56 shrink-0 sticky top-20 self-start">
+          <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">
+            On this page
+          </div>
+          <ul className="space-y-1 border-l border-gray-200">
+            {NAV_ITEMS.map((item) => (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  className="block pl-4 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:border-l-2 hover:border-wizard-orange hover:pl-3.5 transition-all"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </div>
   )
