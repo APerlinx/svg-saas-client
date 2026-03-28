@@ -28,6 +28,31 @@ export const router = createBrowserRouter([
     errorElement: <ErrorBoundary />,
   },
   {
+    path: 'signin',
+    element: <SignIn />,
+    errorElement: <ErrorBoundary />,
+  },
+  {
+    path: 'signup',
+    element: <SignUp />,
+    errorElement: <ErrorBoundary />,
+  },
+  {
+    path: 'forgot-password',
+    element: <ForgotPassword />,
+    errorElement: <ErrorBoundary />,
+  },
+  {
+    path: 'reset-password',
+    element: <ResetPassword />,
+    errorElement: <ErrorBoundary />,
+  },
+  {
+    path: 'auth/callback',
+    element: <OAuthCallback />,
+    errorElement: <ErrorBoundary />,
+  },
+  {
     path: '/',
     element: <App />,
     errorElement: <ErrorBoundary />,
@@ -75,26 +100,6 @@ export const router = createBrowserRouter([
       {
         path: 'admin',
         element: <Admin />,
-      },
-      {
-        path: 'signin',
-        element: <SignIn />,
-      },
-      {
-        path: 'signup',
-        element: <SignUp />,
-      },
-      {
-        path: 'forgot-password',
-        element: <ForgotPassword />,
-      },
-      {
-        path: 'reset-password',
-        element: <ResetPassword />,
-      },
-      {
-        path: 'auth/callback',
-        element: <OAuthCallback />,
       },
       {
         path: 'billing/paypal/success',
